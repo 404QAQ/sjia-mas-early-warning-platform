@@ -85,6 +85,13 @@
 
 本平台是风险提示工具，不构成诊断；预警结果不能替代临床医生判断。患者化验数据属敏感健康信息，未经授权不得使用或公开。
 
+## 🗂 方案总览
+
+<!-- SOLUTIONS_INDEX_START -->
+> 暂无提交方案。第一个方案从这里开始 → 阅读 [solutions/ 提交指南](solutions/README.md)
+<!-- SOLUTIONS_INDEX_END -->
+
+
 ## 许可证
 
 待定（License TBD）
