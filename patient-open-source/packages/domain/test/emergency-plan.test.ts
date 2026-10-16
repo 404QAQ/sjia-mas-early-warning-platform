@@ -28,14 +28,14 @@ describe('emergency plan domain', () => {
   });
 
   it('confirms with a six-month review date and clinician-only fields', () => {
-    const confirmed = confirmEmergencyPlan(submitEmergencyPlan(base, '2026-10-02T00:00:00.000Z'), 'doctor-1', { nightCapable: 'TRUE', triageScript: 'sJIA，有 MAS 风险，正在发热', followUpClinicianPhone: '13800000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, '2026-10-02T00:00:00.000Z');
+    const confirmed = confirmEmergencyPlan(submitEmergencyPlan(base, '2026-10-02T00:00:00.000Z'), 'doctor-1', { nightCapable: 'TRUE', triageScript: 'sJIA，有 MAS 风险，正在发热', followUpClinicianPhone: '00000000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, '2026-10-02T00:00:00.000Z');
     expect(confirmed.status).toBe('CONFIRMED');
     expect(confirmed.nextReviewAt).toBe('2027-04-02T00:00:00.000Z');
     expect(confirmed.clinician.confirmedBy).toBe('doctor-1');
   });
 
   it('replan clears hospital and clinician fields but preserves an immutable event', () => {
-    const confirmed = confirmEmergencyPlan(submitEmergencyPlan(base, '2026-10-02T00:00:00.000Z'), 'doctor-1', { nightCapable: 'TRUE', triageScript: 'script', followUpClinicianPhone: '13800000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, '2026-10-02T00:00:00.000Z');
+    const confirmed = confirmEmergencyPlan(submitEmergencyPlan(base, '2026-10-02T00:00:00.000Z'), 'doctor-1', { nightCapable: 'TRUE', triageScript: 'script', followUpClinicianPhone: '00000000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, '2026-10-02T00:00:00.000Z');
     expect(() => emergencyPlanAfterReplan(confirmed, 'city-shanghai-2', 'actor-1', '2027-04-01T23:59:59.000Z')).toThrow(/复核期/);
     const replanned = emergencyPlanAfterReplan(confirmed, 'city-shanghai-2', 'actor-1', '2027-04-02T00:00:00.000Z');
     expect(replanned.status).toBe('DRAFT');
@@ -47,13 +47,13 @@ describe('emergency plan domain', () => {
   });
 
   it('marks a confirmed plan due after six months without mutating the plan', () => {
-    const confirmed = confirmEmergencyPlan(submitEmergencyPlan(base, '2026-10-02T00:00:00.000Z'), 'doctor-1', { nightCapable: 'TRUE', triageScript: '审核后的到院话术', followUpClinicianPhone: '13800000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, '2026-10-02T00:00:00.000Z');
+    const confirmed = confirmEmergencyPlan(submitEmergencyPlan(base, '2026-10-02T00:00:00.000Z'), 'doctor-1', { nightCapable: 'TRUE', triageScript: '审核后的到院话术', followUpClinicianPhone: '00000000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, '2026-10-02T00:00:00.000Z');
     expect(evaluateEmergencyPlanReview(confirmed, '2027-04-02T00:00:00.000Z')).toBe('DUE');
     expect(evaluateEmergencyPlanReview(confirmed, '2027-04-01T23:59:59.000Z')).toBe('CURRENT');
   });
 
   it('adds six months at the Asia/Shanghai calendar boundary', () => {
-    const confirmed = confirmEmergencyPlan(submitEmergencyPlan(base, '2026-09-30T16:30:00.000Z'), 'doctor-1', { nightCapable: 'TRUE', triageScript: '审核后的到院话术', followUpClinicianPhone: '13800000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, '2026-09-30T16:30:00.000Z');
+    const confirmed = confirmEmergencyPlan(submitEmergencyPlan(base, '2026-09-30T16:30:00.000Z'), 'doctor-1', { nightCapable: 'TRUE', triageScript: '审核后的到院话术', followUpClinicianPhone: '00000000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, '2026-09-30T16:30:00.000Z');
     expect(confirmed.nextReviewAt).toBe('2027-03-31T16:30:00.000Z');
   });
 
@@ -65,11 +65,11 @@ describe('emergency plan domain', () => {
 
   it('requires a non-empty clinician triage script before confirmation', () => {
     const pending = submitEmergencyPlan(base, '2026-10-02T00:00:00.000Z');
-    expect(() => confirmEmergencyPlan(pending, 'doctor-1', { nightCapable: 'TRUE', triageScript: '   ', followUpClinicianPhone: '13800000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, '2026-10-02T00:00:00.000Z')).toThrow(/分诊话术/);
+    expect(() => confirmEmergencyPlan(pending, 'doctor-1', { nightCapable: 'TRUE', triageScript: '   ', followUpClinicianPhone: '00000000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, '2026-10-02T00:00:00.000Z')).toThrow(/分诊话术/);
   });
 
   it('clears clinician review facts when a confirmed caregiver field changes', () => {
-    const confirmed = confirmEmergencyPlan(submitEmergencyPlan(base, '2026-10-02T00:00:00.000Z'), 'doctor-1', { nightCapable: 'TRUE', triageScript: '审核后的到院话术', followUpClinicianPhone: '13800000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, '2026-10-02T00:00:00.000Z');
+    const confirmed = confirmEmergencyPlan(submitEmergencyPlan(base, '2026-10-02T00:00:00.000Z'), 'doctor-1', { nightCapable: 'TRUE', triageScript: '审核后的到院话术', followUpClinicianPhone: '00000000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, '2026-10-02T00:00:00.000Z');
     expect(() => saveEmergencyPlanDraft(confirmed, { step: 4 }, 'caregiver-1', '2026-10-03T00:00:00.000Z')).toThrow(/可保存/);
     expect(() => saveEmergencyPlanDraft(submitEmergencyPlan(base, '2026-10-02T00:00:00.000Z'), { step: 4 }, 'caregiver-1', '2026-10-03T00:00:00.000Z')).toThrow(/待医生确认/);
     const edited = saveEmergencyPlanDraft(confirmed, { step: 4, caregiver: { customThresholds: ['新阈值'] } }, 'caregiver-1', '2026-10-03T00:00:00.000Z');

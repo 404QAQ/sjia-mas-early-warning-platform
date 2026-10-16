@@ -36,7 +36,7 @@ function confirmedPlan(): EmergencyPlan {
   return confirmEmergencyPlan(plan, 'clinician-internal-1', {
     nightCapable: 'TRUE',
     triageScript: 'sJIA，有 MAS 风险，正在发热',
-    followUpClinicianPhone: '13800000001',
+    followUpClinicianPhone: '00000000001',
     onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' },
   }, T1);
 }
@@ -76,7 +76,7 @@ describe('EmergencyShare domain', () => {
       nightEntrance: '东门急诊',
       arrivalMinutesNight: 20,
       triageScript: 'sJIA，有 MAS 风险',
-      followUpClinicianPhone: '13800000001',
+      followUpClinicianPhone: '00000000001',
       neverDo: expect.arrayContaining(['不要自行停激素']),
       canDo: expect.arrayContaining(['少量多次补水']),
     });

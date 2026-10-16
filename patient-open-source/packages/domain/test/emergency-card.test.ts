@@ -18,7 +18,7 @@ function sources() {
     },
   }, 'caregiver-1', T0);
   plan = submitEmergencyPlan(plan, T0, 'caregiver-1');
-  plan = confirmEmergencyPlan(plan, 'clinician-1', { nightCapable: 'TRUE', triageScript: 'sJIA，有 MAS 风险，正在发热', followUpClinicianPhone: '13800000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, T1);
+  plan = confirmEmergencyPlan(plan, 'clinician-1', { nightCapable: 'TRUE', triageScript: 'sJIA，有 MAS 风险，正在发热', followUpClinicianPhone: '00000000001', onCallContact: { label: '值班医师（今晚）', phone: '医院总机转' } }, T1);
   let kit = createEmergencyKit('patient-1', 'kit-1', T0);
   kit = saveEmergencyKitDraft(kit, { locationNote: '门边鞋柜第二层', familyInformed: true }, 'caregiver-1', T1);
   return { plan, kit };
@@ -32,7 +32,7 @@ describe('EmergencyCard', () => {
     expect(card.kitVersion).toBe(kit.version);
     expect(card.destination.hospitalName).toBe('合作医院');
     expect(card.destination.triageScript).toContain('MAS');
-    expect(card.destination.followUpClinicianPhone).toBe('13800000001');
+    expect(card.destination.followUpClinicianPhone).toBe('00000000001');
     expect(card.destination.onCallContact).toEqual({ label: '值班医师（今晚）', phone: '医院总机转' });
     expect(card.thresholds).toHaveLength(4);
     expect(card.neverDo).toContain('不要自行停激素');
@@ -41,7 +41,7 @@ describe('EmergencyCard', () => {
     expect(renderEmergencyCardSvg(card)).toContain('<svg');
     expect(renderEmergencyCardSvg(card)).toContain('绝对不要做');
     expect(emergencyCardTextRows(card).join('\n')).toContain('□ 抽搐 / 意识不清 / 叫不醒');
-    expect(emergencyCardTextRows(card).join('\n')).toContain('随诊医师电话：13800000001');
+    expect(emergencyCardTextRows(card).join('\n')).toContain('随诊医师电话：00000000001');
     expect(emergencyCardTextRows(card).join('\n')).toContain('值班医师（今晚）：医院总机转');
   });
 

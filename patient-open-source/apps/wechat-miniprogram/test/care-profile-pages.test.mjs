@@ -23,10 +23,10 @@ test('联系人登记提交完整号码但只回读脱敏值，不自动调用�
     return [404, {}];
   }, { session });
   const page = instantiate(contacts); page.onShow(); await settle(); page.openRegister({});
-  page.setData({ registrationName: '王女士', registrationRelation: '母亲', registrationPhone: '13800001234' });
+  page.setData({ registrationName: '王女士', registrationRelation: '母亲', registrationPhone: '00000000002' });
   page.saveRegister(); await settle();
   assert.equal(calls.requests.filter(item => item.method === 'POST').length, 1);
-  assert.equal(calls.requests.find(item => item.method === 'POST').data.phone, '13800001234');
+  assert.equal(calls.requests.find(item => item.method === 'POST').data.phone, '00000000002');
   assert.equal(page.data.directory.contacts[0].phoneMasked, '138****1234');
   assert.equal(page.data.registrationPhone, '');
   assert.equal(page.data.registrationOpen, false);
@@ -37,7 +37,7 @@ test('联系人勿扰取消接收checkbox空数组，切身份清除登记草稿
   const page = instantiate(contacts); page.onShow(); await settle();
   page.toggleQuiet({ detail: { value: ['on'] } }); assert.equal(page.data.formQuietEnabled, true);
   page.toggleQuiet({ detail: { value: [] } }); assert.equal(page.data.formQuietEnabled, false);
-  page.setData({ registrationOpen: true, registrationPhone: '13800001234' }); page.directoryPending = { path: 'old', body: {} };
+  page.setData({ registrationOpen: true, registrationPhone: '00000000002' }); page.directoryPending = { path: 'old', body: {} };
   storage.set(SESSION_KEY, { ...session, patientId: 'other', actorId: 'other' });
   page.onShow(); await settle();
   assert.equal(page.data.registrationPhone, ''); assert.equal(page.data.registrationOpen, false); assert.equal(page.directoryPending, null);

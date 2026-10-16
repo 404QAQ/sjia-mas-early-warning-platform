@@ -37,7 +37,7 @@ test('L-01：患者范围不一致、多余字段、非法版本都必须拒绝'
   assert.throws(() => school.parse(schoolView({ disclosure: { version: -1 } }), PATIENT), /版本无效/);
   assert.throws(() => school.parse(schoolView({ disclosure: { peArrangement: 'SOMETIMES' } }), PATIENT));
   assert.throws(() => school.parse(schoolView({ disclosure: { recipients: [{ role: 'PRINCIPAL', level: 'ESSENTIAL' }] } }), PATIENT));
-  assert.throws(() => school.parse(schoolView({ disclosure: { schoolEmergencyContact: { name: '李某某', relation: '母亲', phoneMasked: '13812345678', authorized: true } } }), PATIENT), /学校联系人/);});
+  assert.throws(() => school.parse(schoolView({ disclosure: { schoolEmergencyContact: { name: '李某某', relation: '母亲', phoneMasked: '00000000003', authorized: true } } }), PATIENT), /学校联系人/);});
 
 test('L-01：勾选的层按固定顺序归一化，避免同样内容产生不同命令', () => {
   assert.deepEqual(school.normalizePicked(['SCHOOL_NURSE', 'HEAD_TEACHER']), ['HEAD_TEACHER', 'SCHOOL_NURSE']);
