@@ -1,0 +1,90 @@
+<view class="page patient-page">
+  <view class="title">联系人授权</view>
+  <view class="hint">紧急时联系谁、分享多少信息，由你决定。授权可以随时撤回。</view>
+
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{notice}}" class="message" role="status">{{notice}}</view>
+  <view wx:if="{{pendingText}}" class="warn" role="status">
+    <view>{{pendingText}}</view>
+    <button size="mini" class="secondary inline-action" bindtap="retry" disabled="{{saving}}">重试原操作</button>
+  </view>
+  <view wx:if="{{loading && !rows.length}}" class="hint">正在读取联系人授权…</view>
+  <view wx:elif="{{!rows.length && !error}}" class="card empty-contact"><view class="card-title">还没有联系人</view><view class="hint">登记一位信任的亲友，再决定他可以看到多少信息。</view></view>
+
+  <view wx:if="{{directoryError}}" class="warn">{{directoryError}}</view>
+  <button wx:if="{{directory}}" class="secondary add-contact" bindtap="openRegister" disabled="{{saving}}">＋ 登记联系人</button>
+  <view wx:if="{{registrationOpen}}" class="card registration-card">
+    <view class="card-title">{{registrationId ? '编辑联系人' : '登记联系人'}}</view>
+    <view class="field-label">姓名</view><input value="{{registrationName}}" data-field="registrationName" bindinput="registrationInput" maxlength="100" placeholder="联系人姓名" disabled="{{saving}}" />
+    <view class="field-label">关系</view><input value="{{registrationRelation}}" data-field="registrationRelation" bindinput="registrationInput" maxlength="50" placeholder="如：母亲、配偶、朋友" disabled="{{saving}}" />
+    <view class="field-label">联系电话</view><input value="{{registrationPhone}}" data-field="registrationPhone" bindinput="registrationInput" type="text" maxlength="16" placeholder="{{registrationId ? '留空保留原号码，填写新号码需重新授权' : '输入完整联系电话'}}" disabled="{{saving}}" />
+    <view class="field-label">默认联系顺序</view><radio-group class="registration-priority" bindchange="registrationPriority"><label><radio value="1" checked="{{registrationTier === 1}}" disabled="{{saving}}" />一级</label><label><radio value="2" checked="{{registrationTier === 2}}" disabled="{{saving}}" />二级</label></radio-group>
+    <view class="hint">登记后不会自动授权或发送通知。</view>
+    <view class="action-row"><button class="primary" bindtap="saveRegister" loading="{{saving}}" disabled="{{saving}}">保存联系人</button><button class="secondary" bindtap="closeRegister" disabled="{{saving}}">取消</button></view>
+  </view>
+
+  <view wx:for="{{rows}}" wx:key="contactId" class="card contact">
+    <view class="contact-heading"><view class="contact-name">{{item.displayName}}<text wx:if="{{item.relationLabel}}" class="relation-badge">{{item.relationLabel}}</text></view><text class="status-badge {{item.status === 'ACTIVE' ? 'active' : ''}}">{{item.statusLabel}}</text></view>
+    <view class="contact-meta"><text class="badge">{{item.priority ? item.priorityLabel : item.tierLabel}}</text><text>{{item.phoneMasked}}</text></view>
+    <view class="line">{{item.visibilityLabel}}</view>
+    <view wx:if="{{item.quietLabel}}" class="line">{{item.quietLabel}}</view>
+    <view class="line">授权核对：{{item.freshnessLabel}}<text wx:if="{{item.nextConfirmLabel}}">（{{item.nextConfirmLabel}}）</text></view>
+    <view wx:if="{{item.grantedLabel}}" class="hint">{{item.grantedLabel}}</view>
+    <view wx:if="{{item.confirmedLabel}}" class="hint">{{item.confirmedLabel}}</view>
+    <view wx:if="{{item.withdrawnLabel}}" class="hint">{{item.withdrawnLabel}}</view>
+    <view wx:if="{{item.hasConsent}}" class="hint">同意文本：{{item.consentText}}</view>
+
+    <!-- 授权：尚未授权或已撤回时才能授予（grant 只接受一级/二级 + G1/G2） -->
+    <block wx:if="{{editingId === item.contactId}}">
+      <view class="field-label">顺位</view>
+      <radio-group class="option-group" bindchange="changePriority">
+        <label class="tier"><radio value="1" checked="{{formPriority === 1}}" disabled="{{saving}}" /><view class="tier-body"><view class="tier-head">一级联系人</view><view class="hint">先联系这一位。</view></view></label>
+        <label class="tier"><radio value="2" checked="{{formPriority === 2}}" disabled="{{saving}}" /><view class="tier-body"><view class="tier-head">二级联系人</view><view class="hint">联系不上一级时再找他。</view></view></label>
+      </radio-group>
+      <view class="field-label">可见度</view>
+      <radio-group class="option-group" bindchange="changeVisibility">
+        <label class="tier"><radio value="G1_NOTIFY" checked="{{formVisibility === 'G1_NOTIFY'}}" disabled="{{saving}}" /><view class="tier-body"><view class="tier-head">仅通知</view><view class="hint">只通知，看不到任何记录。</view></view></label>
+        <label class="tier"><radio value="G2_SUMMARY" checked="{{formVisibility === 'G2_SUMMARY'}}" disabled="{{saving}}" /><view class="tier-body"><view class="tier-head">通知与摘要</view><view class="hint">可看到姓名和方向性摘要，没有化验值。</view></view></label>
+      </radio-group>
+      <view class="field-label">授权说明（联系人可见）</view>
+      <textarea class="note" maxlength="2000" placeholder="例如：我授权你在紧急情况下联系我确认状态，你不必看到我的化验结果。" value="{{formConsentText}}" bindinput="consentInput" disabled="{{saving}}" />
+      <checkbox-group bindchange="toggleQuiet"><label class="check"><checkbox value="on" checked="{{formQuietEnabled}}" disabled="{{saving}}" />设置勿扰时段（按 UTC 计算，非本地时间）</label></checkbox-group>
+      <block wx:if="{{formQuietEnabled}}">
+        <view class="row"><input value="{{formQuietFrom}}" maxlength="5" placeholder="22:00" data-field="from" bindinput="quietInput" disabled="{{saving}}" /><input value="{{formQuietTo}}" maxlength="5" placeholder="07:00" data-field="to" bindinput="quietInput" disabled="{{saving}}" /></view>
+        <view class="hint">勿扰时段内不会推送，延到时段结束后再发。格式 HH:mm，两端要不同。</view>
+      </block>
+      <view class="action-row">
+        <button class="primary" bindtap="submitGrant" disabled="{{saving}}">保存这条授权</button>
+        <button class="secondary" bindtap="closeGrant" disabled="{{saving}}">取消编辑</button>
+      </view>
+    </block>
+
+    <!-- 撤回必须二次确认：撤回会连带失效已发出的短链，这是要让人看见的后果 -->
+    <block wx:elif="{{confirmingWithdrawId === item.contactId}}">
+      <view class="warn">撤回后，这位联系人将无法再访问你的信息；此前发给他的分享链接也会失效。</view>
+      <view class="action-row">
+        <button class="danger" bindtap="withdraw" data-id="{{item.contactId}}" disabled="{{saving}}">确认撤回授权</button>
+        <button class="secondary" bindtap="cancelWithdraw" disabled="{{saving}}">先不撤回</button>
+      </view>
+    </block>
+
+    <block wx:else>
+      <view wx:if="{{item.canGrant || item.canConfirm || item.canWithdraw}}" class="action-row contact-actions">
+        <button wx:if="{{item.canGrant}}" class="primary" bindtap="openGrant" data-id="{{item.contactId}}" disabled="{{saving}}">{{item.status === 'ACTIVE' ? '调整授权' : '授权'}}</button>
+        <button wx:if="{{item.canConfirm}}" class="primary" bindtap="confirmFreshness" data-id="{{item.contactId}}" disabled="{{saving}}">确认仍然有效</button>
+        <button wx:if="{{item.canWithdraw}}" class="secondary" bindtap="askWithdraw" data-id="{{item.contactId}}" disabled="{{saving}}">撤回授权</button>
+      </view>
+      <view wx:if="{{item.canManage}}" class="management-row"><button class="text-action" data-id="{{item.contactId}}" bindtap="openRegister" disabled="{{saving}}">编辑资料</button><button class="text-action remove-action" data-id="{{item.contactId}}" bindtap="removeRegistration" disabled="{{saving}}">移除联系人</button></view>
+      <view wx:if="{{!item.canGrant && !item.canConfirm && !item.canWithdraw}}" class="hint">专业联系人由照护团队管理。</view>
+    </block>
+  </view>
+
+  <view class="card legend">
+    <view class="card-title">联系人可以看到什么</view>
+    <view class="line">仅通知：提醒联系人与你联系、确认状态，不显示健康记录。</view>
+    <view class="line">通知与摘要：可看到姓名和变化趋势，不包含化验值或完整用药。</view>
+    <view class="hint">完整病历仅向你本人和获授权的医护开放。</view>
+  </view>
+
+  <button wx:if="{{!loading}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading || saving}}">刷新联系人</button>
+</view>

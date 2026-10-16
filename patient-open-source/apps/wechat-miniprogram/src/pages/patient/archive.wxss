@@ -1,0 +1,147 @@
+@import './archive-common.wxss';
+
+.top-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 22rpx;
+}
+
+.top-row > view {
+  flex: 1;
+  min-width: 0;
+}
+
+.page button.compact {
+  width: auto;
+  flex: none;
+  min-width: 118rpx;
+}
+
+.filters {
+  margin-top: 28rpx;
+}
+
+.result-heading {
+  display: flex;
+  justify-content: space-between;
+  margin: 26rpx 0 18rpx;
+  color: var(--mas-text-muted);
+  font-size: 25rpx;
+}
+
+.result-heading text {
+  color: var(--mas-text-subtle);
+  font-size: 23rpx;
+}
+
+.page button.record-card {
+  display: block;
+  margin: 20rpx 0 0;
+  padding: 26rpx;
+  border: 1rpx solid var(--mas-border);
+  border-radius: var(--mas-radius-card);
+  background: var(--mas-surface);
+  box-shadow: var(--mas-shadow-card);
+  color: var(--mas-text);
+  text-align: left;
+}
+
+.record-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.record-top .card-title {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.record-top .badge {
+  flex: none;
+}
+
+.doctor-line {
+  margin-top: 12rpx;
+  color: var(--mas-primary);
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+.record-diagnosis {
+  margin-top: 18rpx;
+  color: var(--mas-text);
+  font-size: 27rpx;
+  line-height: 1.6;
+}
+
+.record-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 12rpx;
+  color: var(--mas-text-muted);
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+.record-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14rpx;
+  margin-top: 20rpx;
+  color: var(--mas-text-subtle);
+  font-size: 22rpx;
+}
+
+.form-card .field:first-child {
+  margin-top: 0;
+}
+
+.line-editor {
+  margin-bottom: 24rpx;
+  padding: 20rpx 0 28rpx;
+  border-bottom: 1rpx solid var(--mas-border);
+}
+
+.line-head,
+.switch-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  color: var(--mas-text-muted);
+  font-size: 25rpx;
+}
+
+.line-gap {
+  margin-top: 16rpx;
+}
+
+.switch-line {
+  margin-top: 16rpx;
+}
+
+.page .line-head button {
+  width: auto;
+  min-height: var(--mas-control-height);
+  margin: 0;
+}
+
+.abnormal-label {
+  color: var(--mas-warning);
+}
+
+.preview-image {
+  margin-top: 22rpx;
+}
+
+.page button.delete-button,
+.page button.status-button {
+  margin: 18rpx auto 0;
+}

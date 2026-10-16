@@ -1,0 +1,46 @@
+@import "../../styles/patient.wxss";
+
+.health-page { background: var(--mas-bg); }
+.health-page .title { margin-bottom: 8rpx; }
+.compact-heading { margin-bottom: 24rpx; }
+.sub-title { margin-top: 24rpx; color: var(--mas-text-muted); font-size: 28rpx; font-weight: 600; }
+.warning { margin-top: 16rpx; padding: 18rpx; color: var(--mas-warning); background: var(--mas-warning-soft); border: 1rpx solid var(--mas-warning); border-radius: var(--mas-radius-control); line-height: 1.6; }
+.form { margin-top: 20rpx; padding-top: 16rpx; border-top: 1rpx solid var(--mas-border-soft); }
+.choice, .check { display: flex; align-items: center; min-height: var(--mas-control-height); line-height: 1.6; color: var(--mas-text-muted); }
+.choice checkbox, .check checkbox { margin-right: 14rpx; }
+.tag { display: inline-block; margin: 8rpx 8rpx 0 0; padding: 8rpx 14rpx; color: var(--mas-primary); background: var(--mas-surface-soft); border-radius: 999rpx; }
+.row { padding: 18rpx 0; border-bottom: 1rpx solid var(--mas-border-soft); line-height: 1.6; }
+.row:last-child { border-bottom: 0; }
+.row-meta { margin-top: 6rpx; color: var(--mas-text-subtle); font-size: 24rpx; }
+.moods { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12rpx; }
+.page .moods button { width: 100%; min-width: 0; min-height: var(--mas-control-height); margin: 0; padding: 12rpx 0; color: var(--mas-text-muted); background: var(--mas-surface); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-control); font-size: 24rpx; }
+.page .moods button.active { color: var(--mas-on-primary); border-color: var(--mas-primary); background: var(--mas-primary); }
+.selected { margin-top: 12rpx; color: var(--mas-primary); }
+.sibling-row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.page .sibling-row button { width: auto; flex: 0 0 auto; min-width: 128rpx; margin: 0; }
+.health-page .card { padding: var(--mas-card-padding); }
+.section-head { display: flex; align-items: center; justify-content: space-between; gap: 18rpx; }
+.section-head > view:first-child { min-width: 0; }
+.section-head .tag { margin: 0; max-width: 48%; font-size: 20rpx; }
+.health-page .hint { font-size: 24rpx; line-height: 1.7; }
+.vaccine-guidance { padding: 20rpx 2rpx 0; }
+.flu-card .hint { margin-top: 12rpx; }
+.count-tag { flex: none; color: var(--mas-primary); font-size: 23rpx; }
+.record-name { font-size: 28rpx; font-weight: 600; }
+.field-label { display: block; margin-top: 24rpx; color: var(--mas-text); font-size: 25rpx; font-weight: 600; }
+.health-page .input, .health-page .picker { margin-top: 12rpx; min-height: var(--mas-control-height); }
+.picker { display: flex; align-items: center; justify-content: space-between; }
+.picker > text { color: var(--mas-text-subtle); }
+.footnote { margin-top: 12rpx; color: var(--mas-text-subtle); font-size: 21rpx; line-height: 1.65; }
+.empty-copy { padding-top: 24rpx; color: var(--mas-text-subtle); font-size: 25rpx; line-height: 1.7; }
+.diary-editor .textarea { margin: 0; min-height: 280rpx; height: 280rpx; padding: 24rpx; border: 0; background: var(--mas-bg); }
+.mood-label { margin: 24rpx 0 14rpx; }
+.list-heading { margin: 30rpx 2rpx 0; color: var(--mas-text); font-size: 28rpx; font-weight: 600; }
+.list-heading text { padding-left: 12rpx; color: var(--mas-text-subtle); font-size: 23rpx; font-weight: 400; }
+.privacy-tag { padding: 6rpx 12rpx; color: var(--mas-primary); background: var(--mas-surface-soft); border-radius: var(--mas-radius-small); font-size: 21rpx; }
+.diary-body { margin: 24rpx 0 12rpx; color: var(--mas-text); font-size: 27rpx; line-height: 1.8; white-space: pre-wrap; word-break: break-all; }
+.entry-actions, .share-row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.health-page button.text-button { width: auto; min-height: var(--mas-control-height); margin: -12rpx 0; padding: 12rpx 0; color: var(--mas-primary); background: transparent; border: 0; font-size: 24rpx; }
+.health-page button.remove-button { color: var(--mas-danger); }
+.share-row { border-top: 1rpx solid var(--mas-border-soft); }
+.share-row .footnote { flex: 1; margin: 0; }

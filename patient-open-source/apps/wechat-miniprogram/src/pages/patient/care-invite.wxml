@@ -1,0 +1,84 @@
+<view class="page patient-page">
+  <view class="title">邀请我的医生</view>
+  <view class="hint">生成一次性邀请码发给你的主管医生，医生在医生端网页输入后即加入照护团队，可以查看和处理告警。科室安排的医生不受影响，你邀请来的医生可以随时移除。</view>
+
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{notice}}" class="message" role="status">{{notice}}</view>
+  <view wx:if="{{uncertain}}" class="warn" role="status">{{uncertain}}</view>
+  <view wx:if="{{readOnlyReason}}" class="hint readonly">{{readOnlyReason}}</view>
+
+  <view wx:if="{{issued}}" class="card code-card">
+    <view class="card-title">邀请码</view>
+    <text class="code" user-select="true">{{issued.code}}</text>
+    <view class="hint">{{issued.expiresText}}</view>
+    <view class="hint">这个码只在生成时显示一次，不会存在手机里；本页关掉后不能再查看，忘了可以重新生成。</view>
+    <view class="section-title">可以这样告诉医生：</view>
+    <text class="script" user-select="true">{{issued.script}}</text>
+    <view class="action-row">
+      <button class="primary" type="primary" bindtap="copyCode">复制邀请码</button>
+    </view>
+  </view>
+
+  <view wx:if="{{canIssue}}" class="card">
+    <view class="card-title">生成邀请码</view>
+    <view class="hint">生成新码会作废尚未使用的旧码。请只发给你的主管医生。</view>
+    <view wx:if="{{policyText}}" class="hint">{{policyText}}</view>
+    <block wx:if="{{confirmingIssue}}">
+      <view class="warn">生成新码会作废尚未使用的旧码。旧码如果已经发给医生，医生将无法再用它加入。</view>
+      <view class="action-row">
+        <button class="primary" type="primary" bindtap="confirmIssue" disabled="{{issuing}}">确认生成新码</button>
+        <button class="secondary" bindtap="cancelIssue" disabled="{{issuing}}">先不生成</button>
+      </view>
+    </block>
+    <view wx:else class="action-row">
+      <button class="{{issued ? 'secondary' : 'primary'}}" type="{{issued ? 'default' : 'primary'}}" bindtap="issue" loading="{{issuing}}" disabled="{{issuing}}">{{issued || pending ? '重新生成邀请码' : '生成邀请码'}}</button>
+    </view>
+  </view>
+
+  <block wx:if="{{!denied}}">
+    <view class="card">
+      <view class="card-title">待使用的邀请码</view>
+      <view wx:if="{{loading && !pending}}" class="hint">正在读取…</view>
+      <view wx:elif="{{readError}}" class="hint">读取失败，这一栏暂时看不到。请点下方「重新读取」重试。</view>
+      <view wx:elif="{{pending}}">
+        <view class="line">有一张邀请码还没被使用，{{pending.expiresText}}。</view>
+        <view class="hint">为了安全，码本身只在生成时显示一次。</view>
+        <view wx:if="{{canIssue}}" class="action-row">
+          <button size="mini" class="secondary" data-id="{{pending.inviteId}}" bindtap="revoke" loading="{{busyId === pending.inviteId}}" disabled="{{busyId !== ''}}">作废当前邀请码</button>
+        </view>
+      </view>
+      <view wx:else class="hint">没有待使用的邀请码。</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">我邀请的医生</view>
+      <view wx:if="{{readError}}" class="hint">读取失败，这一栏暂时看不到。请点下方「重新读取」重试。</view>
+      <view wx:elif="{{!invited.length && !loading}}" class="hint">还没有医生通过邀请码加入。</view>
+      <view wx:for="{{invited}}" wx:key="inviteId" class="row">
+        <view class="line">{{item.label}}<text wx:if="{{!item.active}}" class="tag">已移除</text></view>
+        <view class="hint">{{item.joinedText}}<text wx:if="{{item.removedText}}"> · {{item.removedText}}</text></view>
+        <block wx:if="{{canIssue && item.active}}">
+          <block wx:if="{{confirmingRemoveId === item.inviteId}}">
+            <view class="hint">移除后，这位医生从下一次操作起不能再查看或处理该患者的信息。</view>
+            <view class="action-row">
+              <button size="mini" class="danger" bindtap="confirmRemove" disabled="{{busyId !== ''}}">确认移除医生</button>
+              <button size="mini" class="secondary" bindtap="cancelRemove" disabled="{{busyId !== ''}}">先不移除</button>
+            </view>
+          </block>
+          <view wx:else class="action-row">
+            <button size="mini" class="secondary" data-id="{{item.inviteId}}" bindtap="remove" loading="{{busyId === item.inviteId}}" disabled="{{busyId !== ''}}">移除医生</button>
+          </view>
+        </block>
+      </view>
+    </view>
+
+  </block>
+
+  <!-- 角色本身就不允许时无需刷新；正常成功状态只显示页面内容，不常驻刷新。 -->
+  <block wx:if="{{!roleDenied}}">
+    <view wx:if="{{(readError || error) && !loading}}" class="recovery-area">
+      <view class="hint">页面数据没有完整读取，可以重新尝试。</view>
+      <button class="secondary recovery-button" bindtap="refresh" loading="{{loading}}" disabled="{{loading || issuing || busyId !== ''}}">重新读取邀请记录</button>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,64 @@
+/* 用户参考：白底细边卡片、深蓝文字、青绿色操作；二级页共用。 */
+page { background: var(--mas-bg); }
+.page { min-height: 100vh; box-sizing: border-box; padding: var(--mas-page-padding) var(--mas-page-padding) calc(128rpx + env(safe-area-inset-bottom)); background: var(--mas-bg); color: var(--mas-text); }
+.title { margin-bottom: 12rpx; color: var(--mas-text); font-size: 36rpx; font-weight: 700; line-height: 1.3; }
+.hint { color: var(--mas-text-muted); font-size: 24rpx; line-height: 1.65; }
+.line { color: var(--mas-text); font-size: 27rpx; line-height: 1.65; overflow-wrap: break-word; }
+.card { margin: var(--mas-section-gap) 0; padding: var(--mas-card-padding); background: var(--mas-surface); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); box-shadow: var(--mas-shadow-card); }
+.card-title { margin-bottom: 14rpx; color: var(--mas-text); font-size: 30rpx; font-weight: 700; line-height: 1.4; }
+.page button { box-sizing: border-box; margin: 16rpx 0; min-height: var(--mas-control-height); padding: 16rpx 24rpx; border-radius: var(--mas-radius-control); font-size: 27rpx; line-height: 1.5; color: var(--mas-on-primary); background: var(--mas-primary); }
+.page button[size="mini"] { min-height: 88rpx; padding: 10rpx 20rpx; font-size: 24rpx; }
+button::after { border: 0; }
+.page button.primary, .page button[type="primary"], .primary { color: var(--mas-on-primary); background: var(--mas-primary); }
+.page button.secondary, .page button[type="default"], .secondary { color: var(--mas-primary); background: var(--mas-surface); border: 1rpx solid var(--mas-border); }
+.page button.tertiary, .tertiary { color: var(--mas-primary); background: var(--mas-surface-soft); border: 1rpx solid transparent; }
+.page button.danger, .danger { color: var(--mas-on-primary); background: var(--mas-danger); border-color: var(--mas-danger); }
+.page button.quiet, .quiet { color: var(--mas-text-muted); background: transparent; border: 1rpx solid transparent; }
+.page button[disabled] { color: var(--mas-text-subtle); background: var(--mas-surface-muted); border-color: var(--mas-border-soft); }
+
+/* 页面操作区：主动作占满一行，次要动作并排但保持相同触控高度。 */
+.button-row { display: flex; gap: 16rpx; align-items: stretch; }
+.page .button-row > button { width: 0; flex: 1 1 0; min-width: 0; margin: 16rpx 0 0; }
+.page .button-row > button:only-child { flex-basis: 100%; }
+
+/* 错误 / 离线提示里的恢复动作是内联操作，避免把提示条撑成一列大按钮。 */
+.error > button[size="mini"], .warn > button[size="mini"], .queue > button[size="mini"] {
+  display: inline-flex;
+  width: auto;
+  min-height: var(--mas-control-height);
+  margin: 14rpx 0 0;
+  padding: 8rpx 20rpx;
+  color: var(--mas-primary);
+  background: var(--mas-surface);
+  border: 1rpx solid var(--mas-border);
+  font-size: 23rpx;
+}
+
+/* 列表内的单行操作，文字与内容同一基线，避免出现孤立的整行按钮。 */
+.resource-row > button[size="mini"], .contact-row > button[size="mini"], .row > button[size="mini"] {
+  flex: 0 0 auto;
+  min-width: 128rpx;
+  min-height: 88rpx;
+  margin: 0;
+}
+input, textarea, .input, .textarea, .picker, .note { box-sizing: border-box; width: 100%; border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-control); background: var(--mas-surface); color: var(--mas-text); font-size: 27rpx; }
+input, .input { margin: 12rpx 0; padding: 18rpx; min-height: 88rpx; }
+textarea, .textarea, .note { margin-top: 14rpx; min-height: 160rpx; padding: 18rpx; }
+.picker { padding: 18rpx; min-height: 88rpx; }
+.message, .error, .warn { margin-top: 18rpx; padding: 18rpx; border: 1rpx solid transparent; border-radius: var(--mas-radius-control); font-size: 25rpx; line-height: 1.6; }
+.message { color: var(--mas-success); background: var(--mas-success-soft); border-color: #c8e8df; }
+.error { color: var(--mas-danger); background: var(--mas-danger-soft); border-color: #f1c9c4; }
+.warn, .queue { color: var(--mas-warning); background: var(--mas-warning-soft); border-color: #e6c56a; }
+
+/* 页面级统一基线：二级页只通过业务类名改变语义色，基础几何保持一致。 */
+.patient-page { padding: var(--mas-page-padding) var(--mas-page-padding) calc(var(--mas-page-bottom-normal) + env(safe-area-inset-bottom)); }
+/* 页面局部样式可能仍声明 .page 的留白；双类选择器把患者端根节点固定到同一几何基线。 */
+.page.patient-page { padding: var(--mas-page-padding) var(--mas-page-padding) calc(var(--mas-page-bottom-normal) + env(safe-area-inset-bottom)); }
+.patient-page.tab-page, .page.patient-page.tab-page { padding-bottom: calc(var(--mas-page-bottom-tab) + env(safe-area-inset-bottom)); }
+.patient-page .page-heading { margin-bottom: 24rpx; }
+.patient-page .page-heading .title { margin-bottom: 0; }
+.patient-page .section-heading { margin-top: 24rpx; }
+.patient-page .field-label { color: var(--mas-text); font-size: 27rpx; font-weight: 600; }
+.patient-page .empty-state { color: var(--mas-text-muted); text-align: center; }
+.patient-page .empty-state .hint { color: var(--mas-text-subtle); }
+.patient-page input:focus, .patient-page textarea:focus, .patient-page .picker:focus { border-color: var(--mas-focus); }

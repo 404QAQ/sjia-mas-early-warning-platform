@@ -1,0 +1,40 @@
+<view class="page patient-page">
+  <view class="page-heading"><view class="contact-mark" aria-hidden="true"></view><view><view class="eyebrow">需要时，彼此照应</view><view class="title">照护协助</view></view></view>
+  <view wx:if="{{loading}}" class="state-card"><view class="state-title">正在读取照护信息</view><view class="hint">请稍等片刻。</view></view>
+  <view wx:elif="{{error}}" class="error" role="alert"><view class="state-title">暂时无法查看</view><view class="hint">{{error}}</view><view class="hint">如内容已失效，请联系分享人重新发送。</view></view>
+  <view wx:elif="{{view.kind === 'link'}}" class="card">
+    <view class="card-title">{{view.summary.title}}</view>
+    <view class="action-copy">{{view.summary.action}}</view>
+    <view wx:if="{{view.summary.patientDisplayName}}" class="patient">照护对象<text>{{view.summary.patientDisplayName}}</text></view>
+    <view wx:if="{{view.response}}" class="done" role="status"><view class="done-title">反馈已记录</view><view class="hint">{{view.response.kind === 'CONTACTED' ? '已联系上' : view.response.kind === 'UNABLE_TO_CONTACT' ? '暂时联系不上' : '暂不需要协助'}}</view></view>
+    <block wx:else>
+      <view class="response-heading">请告诉我们当前情况</view>
+      <button class="primary" data-kind="CONTACTED" bindtap="respond" loading="{{sending}}" disabled="{{sending}}">我已联系上</button>
+      <button class="secondary" data-kind="UNABLE_TO_CONTACT" bindtap="respond" disabled="{{sending}}">暂时联系不上</button>
+      <button class="quiet" data-kind="NOT_NEEDED" bindtap="respond" disabled="{{sending}}">暂不需要</button>
+    </block>
+  </view>
+  <block wx:elif="{{view.kind === 'share'}}">
+    <view class="summary-card">
+      <view class="summary-label">家庭应急预案</view>
+      <view class="summary-title">{{view.summary.title}}</view>
+      <view class="summary-copy">{{view.summary.description}}</view>
+      <view wx:if="{{view.summary.patientDisplayName}}" class="summary-patient">照护对象 · {{view.summary.patientDisplayName}}</view>
+      <view class="triage"><view class="summary-label">到了医院这样说</view><view class="triage-copy">{{view.summary.triageScript}}</view></view>
+    </view>
+    <view class="card alert-card">
+      <view class="card-title">什么时候立刻去急诊</view>
+      <view wx:for="{{view.summary.thresholds}}" wx:key="*this" class="list-row"><view class="list-dot"></view><view>{{item}}</view></view>
+    </view>
+    <view class="card">
+      <view class="card-title">路线与联系</view>
+      <view class="info-row"><view class="info-label">首选医院</view><view class="info-value">{{view.summary.hospitalName}}</view></view>
+      <view wx:if="{{view.summary.nightEntrance}}" class="info-row"><view class="info-label">夜间入口</view><view class="info-value">{{view.summary.nightEntrance}}</view></view>
+      <view class="info-row"><view class="info-label">预计路程</view><view class="info-value">约 {{view.summary.arrivalMinutesNight}} 分钟</view></view>
+      <view class="info-row"><view class="info-label">车上联系</view><view class="info-value">{{view.summary.followUpClinicianPhone}}</view></view>
+    </view>
+    <view class="card alert-card"><view class="card-title">绝对不要做</view><view wx:for="{{view.summary.neverDo}}" wx:key="*this" class="list-row"><view class="list-dot"></view><view>{{item}}</view></view></view>
+    <view class="card"><view class="card-title">可以做什么</view><view wx:for="{{view.summary.canDo}}" wx:key="*this" class="list-row"><view class="list-dot"></view><view>{{item}}</view></view></view>
+  </block>
+  <view wx:if="{{!loading && !error && view}}" class="privacy-note">此页仅展示已获授权的照护信息，请勿转发给无关人员。</view>
+</view>

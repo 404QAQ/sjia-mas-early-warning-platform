@@ -1,0 +1,9 @@
+@import "../../styles/patient.wxss";
+
+.nudge { margin-top: 12rpx; color: var(--mas-warning); }
+.field-label { margin: 20rpx 0 10rpx; color: var(--mas-text); font-size: 27rpx; font-weight: 600; }
+.option { display: block; padding: 14rpx 0; color: var(--mas-text-muted); line-height: 1.6; }
+.row { padding: 18rpx 0; border-bottom: 1rpx solid var(--mas-border-soft); line-height: 1.6; }
+.row:last-child { border-bottom: 0; }
+.row-meta { margin-top: 6rpx; color: var(--mas-text-subtle); font-size: 26rpx; }
+.form-card { border-top: 4rpx solid var(--mas-primary); }

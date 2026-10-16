@@ -1,0 +1,19 @@
+<view class="page patient-page">
+  <view class="trend-header"><view><view class="title">指标趋势</view><view class="hint">最近记录 · {{asOfText || '正在同步'}}</view><view class="audience-note">患者、家属与照护医生均可查看，共同核对近期变化。</view></view><button wx:if="{{error && !loading}}" class="text-button recovery-link" bindtap="refresh" disabled="{{loading}}" loading="{{loading}}">重新读取</button></view>
+  <view wx:if="{{loading && !trend}}" class="card"><view class="hint">正在读取近期记录…</view></view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <block wx:if="{{trend}}">
+    <view class="card decision decision-{{actionTone}}"><view class="card-title">{{trend.decisionCard.title}}</view><view class="hint">{{trend.decisionCard.action}}</view></view>
+    <view wx:for="{{rows}}" wx:key="display" class="card">
+      <view class="trend-header"><view><view class="card-title">{{item.display}}</view><view class="latest">{{item.latest}}</view></view><text class="count">{{item.records.length}} 次记录</text></view>
+      <view wx:if="{{item.chart.points.length > 1 && item.chart.comparable}}" class="chart-layout"><view class="chart-axis"><text wx:for="{{item.chart.ticks}}" wx:for-item="tick" wx:key="*this">{{tick}}</text></view><view class="chart"><view wx:for="{{item.chart.points}}" wx:for-item="point" wx:key="at" class="chart-column"><view class="chart-track"><view class="chart-bar" style="height: {{point.height}}%;"><text class="chart-value">{{point.value}}</text></view></view><view class="chart-label">{{point.label}}</view></view></view></view>
+      <view wx:elif="{{item.records.length === 1}}" class="hint">{{item.records[0].at}} · 再记录几次，就能看见变化趋势。</view>
+      <view wx:elif="{{!item.chart.comparable}}" class="hint">各次记录单位不同，请展开记录逐项核对。</view>
+      <view wx:elif="{{!item.records.length}}" class="hint">暂时没有这项指标的记录。</view>
+      <button wx:if="{{item.records.length}}" class="records-toggle" data-display="{{item.display}}" bindtap="toggleRecords">{{expandedMetric === item.display ? '收起记录' : '查看每次记录'}} <text>{{expandedMetric === item.display ? '−' : '＋'}}</text></button>
+      <view wx:if="{{expandedMetric === item.display}}" class="record-list"><view wx:for="{{item.records}}" wx:for-item="record" wx:key="index" class="record-row"><view><view>{{record.at}}</view><text class="count">{{record.source}}</text></view><text class="record-value">{{record.value}}</text></view></view>
+    </view>
+    <view wx:if="{{!rows.length}}" class="card"><view class="card-title">从一次记录开始</view><view class="hint">记下体温和症状，近期变化会汇总在这里。</view></view>
+    <view class="trend-foot">图表按记录顺序展示。具体结果请结合症状与医生一起确认。</view>
+  </block>
+</view>

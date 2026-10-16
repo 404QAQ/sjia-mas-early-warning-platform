@@ -1,0 +1,12 @@
+{
+  "name": "@mas/patient-api",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "患者微信小程序的最小公开 API 边界",
+  "scripts": {
+    "start": "node src/server.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": { "node": ">=20.10 <21" }
+}

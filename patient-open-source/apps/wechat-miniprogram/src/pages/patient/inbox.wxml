@@ -1,0 +1,73 @@
+<view class="page patient-page">
+  <view class="title">消息通知</view>
+  <view class="hint">用药、复诊与照护提醒，在这里及时查看。通知范围按当前身份和隐私授权展示。</view>
+  <view class="card medication-notice-card" aria-label="今日用药提醒">
+    <view class="entry-head"><view class="card-title">今日用药提醒</view><view class="state state-demo">站内提醒</view></view>
+    <view wx:if="{{reminderLoading}}" class="hint">正在读取用药计划…</view>
+    <view wx:elif="{{reminderError}}" class="hint">{{reminderError}}</view>
+    <view wx:elif="{{!reminders.length}}" class="hint">今天没有待打卡的用药计划。</view>
+    <view wx:for="{{reminders}}" wx:key="id" class="reminder-row">
+      <view class="reminder-head"><view class="reminder-title">{{item.title}}</view><text class="reminder-status {{item.recorded ? 'recorded' : ''}}">{{item.status}}</text></view>
+      <view class="hint">{{item.detail}}</view>
+    </view>
+    <button class="secondary medication-notice-action" bindtap="openMedications">查看计划与打卡</button>
+  </view>
+
+  <view wx:if="{{deferredReminders.length || deferredError}}" class="card medication-notice-card" aria-label="已设置的用药稍后提醒">
+    <view class="entry-head"><view class="card-title">稍后提醒</view><view class="state state-demo">站内提醒</view></view>
+    <view wx:if="{{deferredError}}" class="hint">{{deferredError}}<button size="mini" class="secondary" bindtap="refresh" disabled="{{reminderLoading}}">重新读取</button></view>
+    <view wx:for="{{deferredReminders}}" wx:key="id" class="reminder-row">
+      <view class="reminder-head"><view class="reminder-title">{{item.title}}</view><text class="reminder-status {{item.finished ? 'recorded' : ''}}">{{item.status}}</text></view>
+      <view class="hint">{{item.detail}}</view>
+    </view>
+    <button wx:if="{{deferredReminders.length}}" class="secondary medication-notice-action" bindtap="openMedications">核对用药与提醒</button>
+  </view>
+
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{notice}}" class="message" role="status">{{notice}}</view>
+  <view wx:if="{{pendingText}}" class="warn" role="status">{{pendingText}}<button size="mini" bindtap="retry" disabled="{{saving}}">重试确认</button></view>
+  <view wx:if="{{loading && !entries.length}}" class="hint">正在读取通知…</view>
+
+  <view wx:if="{{!loading && !entries.length}}" class="card">
+    <view class="card-title">还没有通知</view>
+    <view class="line">现在没有发给你的通知。有新的会自动出现在这里，下拉刷新可以马上看到最新的。</view>
+  </view>
+
+  <view wx:for="{{entries}}" wx:key="id" class="card">
+    <view class="entry-head">
+      <view class="state state-{{item.labelKind}}">{{item.stateLabel}}</view>
+    </view>
+    <view class="line">{{item.detail}}</view>
+    <view class="hint">{{item.channelText}}</view>
+    <view wx:if="{{item.timingText}}" class="hint">{{item.timingText}}</view>
+
+    <view class="timeline">
+      <view wx:for="{{item.timeline}}" wx:for-item="row" wx:key="label" class="timeline-row">
+        <view wx:if="{{row.action}}" class="timeline-action">
+          <button size="mini" data-id="{{item.id}}" bindtap="confirm" disabled="{{saving}}" loading="{{confirmingId === item.id}}">我看到了</button>
+        </view>
+        <view wx:else class="timeline-text">
+          <text class="timeline-label">{{row.label}}</text>
+          <text wx:if="{{row.at}}" class="timeline-at">{{row.at}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="delivery-help">
+    <button class="help-toggle" bindtap="toggleDeliveryHelp">已提交、已送达与已确认 {{showDeliveryHelp ? '收起 −' : '展开 +'}}</button>
+    <block wx:if="{{showDeliveryHelp}}">
+  <view wx:for="{{sections}}" wx:key="title" class="card">
+    <view class="card-title">{{item.title}}</view>
+    <view class="line">{{item.body}}</view>
+  </view>
+
+    </block>
+    <view class="notice-channel-card">
+      <view class="card-title">通知流 · 应用内 / 外部通道状态</view>
+      <view class="line">当前演示以应用内消息为准；微信订阅、短信和电话提醒尚未开通，不会伪装成真实外部通知。</view>
+      <button class="secondary privacy-action" bindtap="openPrivacy">隐私与安全设置</button>
+    </view>
+  </view>
+  <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading || saving}}">重新读取消息</button>
+</view>

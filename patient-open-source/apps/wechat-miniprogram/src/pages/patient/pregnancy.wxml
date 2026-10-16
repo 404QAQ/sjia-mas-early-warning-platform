@@ -1,0 +1,17 @@
+<view class="page patient-page">
+  <view class="title">生育与妊娠</view>
+  <view class="hint">这是你的私密记录。系统不会自动调药、计算风险或主动群发通知；用药请和医生逐项核对。</view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view><view wx:if="{{notice}}" class="message" role="status">{{notice}}</view>
+  <view wx:if="{{loading}}" class="hint">读取中…</view>
+  <view wx:elif="{{status}}" class="card">
+    <view class="card-title">我现在处于</view>
+    <view class="choices"><button wx:for="{{['NONE','CONSIDERING','PLANNING','PREGNANT','POSTPARTUM']}}" wx:key="*this" data-state="{{item}}" bindtap="chooseState" class="choice {{selectedState === item ? 'selected' : ''}}" disabled="{{saving}}">{{item === 'NONE' ? '目前没有计划' : item === 'CONSIDERING' ? '先了解，再考虑' : item === 'PLANNING' ? '正在计划' : item === 'PREGNANT' ? '已经怀孕' : '产后关注期'}}</button></view>
+    <view wx:if="{{selectedState === 'POSTPARTUM'}}" class="field"><view class="field-label">生产日期</view><picker mode="date" value="{{deliveryDate}}" bindchange="dateChange"><view class="picker">{{deliveryDate || '请选择生产日期'}}</view></picker></view>
+    <button class="primary" bindtap="saveStatus" disabled="{{saving}}">保存当前状态</button>
+    <view wx:if="{{affectedText}}" class="hint">需要医生复核的当前用药：{{affectedText}}</view>
+    <view wx:if="{{postpartumText}}" class="hint">产后关注窗口至：{{postpartumText}}</view>
+  </view>
+  <view wx:if="{{status && status.state === 'PLANNING'}}" class="card"><view class="card-title">孕前问题清单</view><view wx:if="{{!questions}}" class="hint">生成一份清单，带去复诊逐项询问。</view><view wx:for="{{questions.questions}}" wx:key="id" class="line">{{index + 1}}. {{item.prompt}}</view><button class="secondary" size="mini" bindtap="generateQuestions" wx:if="{{!questions}}" disabled="{{saving}}">生成问题清单</button><button class="primary" size="mini" bindtap="useQuestions" wx:if="{{questions && !questions.usedAt}}" disabled="{{saving}}">我已带去复诊</button><view wx:if="{{questions.usedAt}}" class="hint">已标记带去复诊。</view></view>
+  <view wx:if="{{pendingCount || rejectedCount}}" class="card"><view>待确认 {{pendingCount}} 条<text wx:if="{{rejectedCount}}">，需重试 {{rejectedCount}} 条</text></view><button size="mini" bindtap="retry" disabled="{{saving}}">重试</button></view>
+  <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading || saving}}">重新读取私密资料</button>
+</view>

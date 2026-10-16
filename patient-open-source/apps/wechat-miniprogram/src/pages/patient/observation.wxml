@@ -1,0 +1,62 @@
+<view class="page patient-page">
+  <view class="page-subtitle">每条记录都会保留记录人与时间</view>
+  <view wx:if="{{loading}}" class="loading-line">正在同步最近记录…</view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{message}}" class="message" role="status">{{message}}</view>
+  <view wx:if="{{trend && trend.decisionCard.actionLevel === 'ACT_NOW'}}" class="error" role="alert"><view>{{trend.decisionCard.title}}</view><view>{{trend.decisionCard.action}}</view></view>
+  <view id="record-form" class="card form-card">
+    <view wx:if="{{stageReady}}" class="stage-kicker">{{stageKicker}}</view>
+    <view class="card-heading"><view class="card-title">{{entryMode === 'symptom' ? '症状速记' : '记录本次体温'}}</view></view>
+    <view wx:if="{{stageReady}}" class="hint form-intro">{{entryMode === 'symptom' ? '选择本次出现的症状，可单独保存。' : stageHint}}</view>
+    <view wx:if="{{entryMode !== 'symptom'}}" class="temperature-entry">
+      <view class="field-label">本次体温</view>
+      <view class="temperature-control">
+        <input class="temperature" type="digit" maxlength="4" value="{{temperature}}" placeholder="输入实测值" placeholder-class="temperature-placeholder" bindinput="setTemperature" aria-label="本次实测体温，摄氏度，34到43" disabled="{{loading || saving || !stageReady}}" />
+        <text class="temperature-unit">℃</text>
+      </view>
+      <slider min="34" max="43" step="0.1" value="{{temperature || 36.5}}" bindchange="setTemperatureSlider" activeColor="#0f766e" block-size="24" disabled="{{loading || saving || !stageReady}}" aria-label="调节本次实测体温"/><view class="temperature-range">34 ℃<text>滑动调节或直接输入实测值</text>43 ℃</view>
+    </view>
+    <view wx:if="{{entryMode !== 'symptom' && lastTemperatureLabel}}" class="previous-reading">上次 {{lastTemperatureLabel}}<text>仅供参考</text></view>
+    <view class="date-row">
+      <view class="field-label">{{entryMode === 'symptom' ? '发生日期' : '测量日期'}}</view>
+      <picker mode="date" value="{{observedDate}}" end="{{today}}" bindchange="setObservedDate" disabled="{{loading || saving || !stageReady}}">
+        <view class="date-picker">{{observedDate === today ? '今天' : observedDate}}<text>更改 ›</text></view>
+      </picker>
+    </view>
+    <view class="symptoms-heading">
+      <view class="symptoms-copy"><view class="field-label">症状 <text>{{entryMode === 'symptom' ? '必选 · 至少一项' : '选填'}}</text></view><view class="symptom-summary {{selectedSymptoms.length ? 'has-selection' : ''}}">{{entryMode === 'symptom' ? (selectedSymptoms.length ? '已选择 ' + selectedSymptoms.length + ' 项症状' : '请选择至少一项症状') : symptomSummary}}</view></view>
+      <button wx:if="{{entryMode !== 'symptom'}}" class="text-button" bindtap="toggleSymptoms" aria-expanded="{{symptomsExpanded}}" disabled="{{loading || saving || !stageReady}}">{{symptomsExpanded ? '收起' : '补充'}}{{selectedSymptoms.length ? '（' + selectedSymptoms.length + '）' : ''}} {{symptomsExpanded ? '⌃' : '⌄'}}</button>
+    </view>
+    <view wx:if="{{selectedUrgency}}" class="error selected-urgency" role="alert">{{selectedUrgency}}</view>
+    <view hidden="{{entryMode !== 'symptom' && !symptomsExpanded}}" class="symptoms-panel">
+      <checkbox-group bindchange="setSymptoms">
+        <block wx:for="{{symptomGroups}}" wx:key="group">
+          <view class="symptom-group-title">{{item.group}}</view>
+          <block wx:for="{{item.items}}" wx:for-item="symptom" wx:key="code">
+            <label class="symptom">
+              <checkbox value="{{symptom.code}}" checked="{{symptom.selected}}" disabled="{{loading || saving || !stageReady}}" />
+              <view class="symptom-label-wrap">
+                <text>{{entryMode === 'symptom' && symptom.code === 'FEVER_HIGH' ? '持续高热' : symptom.label}}</text>
+                <text wx:if="{{symptom.urgencyNote}}" class="symptom-note">{{symptom.urgencyNote}}</text>
+              </view>
+            </label>
+          </block>
+        </block>
+      </checkbox-group>
+    </view>
+    <view class="observation-extra"><view class="field-label">本次感受 <text>选填</text></view><view class="feeling-options"><button wx:for="{{feelings}}" wx:key="*this" class="feeling-option {{feeling === item ? 'selected' : ''}}" data-feeling="{{item}}" bindtap="selectFeeling" disabled="{{saving || loading}}" aria-pressed="{{feeling === item}}">{{item}}</button></view><view class="field-label">补充说明 <text>选填</text></view><textarea class="observation-note" value="{{note}}" maxlength="1500" bindinput="setNote" disabled="{{saving || loading}}" placeholder="比如：精神状态、持续时间、与昨天相比的变化" aria-label="体温与症状补充说明"/><view class="hint">由当前登录身份记录，感受和说明供就诊沟通使用。</view></view>
+    <button class="primary" bindtap="save" disabled="{{saving || loading || !stageReady || (entryMode === 'symptom' ? !selectedSymptoms.length : !temperature)}}">{{saving ? '正在提交…' : '保存本次记录'}}</button>
+    <view class="save-hint">未勾选症状仅表示未填写，不代表没有症状。</view>
+    <button wx:if="{{unsentCount}}" class="secondary" bindtap="retryUnsent" disabled="{{saving}}">重试未确认记录（{{unsentCount}}）</button>
+  </view>
+
+  <view class="card">
+    <view class="card-heading"><view class="card-title">最近健康记录</view><text class="meta">共 {{recordCount}} 条</text></view>
+    <view wx:if="{{observationsNotice}}" class="hint">{{observationsNotice}}</view>
+    <view wx:elif="{{!recentRecords.length}}" class="empty-state"><view class="empty-title">还没有健康记录</view><view class="hint">保存本次记录后，可以在这里查看。</view></view>
+    <view wx:for="{{historyExpanded ? historyRecords : recentRecords}}" wx:key="id" class="record-row"><view class="record-heading"><view class="record-main">{{item.display}}</view><text class="record-value">{{item.valueText}}</text></view><view class="record-meta">{{item.observedAt}} · {{item.sourceLabel}}</view><view wx:if="{{item.notes}}" class="record-note">{{item.notes}}</view></view>
+    <button wx:if="{{historyRecords.length > 3}}" class="text-button history-toggle" bindtap="toggleHistory" aria-expanded="{{historyExpanded}}">{{historyExpanded ? '收起记录 ⌃' : '展开最近 ' + historyRecords.length + ' 条记录 ⌄'}}</button>
+  </view>
+  <view wx:if="{{pendingCount || rejectedCount}}" class="card queue-card"><view class="card-title">尚未同步的记录</view><view class="queue-text">待提交 {{pendingCount}} 条 · 需重试 {{rejectedCount}} 条</view><button class="secondary" bindtap="retryQueue" disabled="{{syncing}}">{{syncing ? '同步中…' : '重新同步'}}</button></view>
+  <button wx:if="{{error || observationsNotice}}" class="secondary recovery-button" bindtap="load" disabled="{{loading || saving || syncing}}">重新读取记录</button>
+</view>

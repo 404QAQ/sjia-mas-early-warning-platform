@@ -1,0 +1,149 @@
+/* MAS 患者端演示产品的全局视觉令牌。页面仍可按业务语义使用局部样式，
+ * 但颜色、间距、圆角和阴影统一从这里取值，避免每个页面形成一套独立皮肤。 */
+page {
+  --mas-bg: #f7f9fa;
+  --mas-surface: #ffffff;
+  --mas-surface-soft: #eff3f6;
+  --mas-surface-muted: #f3f6f7;
+  --mas-primary: #0f6e78;
+  --mas-primary-strong: #0b5660;
+  --mas-on-primary: #ffffff;
+  --mas-accent: #2e6b47;
+  --mas-text: #131a1f;
+  --mas-text-strong: #172b4d;
+  --mas-text-muted: #3a4854;
+  --mas-text-subtle: #6b7c8a;
+  --mas-border: #dce4e9;
+  --mas-border-soft: #e9eef1;
+  --mas-info: #3f6f86;
+  --mas-info-soft: #edf5f7;
+  --mas-warning: #8a5a12;
+  --mas-warning-soft: #faf0dc;
+  --mas-danger: #b4232c;
+  --mas-danger-soft: #fbe9ea;
+  --mas-success: #2e6b47;
+  --mas-success-soft: #e4f1e8;
+  --mas-focus: #2b7f8a;
+  --mas-radius-card: 16rpx;
+  --mas-radius-control: 14rpx;
+  --mas-radius-small: 10rpx;
+  --mas-shadow-card: 0 1rpx 2rpx rgba(19, 26, 31, .05), 0 4rpx 16rpx rgba(19, 26, 31, .05);
+  --mas-shadow-float: 0 2rpx 6rpx rgba(19, 26, 31, .07), 0 12rpx 32rpx rgba(19, 26, 31, .09);
+  --mas-page-padding: 28rpx;
+  --mas-page-bottom-normal: 56rpx;
+  --mas-page-bottom-tab: 128rpx;
+  --mas-card-padding: 26rpx;
+  --mas-section-gap: 20rpx;
+  --mas-control-height: 88rpx;
+  --mas-space-1: 8rpx;
+  --mas-space-2: 16rpx;
+  --mas-space-3: 24rpx;
+  --mas-space-4: 32rpx;
+  --mas-space-5: 40rpx;
+  color: var(--mas-text);
+  background: var(--mas-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+}
+
+button::after { border: 0; }
+
+/* 所有可点击控件都提供稳定的按压反馈；不改变布局尺寸，避免长列表跳动。 */
+button:not([disabled]):active {
+  opacity: .78;
+}
+
+/* 统一页面级控件的最小可点击区域，具体页面只负责颜色和层级。 */
+button {
+  box-sizing: border-box;
+}
+
+/* style v2 为普通 button 设置固定宽度和自动边距；页面布局显式接管这两项。
+ * 局部文字按钮用 .page button.<class> 设为 auto，横排操作用容器选择器分配宽度。 */
+.page button:not([size="mini"]), .page button[size="mini"] {
+  min-width: 0;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+.page button:not([size="mini"]) { width: 100%; }
+.page button[size="mini"] { width: auto; }
+.page button[disabled] { opacity: .58; }
+
+
+/* 未引入二级页共享样式的页面也沿用同一套控件基线。 */
+button[size="mini"] {
+  min-height: 88rpx;
+  padding: 10rpx 20rpx;
+  border-radius: var(--mas-radius-control);
+  font-size: 24rpx;
+  line-height: 1.45;
+}
+
+/* 患者端所有业务页面共用同一页面外框；伪装封面不带 patient-page，保留生活助手主题。 */
+page .patient-page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: var(--mas-page-padding) var(--mas-page-padding) calc(var(--mas-page-bottom-normal) + env(safe-area-inset-bottom));
+  background: var(--mas-bg);
+  color: var(--mas-text);
+}
+
+page .patient-page input,
+page .patient-page textarea,
+page .patient-page .picker {
+  box-sizing: border-box;
+  border-color: var(--mas-border);
+  border-radius: var(--mas-radius-control);
+  background: var(--mas-surface);
+  color: var(--mas-text);
+}
+page .patient-page.tab-page {
+  padding-bottom: calc(var(--mas-page-bottom-tab) + env(safe-area-inset-bottom));
+}
+
+/* 所有患者业务卡片只保留内容语义差异，边界、圆角和阴影统一。 */
+page .patient-page .card {
+  box-sizing: border-box;
+  border-color: var(--mas-border);
+  border-radius: var(--mas-radius-card);
+  box-shadow: var(--mas-shadow-card);
+}
+page .patient-page .card-title {
+  line-height: 1.4;
+}
+button.tertiary, .tertiary { color: var(--mas-primary); background: var(--mas-surface-soft); border: 1rpx solid transparent; }
+button.danger, .danger { color: var(--mas-on-primary); background: var(--mas-danger); border: 1rpx solid var(--mas-danger); }
+button.quiet, .quiet { color: var(--mas-text-muted); background: transparent; border: 1rpx solid transparent; }
+.button-row { display: flex; gap: 16rpx; align-items: stretch; }
+.page .button-row > button { flex: 1 1 0; width: 0; min-width: 0; margin: 16rpx 0 0; }
+
+.mas-page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: var(--mas-page-padding) var(--mas-page-padding) calc(128rpx + env(safe-area-inset-bottom));
+  background: var(--mas-bg);
+}
+
+.mas-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 74rpx;
+  margin-bottom: 22rpx;
+}
+
+.mas-title { font-size: 38rpx; line-height: 1.2; font-weight: 700; letter-spacing: -0.5rpx; }
+.mas-subtitle { margin-top: 10rpx; color: var(--mas-text-muted); font-size: 25rpx; line-height: 1.55; }
+.mas-card { background: var(--mas-surface); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); box-shadow: var(--mas-shadow-card); }
+.mas-card-title { font-size: 30rpx; line-height: 1.35; font-weight: 700; }
+.mas-hint { color: var(--mas-text-muted); font-size: 24rpx; line-height: 1.55; }
+.mas-chip { display: inline-flex; align-items: center; min-height: 42rpx; padding: 0 16rpx; border-radius: 999rpx; background: var(--mas-surface-soft); color: var(--mas-primary); font-size: 22rpx; }
+.mas-divider { height: 1rpx; background: var(--mas-border); }
+.mas-primary-button { background: var(--mas-primary); color: var(--mas-on-primary); border-radius: var(--mas-radius-control); font-weight: 700; }
+.mas-secondary-button { background: var(--mas-surface); color: var(--mas-primary); border: 1rpx solid var(--mas-primary); border-radius: var(--mas-radius-control); font-weight: 600; }
+.mas-press { transition: opacity 160ms ease, transform 160ms ease; }
+.mas-press:active { opacity: .78; transform: scale(.985); }
+
+@media (prefers-reduced-motion: reduce) {
+  .mas-press { transition: none; }
+}

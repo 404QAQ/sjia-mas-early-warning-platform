@@ -1,0 +1,156 @@
+<view class="page patient-page">
+  <view class="page-intro"><view><view class="page-title">{{planEditorOpen ? '新增用药设定' : '用药管理'}}</view><text>按已有医嘱，记录实际用药</text></view><text class="updated-at">{{overviewUpdatedAt}}</text></view>
+
+  <button wx:if="{{canEditPlans && !planEditorOpen}}" class="add-plan-entry" bindtap="openPlanEditor" disabled="{{saving || planCommandPending}}">＋ 新增用药设定</button>
+  <view wx:if="{{notice}}" class="status notice" role="status">{{notice}}</view>
+  <view wx:if="{{pendingCount || rejectedCount}}" class="queue" role="status">
+    <view>待同步记录：{{pendingCount}} 条<text wx:if="{{rejectedCount}}">，需要处理：{{rejectedCount}} 条</text></view>
+    <view class="hint">记录已保留，网络恢复后可以继续同步。</view>
+    <button size="mini" bindtap="retry" loading="{{saving}}" disabled="{{saving}}">重新同步</button>
+  </view>
+  <view wx:for="{{rejectedPlanCommands}}" wx:key="key" class="error" role="alert"><view>{{item.error}}</view><button data-key="{{item.key}}" bindtap="repairReportedPlan" disabled="{{saving}}">核对最新安排并重新填写</button></view>
+  <view wx:if="{{planEditorOpen}}" id="plan-editor" class="card plan-editor">
+    <view class="section-head"><view class="card-title">{{planDraft.id ? '编辑自记用药安排' : '录入已有医嘱'}}</view><button class="text-action" bindtap="closePlanEditor" disabled="{{saving}}">收起</button></view>
+    <view class="hint">按处方或出院医嘱填写，保存后交由医生核对。</view>
+    <view wx:if="{{planIdentityLocked}}" class="hint">这项安排已有服药记录，药名、单位、频率和开始日期保留。医嘱换药时，请结束旧安排并录入新安排。</view>
+    <label class="field-label" for="plan-drug">药品名称</label><input id="plan-drug" class="facility" value="{{planDraft.drug}}" maxlength="200" data-field="drug" bindinput="planInput" disabled="{{saving || planCommandPending || planIdentityLocked}}" placeholder="按处方填写药名" />
+    <view class="plan-fields">
+      <view><label class="field-label" for="plan-dose">单次剂量</label><input id="plan-dose" class="facility" type="digit" value="{{planDraft.dose}}" data-field="dose" bindinput="planInput" disabled="{{saving || planCommandPending}}" placeholder="例如 5" /></view>
+      <view><label class="field-label" for="plan-unit">剂量单位</label><input id="plan-unit" class="facility" value="{{planDraft.unit}}" maxlength="32" data-field="unit" bindinput="planInput" disabled="{{saving || planCommandPending || planIdentityLocked}}" placeholder="例如 mg、片" /></view>
+    </view>
+    <view class="plan-option-chips"><button wx:for="{{planUnitOptions}}" wx:key="*this" class="{{planDraft.unit === item ? 'selected' : ''}}" data-unit="{{item}}" bindtap="selectPlanUnit" disabled="{{saving || planCommandPending || planIdentityLocked}}">{{item}}</button></view>
+    <view class="field-label">用药类别</view><picker mode="selector" range="{{planKindOptions}}" range-key="label" value="{{planKindIndex}}" data-field="kind" bindchange="planPicker" disabled="{{saving || planCommandPending || planIdentityLocked}}" aria-label="用药类别"><view class="picker">{{planKindOptions[planKindIndex].label}}</view></picker>
+    <view class="field-label">药物用法</view><view class="plan-option-chips"><button wx:for="{{planRouteOptions}}" wx:key="value" class="{{planRouteIndex === index ? 'selected' : ''}}" data-field="route" data-index="{{index}}" bindtap="selectPlanOption" disabled="{{saving || planCommandPending || planIdentityLocked}}">{{item.label}}</button></view>
+    <view class="field-label">用药周期</view><view class="plan-option-chips"><button wx:for="{{planFrequencyOptions}}" wx:key="value" class="{{planFrequencyIndex === index ? 'selected' : ''}}" data-field="frequency" data-index="{{index}}" bindtap="selectPlanOption" disabled="{{saving || planCommandPending || planIdentityLocked}}">{{item.label}}</button></view>
+    <view class="field-label">开始日期</view><picker mode="date" value="{{planDraft.startDate}}" bindchange="planStartDate" disabled="{{saving || planCommandPending || planIdentityLocked}}" aria-label="开始日期"><view class="picker">{{planDraft.startDate || '选择开始日期'}}</view></picker>
+    <label class="field-label" for="plan-prescription">医嘱来源</label><input id="plan-prescription" class="facility" value="{{planDraft.prescriptionNote}}" maxlength="300" data-field="prescriptionNote" bindinput="planInput" disabled="{{saving || planCommandPending}}" placeholder="医院、开单医生、处方日期及原医嘱说明" />
+    <block wx:if="{{planDraft.id}}"><view class="field-label">记录状态</view><picker mode="selector" range="{{planStatusOptions}}" range-key="label" value="{{planStatusIndex}}" data-field="status" bindchange="planPicker" disabled="{{saving || planCommandPending}}" aria-label="记录状态"><view class="picker">{{planStatusOptions[planStatusIndex].label}}</view></picker><view class="hint">暂停或结束的是这项记录安排，是否停药、换药仍以医嘱为准。</view></block>
+    <view wx:if="{{planError}}" class="error" role="alert">{{planError}}</view>
+    <view wx:if="{{planCommandPending}}" class="hint">这项安排尚未确认保存，请使用上方「重新同步」核对原操作。</view>
+    <button class="primary-action" bindtap="saveReportedPlan" loading="{{saving}}" disabled="{{saving || planCommandPending}}">保存用药设定</button>
+  </view>
+  <view wx:if="{{planError && !planEditorOpen}}" class="error" role="alert">{{planError}}</view>
+  <view wx:if="{{loading}}" class="hint loading">读取中…</view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <block wx:if="{{!loading && overview && !planEditorOpen}}">
+    <view wx:if="{{overview.plans.length === 0}}" class="card empty-card"><view class="card-title">还没有用药安排</view><view class="hint">{{canEditPlans ? '已有门诊处方或出院医嘱，可录入后记录实际服药。尚未用药时，无需添加。' : '患者本人或法定监护人可录入已有医嘱。'}}</view><button wx:if="{{canEditPlans}}" class="primary-action" bindtap="openPlanEditor" disabled="{{saving || planCommandPending}}">录入已有医嘱</button></view>
+
+    <view wx:if="{{activePlanCount}}" class="card checkin-card">
+      <view class="section-head"><view><view class="card-title">今日用药打卡</view><view class="today-date">{{todayLabel}} · 实际用药后记录</view></view><view class="today-count"><text class="count-value">{{recordedToday}}<text class="count-total"> / {{todayDueCount}}</text></text><text>定期用药已记录</text></view></view>
+      <view wx:if="{{reminderError}}" class="reminder-error" role="alert"><text>{{reminderError}}</text><button class="text-action" bindtap="refreshReminders" loading="{{remindersLoading}}" disabled="{{remindersLoading}}">重试读取提醒</button></view>
+      <view wx:if="{{steroidReadingRequired}}" class="reading-entry"><view><view class="reading-title">激素起始 / 减量前必读</view><text>记录前，请先阅读用药提醒。</text></view><button class="text-action" bindtap="openSteroidGuide">去阅读 ›</button></view>
+      <view wx:for="{{todayPlans}}" wx:key="id" class="today-item">
+        <view class="today-plan-row">
+          <view><view class="drug-name">{{item.drug}}</view><view class="drug-dose">{{actualDoseInputs[item.id] ? '本次实际 ' + actualDoseInputs[item.id] + ' ' + item.unit : '计划 ' + (plannedDoses[item.id] || item.dose + ' ' + item.unit)}}</view><view class="time-text">{{routeLabels[item.route]}} · {{frequencyLabels[item.frequency]}}<text wx:if="{{item.source === 'PATIENT_REPORTED'}}"> · 自行录入待核对</text></view></view>
+          <view class="today-status {{statusText[item.id] === '今日已记录' ? 'is-done' : ''}}">{{statusText[item.id] === '待服务端确认' ? '正在同步' : statusText[item.id]}}</view>
+        </view>
+        <view wx:if="{{deferredText[item.id]}}" class="deferred-text">{{deferredText[item.id]}}</view>
+        <view wx:if="{{statusText[item.id] !== '尚未开始' && (statusText[item.id] !== '今日已记录' || item.frequency === 'AS_NEEDED') && (statusText[item.id] !== '今日无需记录' || item.frequency === 'AS_NEEDED')}}" class="action-row">
+          <button wx:if="{{item.route !== 'SC_INJECTION'}}" class="action-btn primary-action" data-plan-id="{{item.id}}" bindtap="record" aria-label="{{item.drug}} 记录已服用" disabled="{{saving || statusText[item.id] === '待服务端确认'}}">{{item.frequency === 'AS_NEEDED' ? '记录本次已用' : '记录已服用'}}</button>
+          <button wx:else class="action-btn primary-action" data-plan-id="{{item.id}}" bindtap="openPlanDetails" disabled="{{saving || statusText[item.id] === '待服务端确认'}}">{{item.frequency === 'AS_NEEDED' ? '记录本次注射' : '记录注射'}}</button>
+          <button class="action-btn more-action" data-plan-id="{{item.id}}" bindtap="toggleTodayOptions" aria-expanded="{{todayOptionsPlanId === item.id}}" disabled="{{saving || statusText[item.id] === '待服务端确认'}}">{{todayOptionsPlanId === item.id ? '收起' : '剂量 / 提醒'}}</button>
+        </view>
+        <view wx:if="{{todayOptionsPlanId === item.id}}" class="today-options">
+          <label class="field-label" for="today-dose-{{index}}">本次实际剂量（{{item.unit}}）</label>
+          <input id="today-dose-{{index}}" class="facility" type="digit" data-plan-id="{{item.id}}" value="{{actualDoseInputs[item.id]}}" placeholder="留空按计划 {{plannedDoses[item.id] || item.dose + ' ' + item.unit}} 记录" bindinput="actualDoseInput" disabled="{{saving}}" />
+          <block wx:if="{{item.frequency !== 'AS_NEEDED' && statusText[item.id] !== '今日已记录'}}"><view class="reminder-label">稍后在小程序内提醒</view><view class="delay-options"><button size="mini" data-plan-id="{{item.id}}" data-delay="1" bindtap="deferRecord" disabled="{{saving || deferBusy || remindersLoading || reminderError}}">1 小时后</button><button size="mini" data-plan-id="{{item.id}}" data-delay="2" bindtap="deferRecord" disabled="{{saving || deferBusy || remindersLoading || reminderError}}">2 小时后</button></view><view class="hint">保存后可在「消息通知」查看，用药时间仍以医嘱为准。</view></block>
+          <button class="detail-link" data-plan-id="{{item.id}}" bindtap="openPlanDetails">查看方案详情 ›</button>
+        </view>
+      </view>
+      <view wx:if="{{!todayDueCount}}" class="reminder-note">今天没有定期用药待记录；按需用药仍按医嘱执行。</view>
+    </view>
+
+    <view id="steroid-guide"></view>
+    <view wx:if="{{steroidPlans.length && (steroidReadingRequired || showSteroidGuide)}}" class="card steroid-guide {{steroidReadingRequired ? 'reading-required' : ''}}">
+      <view class="section-head"><view class="card-title">激素起始 / 减量前必读</view><view class="tag tag-warm" wx:if="{{steroidReadingRequired}}">请先阅读</view><button wx:else class="text-action" bindtap="toggleSteroidGuide">收起</button></view>
+      <view class="steroid-quote">你可能会变得易怒、睡不好、情绪起伏大。这是药，不是你的性格，也不是你变坏了。</view>
+      <view wx:for="{{steroidPlans}}" wx:key="id" class="steroid-plan"><view class="drug-name">{{item.drug}}</view><view class="hint">{{item.detail}}</view></view>
+      <view class="hint">请把情绪和睡眠变化告诉照护团队，不要自行停药或减药。方案变化后会再次提示阅读。</view>
+      <button wx:if="{{steroidReadingRequired}}" class="primary-action" size="mini" bindtap="acknowledgeSteroid">我已阅读，按医生方案记录</button>
+    </view>
+
+    <view wx:if="{{overview.plans.length}}" class="card calendar-card">
+      <view class="section-head"><view class="card-title">用药月历</view><view class="month-switch"><button class="month-arrow" bindtap="previousMonth" aria-label="上个月">‹</button><text>{{calendarLabel}}</text><button class="month-arrow" bindtap="nextMonth" aria-label="下个月">›</button></view></view>
+      <view class="hint">点击日期，查看当天计划与用药记录。</view>
+      <view class="week-row"><text>日</text><text>一</text><text>二</text><text>三</text><text>四</text><text>五</text><text>六</text></view>
+      <view class="calendar-grid">
+        <button wx:for="{{calendarDays}}" wx:key="key" data-key="{{item.key}}" bindtap="selectCalendarDay" class="calendar-day {{item.inMonth ? '' : 'outside'}} {{item.state === 'TAKEN' ? 'taken' : ''}} {{item.state === 'PARTIAL' ? 'partial' : ''}} {{item.state === 'FUTURE' ? 'future' : ''}} {{selectedDayLabel === item.key ? 'selected' : ''}}" aria-label="{{item.label}}"><text>{{item.day}}</text></button>
+      </view>
+      <view class="legend"><text><view class="dot all"></view>记录齐全</text><text><view class="dot partial-dot"></view>部分记录</text><text><view class="dot empty-dot"></view>暂无记录</text></view>
+    </view>
+    <view wx:if="{{selectedDay}}" class="card calendar-detail"><view class="detail-date">{{selectedDay.label}} · {{selectedDayLogs.length}} 条已记录</view><view wx:if="{{selectedDayPlans.length === 0}}" class="hint">当天没有按计划安排用药。</view><view wx:for="{{selectedDayPlans}}" wx:key="key" class="calendar-detail-row"><view><view class="drug-name">{{item.drug}}</view><view class="hint">{{item.doseLabel}}{{item.actualDoseLabel ? ' · ' + item.actualDoseLabel : ''}}</view></view><text wx:if="{{item.recorded}}" class="detail-state">{{item.takenAtLabel}} 已记录</text><text wx:else class="detail-state">未记录</text></view><view wx:if="{{selectedDayLogs.length && selectedDayPlans.length === 0}}" class="hint">当天有按需用药记录，请在下方计划与实际记录中查看剂量。</view></view>
+
+    <view wx:if="{{waveRows.length}}" class="card wave-card">
+      <view class="section-head"><view><view class="card-title">用药与波动（近 14 日）</view><view class="hint">按同一服务端快照对齐计划、实际记录和已记录指标，供你和照护团队共同核对。</view></view><view class="tag">{{wave.range.from}} 至 {{wave.range.to}}</view></view>
+      <view wx:for="{{waveRows}}" wx:key="key" class="wave-row wave-{{item.state}}">
+        <view class="wave-date">{{item.date}}</view>
+        <view class="wave-content">
+          <view wx:if="{{item.plannedText}}" class="wave-line"><text class="wave-label">计划</text><text>{{item.plannedText}}</text></view>
+          <view wx:if="{{item.actualText}}" class="wave-line"><text class="wave-label">实际</text><text>{{item.actualText}}</text></view>
+          <view wx:if="{{item.observationsText}}" class="wave-line"><text class="wave-label">指标</text><text>{{item.observationsText}}</text></view>
+          <view wx:if="{{item.hintsText}}" class="wave-hint">{{item.hintsText}}</view>
+          <view wx:if="{{!item.plannedText && !item.actualText && !item.observationsText}}" class="hint">当天没有记录</view>
+        </view>
+      </view>
+      <view class="hint wave-note">关系提示只描述记录之间的对应关系，不替代医生判断；发现“未记录”或剂量差异时，请联系照护团队核对。</view>
+    </view>
+    <view wx:if="{{waveError}}" class="error" role="alert">{{waveError}}</view>
+
+    <view wx:if="{{deviationRows.length}}" class="card deviation-card">
+      <view class="section-head"><view class="card-title">待核对的用药记录</view><view class="tag tag-warm">{{deviationRows.length}} 项</view></view>
+      <view wx:for="{{deviationRows}}" wx:key="key" class="deviation-row"><view class="drug-name">{{item.drug}} · {{item.label}}</view><view class="hint">{{item.detail}}</view></view>
+      <view wx:if="{{careCapabilities && !careCapabilities.canMessageCareTeam}}" class="hint">可在下次就诊时出示这些记录，请医生或药师协助核对。</view>
+      <button class="secondary" size="mini" bindtap="openSupport">{{careCapabilities && !careCapabilities.canMessageCareTeam ? '查看照护与联系信息' : '让照护团队协助核对'}}</button>
+    </view>
+
+    <view wx:if="{{overview.plans.length}}" class="plans-heading"><view class="section-label">用药方案</view><button wx:if="{{canEditPlans}}" class="text-action" bindtap="openPlanEditor" disabled="{{saving || planCommandPending}}">＋ 录入已有医嘱</button></view>
+    <view wx:if="{{overview.plans.length && careCapabilities && !careCapabilities.canMessageCareTeam}}" class="hint">暂未关联接收留言的医护，可在就诊时出示用药记录。</view>
+    <button wx:if="{{steroidPlans.length && !steroidReadingRequired && !showSteroidGuide}}" class="guide-entry" bindtap="toggleSteroidGuide"><view><text class="guide-check">✓</text> 激素用药提醒</view><text>已阅读 · 再看看 ›</text></button>
+
+    <view wx:for="{{overview.plans}}" wx:key="id" id="medication-plan-{{index}}" class="card plan-detail-card">
+      <view class="section-head"><view><view class="card-title">{{item.drug}}</view><view class="hint">{{plannedDoses[item.id] || item.dose + item.unit}} · {{routeLabels[item.route]}} · {{frequencyLabels[item.frequency]}}</view></view><view class="today-status">{{statusText[item.id] === '待服务端确认' ? '正在同步' : statusText[item.id]}}</view></view>
+      <view class="source-label {{item.source === 'PATIENT_REPORTED' ? 'source-reported' : ''}}">{{item.source === 'PATIENT_REPORTED' ? '自行录入 · ' + (item.reviewedPlanId ? '已由医生接续，保留原记录' : '待医生核对') : '医生确认方案'}}</view>
+      <view wx:if="{{item.prescriptionNote}}" class="hint">医嘱来源：{{item.prescriptionNote}}</view>
+      <button class="detail-toggle" data-plan-id="{{item.id}}" bindtap="togglePlanDetails" aria-expanded="{{expandedPlanId === item.id}}">{{expandedPlanId === item.id ? '收起详情' : item.status !== 'ACTIVE' ? '查看历史详情' : item.route === 'SC_INJECTION' ? '注射记录与注意事项' : '实际剂量与方案详情'}} <text>{{expandedPlanId === item.id ? '⌃' : '›'}}</text></button>
+      <block wx:if="{{expandedPlanId === item.id}}">
+      <button wx:if="{{canEditPlans && item.source === 'PATIENT_REPORTED' && item.status !== 'STOPPED' && !item.reviewedPlanId}}" class="text-action" data-plan-id="{{item.id}}" bindtap="editReportedPlan" disabled="{{saving || planCommandPending}}">编辑记录安排</button>
+      <button wx:if="{{item.source !== 'PATIENT_REPORTED' && item.status === 'ACTIVE'}}" class="text-action" bindtap="requestPlanAdjustment">{{careCapabilities && !careCapabilities.canMessageCareTeam ? '记下需要核对的问题' : '向照护团队咨询调整'}}</button>
+
+      <view wx:if="{{item.status !== 'ACTIVE'}}" class="hint">{{item.status === 'STOPPED' ? '这项安排已结束，历史实际用药可在上方月历查看。' : '这项安排已暂停，历史记录保留，当前无需打卡。'}}</view>
+      <view wx:if="{{lateText[item.id]}}" class="late-hint">{{lateText[item.id]}}</view>
+      <view wx:if="{{item.status === 'ACTIVE' && (statusText[item.id] !== '今日已记录' || item.frequency === 'AS_NEEDED')}}" class="dose-facts">
+        <view class="hint">实际已用剂量（{{item.unit}}）· 留空按当前计划记录</view>
+        <input class="facility" type="digit" data-plan-id="{{item.id}}" value="{{actualDoseInputs[item.id]}}" placeholder="当前计划 {{plannedDoses[item.id] || item.dose + item.unit}}" bindinput="actualDoseInput" disabled="{{saving}}" />
+      </view>
+      <block wx:if="{{item.route === 'SC_INJECTION'}}">
+          <view class="injection-summary">轮换提示：{{injectionSummaryText[item.id]}}</view>
+        <view wx:if="{{item.status === 'ACTIVE'}}" class="injection-form">
+          <view class="cold-chain-guide"><view class="guide-title">储运与携带说明</view><view class="hint">按药品说明书和医生/药师要求保存、携带；温度偏离时只记录事实并联系照护团队。系统不判断药品是否可用，也不建议补打。</view><button class="secondary" size="mini" bindtap="openSupport">联系照护团队</button></view>
+          <picker mode="selector" range="{{injectionSiteOptions}}" range-key="label" value="{{injectionSiteIndexes[item.id]}}" data-plan-id="{{item.id}}" data-field="site" bindchange="injectionPicker"><view class="picker">{{injectionSiteLabels[item.id]}}</view></picker>
+          <picker mode="selector" range="{{injectionAdminOptions}}" range-key="label" value="{{injectionAdminIndexes[item.id]}}" data-plan-id="{{item.id}}" data-field="admin" bindchange="injectionPicker"><view class="picker">{{injectionAdminLabels[item.id]}}</view></picker>
+          <view class="cold-chain-toggle"><switch data-plan-id="{{item.id}}" checked="{{coldChainEnabled[item.id]}}" bindchange="coldChainToggle" /> 记录冷链事实</view>
+          <block wx:if="{{coldChainEnabled[item.id]}}"><picker mode="selector" range="{{coldChainOptions}}" range-key="label" value="{{coldChainIndexes[item.id]}}" data-plan-id="{{item.id}}" data-field="cold" bindchange="injectionPicker"><view class="picker">{{coldChainLabels[item.id]}}</view></picker><input class="facility" type="number" data-plan-id="{{item.id}}" value="{{coldChainDurations[item.id]}}" placeholder="冷链事件持续小时数" bindinput="coldChainDuration" disabled="{{saving}}" /><picker mode="date" data-plan-id="{{item.id}}" value="{{coldChainDates[item.id]}}" bindchange="coldChainDate"><view class="picker">{{coldChainDates[item.id] || '选择冷链事实报告日期'}}</view></picker></block>
+          <button class="primary-action" size="mini" data-plan-id="{{item.id}}" bindtap="record" disabled="{{saving || item.status !== 'ACTIVE' || statusText[item.id] === '尚未开始' || statusText[item.id] === '待服务端确认' || (item.frequency !== 'AS_NEEDED' && (statusText[item.id] === '今日已记录' || statusText[item.id] === '今日无需记录'))}}">{{item.frequency === 'AS_NEEDED' ? '记录本次注射' : '记录今日注射'}}</button>
+        </view>
+      </block>
+      <button wx:elif="{{item.status === 'ACTIVE'}}" class="primary-action" size="mini" data-plan-id="{{item.id}}" bindtap="record" disabled="{{saving || statusText[item.id] === '尚未开始' || statusText[item.id] === '待服务端确认' || (item.frequency !== 'AS_NEEDED' && (statusText[item.id] === '今日已记录' || statusText[item.id] === '今日无需记录'))}}">{{item.frequency === 'AS_NEEDED' ? '记录本次已用' : '记录今日已用'}}</button>
+      </block>
+    </view>
+
+    <view wx:if="{{trackRows.length}}" class="card trajectory-card">
+      <view class="section-head"><view class="card-title">用药安排与实际记录</view><button class="text-action" bindtap="toggleTrajectory" aria-expanded="{{showTrajectory}}">{{showTrajectory ? '收起' : '展开记录 ›'}}</button></view>
+      <view class="hint">{{showTrajectory ? '显示最近 ' + trackRows.length + ' 条安排与实际记录。' : '最近 ' + (trackRows.length > 3 ? 3 : trackRows.length) + ' 条记录；可展开查看近期变化。'}}</view>
+      <view class="track-legend"><text class="plan-track-label">○ 用药安排</text><text class="actual-track-label">● 实际记录</text></view>
+      <block wx:for="{{trackRows}}" wx:key="key"><view wx:if="{{showTrajectory || index >= trackRows.length - 3}}" class="track-row {{item.kind === 'PLAN' ? 'track-plan' : 'track-actual'}}">
+        <view class="track-date">{{item.date}}</view><view class="track-main"><view class="drug-name">{{item.label}}</view><view class="hint">{{item.kind === 'PLAN' ? '用药安排' : '实际用药'}} · {{item.status}}</view></view><view class="track-dose">{{item.dose}}</view>
+      </view></block>
+    </view>
+
+    <view wx:if="{{sideEffects.length}}" class="card"><view class="card-title">近期用药不适</view><view wx:for="{{sideEffects}}" wx:key="id" class="hint">{{item.label}} · {{sideEffectSeverityLabels[item.severity] || item.severity}} · {{item.guidance}}</view><view class="hint">如出现严重或快速加重的不适，请立即联系医生或急诊。</view></view>
+    <view wx:if="{{sideEffectError}}" class="error" role="alert">{{sideEffectError}}</view>
+    <view wx:if="{{sideEffectDefinitions.length}}" class="card"><view class="section-head"><view class="card-title">记录用药不适</view><button class="text-action" bindtap="toggleSideEffects" aria-expanded="{{showSideEffects}}">{{showSideEffects ? '收起' : '填写 ›'}}</button></view><view class="hint">有不舒服及时记录，请勿自行停药或调药。</view><block wx:if="{{showSideEffects}}"><radio-group bindchange="selectSideEffect"><label wx:for="{{sideEffectDefinitions}}" wx:key="code" class="choice"><radio value="{{item.code}}" checked="{{sideEffectCode === item.code}}" disabled="{{saving}}" />{{item.label}}（{{sideEffectSeverityLabels[item.severity] || item.severity}}）</label></radio-group><textarea class="note" maxlength="2000" placeholder="补充说明（可选）" value="{{sideEffectNote}}" bindinput="sideEffectInput" disabled="{{saving}}"></textarea><button size="mini" bindtap="reportSideEffect" loading="{{saving}}" disabled="{{saving || !sideEffectCode}}">保存不适记录</button></block></view>
+    <view wx:if="{{screenings.length}}" class="card"><view class="card-title">用药相关筛查</view><view wx:for="{{screenings}}" wx:key="type" class="screening-row"><view class="hint">{{screeningLabels[item.type]}} · 到期 {{item.dueAtLabel}}{{item.doneAtFacility ? ' · 已完成' : ''}}</view><view wx:if="{{!item.doneAt}}"><picker mode="date" data-type="{{item.type}}" value="{{screeningDates[item.type]}}" bindchange="screeningDate"><view class="picker">{{screeningDates[item.type] || '选择完成日期'}}</view></picker><input class="facility" data-type="{{item.type}}" value="{{screeningFacilities[item.type]}}" placeholder="检查机构" maxlength="200" bindinput="screeningFacility" /><button size="mini" data-type="{{item.type}}" bindtap="completeScreening" loading="{{saving}}" disabled="{{saving}}">记录完成</button></view></view><view class="hint">检查结果请交给照护团队确认。</view></view>
+    <view wx:if="{{screeningError}}" class="error" role="alert">{{screeningError}}</view>
+  </block>
+  <button wx:if="{{(error || sideEffectError || screeningError) && !loading}}" class="recovery-button" bindtap="refresh" disabled="{{loading || saving}}">重新读取用药记录</button>
+</view>

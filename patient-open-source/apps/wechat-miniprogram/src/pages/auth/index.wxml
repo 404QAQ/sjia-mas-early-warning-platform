@@ -1,0 +1,31 @@
+<view class="page auth-page patient-page">
+  <view class="brand"><view class="brand-mark" aria-hidden="true"></view><text>无恙</text><text class="brand-subtitle">健康记录演示</text></view>
+  <view class="title">每一份记录，都有照应</view>
+  <view class="hint">了解身体变化，让用药、复诊和日常照护更有条理。</view>
+  <view class="entry-card">
+    <view class="entry-card-head">
+      <view>
+        <view class="entry-card-title">选择患者入口</view>
+        <view class="entry-card-hint">家属可按照护对象选择。登录后进入已授权的档案。</view>
+      </view>
+    </view>
+    <view class="sex-options">
+      <button class="sex-option {{entrySex === 'MALE' ? 'selected' : ''}}" data-sex="MALE" bindtap="chooseSex" aria-label="男性患者入口，{{entrySex === 'MALE' ? '已选择' : '未选择'}}" disabled="{{loading}}">
+        <view class="sex-symbol male" aria-hidden="true"><view class="person-head"></view><view class="person-body"></view></view>
+        <view class="sex-copy"><text class="sex-name">男性入口</text><text class="sex-note">用药与复诊变化</text></view>
+        <text wx:if="{{entrySex === 'MALE'}}" class="selected-mark">已选</text>
+      </button>
+      <button class="sex-option {{entrySex === 'FEMALE' ? 'selected' : ''}}" data-sex="FEMALE" bindtap="chooseSex" aria-label="女性患者入口，{{entrySex === 'FEMALE' ? '已选择' : '未选择'}}" disabled="{{loading}}">
+        <view class="sex-symbol female" aria-hidden="true"><view class="person-head"></view><view class="person-body"></view></view>
+        <view class="sex-copy"><text class="sex-name">女性入口</text><text class="sex-note">用药与生理阶段</text></view>
+        <text wx:if="{{entrySex === 'FEMALE'}}" class="selected-mark">已选</text>
+      </button>
+    </view>
+    <button class="neutral-entry {{entrySex === 'UNKNOWN' ? 'selected' : ''}}" data-sex="UNKNOWN" bindtap="chooseSex" disabled="{{loading}}">暂不选择，按档案进入</button>
+    <view class="entry-selection" role="status">{{entrySexLabel}}</view>
+  </view>
+  <button class="primary-button" type="primary" bindtap="login" loading="{{loading}}" disabled="{{loading}}">微信授权登录</button>
+  <button class="{{notBound ? 'invite highlighted' : 'invite'}}" bindtap="openBind" disabled="{{loading}}">我有医生给的邀请码</button>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view class="footnote">资料仅向已授权的本人和照护家属展示。医护人员请使用医生工作台。</view>
+</view>

@@ -1,0 +1,36 @@
+@import "../../styles/patient.wxss";
+.page { min-height: 100vh; box-sizing: border-box; background: var(--mas-bg); color: var(--mas-text); }
+.brand { display: flex; align-items: center; gap: 12rpx; color: var(--mas-primary); font-size: 24rpx; font-weight: 600; }
+.brand-subtitle { color: var(--mas-text-muted); font-size: 20rpx; font-weight: 400; }
+.brand-mark { position: relative; width: 42rpx; height: 42rpx; border: 2rpx solid currentColor; border-radius: 12rpx; }
+.brand-mark::before, .brand-mark::after { content: ''; position: absolute; border-radius: 2rpx; background: currentColor; }
+.brand-mark::before { left: 9rpx; right: 9rpx; top: 19rpx; height: 4rpx; }
+.brand-mark::after { top: 9rpx; bottom: 9rpx; left: 19rpx; width: 4rpx; }
+.title { margin-top: 30rpx; font-size: 42rpx; line-height: 1.4; font-weight: 700; letter-spacing: -.5rpx; }
+.hint { margin: 16rpx 0 30rpx; color: var(--mas-text-muted); font-size: 26rpx; line-height: 1.7; }
+.entry-card { padding: 28rpx; border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); background: var(--mas-surface); box-shadow: var(--mas-shadow-card); }
+.entry-card-title { font-size: 30rpx; font-weight: 700; }
+.entry-card-hint { margin-top: 10rpx; color: var(--mas-text-muted); font-size: 24rpx; line-height: 1.6; }
+.sex-options { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16rpx; margin-top: 24rpx; }
+.page button { box-sizing: border-box; width: 100%; min-height: 88rpx; margin: 0; border-radius: var(--mas-radius-control); font-size: 27rpx; line-height: 1.5; }
+button::after { border: 0; }
+.page button.sex-option { position: relative; display: flex; align-items: flex-start; flex-direction: column; min-width: 0; min-height: 194rpx; padding: 22rpx 20rpx; border: 2rpx solid var(--mas-border); background: var(--mas-surface); color: var(--mas-text); text-align: left; }
+.page button.sex-option.selected { border-color: var(--mas-primary); background: var(--mas-surface-soft); }
+.sex-symbol { position: relative; width: 64rpx; height: 64rpx; border-radius: 18rpx; }
+.sex-symbol.male { background: #eaf3fa; color: #497ea2; }
+.sex-symbol.female { background: #f7edf4; color: #a56e91; }
+.person-head { position: absolute; top: 11rpx; left: 23rpx; width: 15rpx; height: 15rpx; border: 3rpx solid currentColor; border-radius: 50%; }
+.person-body { position: absolute; top: 36rpx; left: 16rpx; width: 31rpx; height: 17rpx; border: 3rpx solid currentColor; border-bottom: 0; border-radius: 20rpx 20rpx 0 0; }
+.sex-copy { display: flex; flex-direction: column; margin-top: 14rpx; }
+.sex-name { font-size: 28rpx; font-weight: 700; }
+.sex-note { margin-top: 7rpx; color: var(--mas-text-muted); font-size: 22rpx; }
+.selected-mark { position: absolute; top: 18rpx; right: 15rpx; padding: 3rpx 9rpx; border-radius: 8rpx; color: var(--mas-primary); background: #dceeea; font-size: 20rpx; font-weight: 600; }
+.page button.neutral-entry { min-height: 88rpx; margin-top: 10rpx; padding: 16rpx 0; background: transparent; color: var(--mas-text-muted); font-size: 24rpx; text-align: center; }
+.page button.neutral-entry.selected { color: var(--mas-primary); font-weight: 600; }
+.entry-selection { padding-top: 16rpx; border-top: 1rpx solid var(--mas-border); color: var(--mas-text-muted); font-size: 22rpx; line-height: 1.6; }
+.page button.primary-button { min-height: 88rpx; margin-top: 24rpx; padding: 20rpx; color: var(--mas-on-primary); background: var(--mas-primary); font-weight: 600; }
+.page button.invite { min-height: 88rpx; margin-top: 16rpx; padding: 21rpx; border: 1rpx solid var(--mas-border); color: var(--mas-primary); background: var(--mas-surface); }
+.page button.invite.highlighted { border-color: var(--mas-primary); background: var(--mas-surface-soft); font-weight: 600; }
+.page button[disabled] { opacity: .58; }
+.error { margin-top: 22rpx; padding: 22rpx; color: var(--mas-danger); background: var(--mas-danger-soft); border-radius: var(--mas-radius-control); font-size: 25rpx; line-height: 1.6; }
+.footnote { margin-top: 30rpx; color: var(--mas-text-muted); font-size: 23rpx; line-height: 1.7; text-align: center; }

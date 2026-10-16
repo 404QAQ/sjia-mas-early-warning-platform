@@ -1,0 +1,9 @@
+@import "../../styles/patient.wxss";
+
+.tier { display: flex; align-items: flex-start; padding: 14rpx 0; }
+.tier-body { flex: 1; margin-left: 12rpx; }
+.tier-head { color: var(--mas-text-strong); font-size: 28rpx; font-weight: 600; }
+.communication-note { margin-top: 22rpx; padding: 24rpx; background: var(--mas-surface); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-control); }
+.communication-note .field-label { margin-top: 0; color: var(--mas-text-strong); font-weight: 600; }
+.peer-actions { margin-top: 12rpx; }
+.peer-actions button { margin-top: 0; }

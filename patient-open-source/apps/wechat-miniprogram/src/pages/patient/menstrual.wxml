@@ -1,0 +1,26 @@
+<view class="page patient-page">
+  <view class="title">经期与用药关注</view>
+  <view class="hint">只记录你主动提供的事实，不推算排卵、不诊断、不自动调药。</view>
+  <view wx:if="{{pendingCount || rejectedCount}}" class="queue" role="status">
+    <view>本机待确认操作：{{pendingCount}} 条<text wx:if="{{rejectedCount}}">，需要处理：{{rejectedCount}} 条</text></view>
+    <view class="hint">网络异常时记录会先留在本机，重试不会覆盖其他经期记录。</view>
+    <button size="mini" bindtap="retry" loading="{{saving}}" disabled="{{saving}}">重试待提交操作</button>
+  </view>
+  <view wx:if="{{loading}}" class="hint">读取中…</view>
+  <view wx:elif="{{error}}" class="error" role="alert">{{error}}</view>
+  <form wx:if="{{!loading && cycle}}" bindsubmit="save">
+    <view class="card phase-card">
+      <view class="label">当前阶段</view>
+      <view class="phase-value">{{cycle.phaseLabel}}</view>
+      <view class="hint">{{cycle.phaseNote}}</view>
+      <view class="hint">阶段只按你填写的起止日期给出，不推算排卵、不诊断、不自动调药。</view>
+    </view>
+    <view class="card"><view class="label">开始日期</view><picker mode="date" name="periodStart" value="{{periodStartDate}}" data-field="periodStartDate" bindchange="dateChange"><view class="picker">{{periodStartDate || '请选择'}}</view></picker></view>
+    <view class="card"><view class="label">结束日期（可选）</view><picker mode="date" name="periodEnd" value="{{periodEndDate}}" data-field="periodEndDate" bindchange="dateChange"><view class="picker">{{periodEndDate || '未结束/未提供'}}</view></picker></view>
+    <view class="card"><switch name="sharedWithCareTeam" checked="{{cycle.sharedWithCareTeam}}" /> 允许当前照护医生查看完整日期</view>
+    <button form-type="submit" type="primary" loading="{{saving}}" disabled="{{saving}}">保存</button>
+  </form>
+  <view wx:if="{{cycle}}" class="hint">{{cycle.medicationReview.message}}</view>
+  <view wx:elif="{{!loading}}" class="error" role="alert">经期记录暂未读取到，请刷新重试。</view>
+  <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading || saving}}">刷新</button>
+</view>

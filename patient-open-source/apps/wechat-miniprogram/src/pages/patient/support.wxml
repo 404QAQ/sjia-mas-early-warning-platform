@@ -1,0 +1,70 @@
+<view class="page support-page patient-page">
+  <view class="section-tabs"><button class="{{activeSection === 'messages' ? 'selected' : ''}}" data-section="messages" bindtap="switchSection">医生消息</button><button class="{{activeSection === 'care' ? 'selected' : ''}}" data-section="care" bindtap="switchSection">照护与支持</button></view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <block wx:if="{{activeSection === 'messages'}}">
+    <view class="message-hero"><view class="hero-title">医生消息</view><view class="hero-copy">随诊医生的复评、用药与随访留言都在这里，重要事项请遵医嘱执行。</view></view>
+    <view wx:if="{{loading}}" class="hint loading-copy">正在读取消息…</view>
+    <view wx:if="{{messagesError}}" class="error" role="alert">{{messagesError}}</view>
+    <view wx:if="{{!loading && !messagesError && !messages.length}}" class="card empty-copy">暂无医生消息，可以在下方向照护团队留言。</view>
+    <view wx:for="{{messages}}" wx:key="id" class="card doctor-message {{!item.read && !item.outgoing ? 'unread' : ''}}">
+      <view class="message-head"><view class="message-tag {{item.outgoing ? 'outgoing' : ''}}">{{item.outgoing ? '我发出的' : '医生留言'}}</view><view class="message-title">{{item.title}}</view><view wx:if="{{!item.read && !item.outgoing}}" class="unread-dot"></view></view>
+      <view class="message-body">{{item.body}}</view><view class="message-footer"><text>{{item.timeText}}</text><button wx:if="{{!item.outgoing && !item.read}}" class="text-action" data-id="{{item.id}}" bindtap="readMessage" loading="{{readSaving}}" disabled="{{readSaving}}">标记已读</button><text wx:elif="{{!item.outgoing}}">已读</text><text wx:else>已发送</text></view>
+    </view>
+    <view id="care-messages" class="card compose-card"><view class="card-title">{{careCapabilities.canMessageCareTeam ? '给照护团队留言' : '待沟通内容'}}</view><view class="hint">写下发生时间、具体变化和希望医生关注的事。</view><textarea value="{{draft}}" disabled="{{sending}}" bindinput="onDraft" maxlength="20000" placeholder="描述需要医生关注的情况"></textarea><view wx:if="{{pending}}" class="pending">草稿已保存在本机，尚未确认发送。</view><view wx:if="{{careCapabilities && !careCapabilities.canMessageCareTeam}}" class="hint">当前没有已确认的医护收件人，可邀请医生加入或就诊时出示。</view><view wx:elif="{{!careCapabilities}}" class="hint">{{loading ? '正在确认照护团队…' : '接收状态暂未确认，请重新读取。'}}</view><button wx:if="{{!careCapabilities.canMessageCareTeam && showCareInvite}}" class="secondary" bindtap="openCareInvite">邀请我的医生加入</button><button type="primary" bindtap="sendMessage" loading="{{sending}}" disabled="{{sending || !draft || !careCapabilities.canMessageCareTeam}}">发送给照护团队</button><view class="footnote">医生不一定实时在线；紧急情况请直接就医。</view></view>
+    <view class="card consultation-card"><view class="card-title">远程求助 / 会诊</view><view class="hint">把需要医生共同判断的问题提交给照护团队，接诊、回复和执行确认都会留在同一条时间线上。</view><view wx:if="{{consultationError}}" class="error" role="alert">{{consultationError}}</view><view wx:if="{{!consultations.length}}" class="hint">还没有会诊申请。</view><view wx:for="{{consultations}}" wx:key="id" class="consultation-row"><view class="consultation-head"><text class="message-title">{{item.topic}}</text><text class="message-tag">{{item.urgency === 'URGENT' ? '紧急' : item.urgency === 'SOON' ? '尽快' : '常规'}}</text></view><view class="hint">{{item.status === 'PENDING' ? '待医生接诊' : item.status === 'ACCEPTED' ? '医生已接诊，等待回复' : item.status === 'RESPONDED' ? '医生已回复，请确认执行' : item.status === 'ACKNOWLEDGED' ? '已确认执行' : item.status === 'CLOSED' ? '会诊已完成' : item.status === 'DECLINED' ? '医生暂无法接诊' : '已撤回'}}</view><view wx:if="{{item.detail}}" class="message-body">{{item.detail}}</view><view wx:for="{{item.events}}" wx:for-item="event" wx:key="id" class="consultation-event"><text>{{event.type === 'REQUESTED' ? '已发起' : event.type === 'ACCEPTED' ? '医生接诊' : event.type === 'REPLIED' ? '医生回复' : event.type === 'ACKNOWLEDGED' ? '患者确认' : event.type === 'CLOSED' ? '已完成' : event.type === 'DECLINED' ? '暂无法接诊' : '已撤回'}} · {{event.at}}</text><text wx:if="{{event.body}}">{{event.body}}</text><text wx:if="{{event.nextStep}}">下一步：{{event.nextStep}}</text></view><button wx:if="{{item.status === 'RESPONDED'}}" class="secondary" size="mini" data-id="{{item.id}}" data-version="{{item.version}}" bindtap="acknowledgeConsultation" loading="{{consultationSaving}}" disabled="{{consultationSaving}}">确认我会按回复执行</button></view><view class="consultation-compose"><input value="{{consultationTopic}}" maxlength="200" bindinput="onConsultationTopic" placeholder="例如：最近发热和用药变化想请医生一起看"/><textarea value="{{consultationDetail}}" maxlength="5000" bindinput="onConsultationDetail" placeholder="补充时间、症状和希望医生回答的问题"></textarea><view class="consultation-urgency"><button size="mini" class="{{consultationUrgency === 'ROUTINE' ? 'selected' : ''}}" data-value="ROUTINE" bindtap="onConsultationUrgency">常规</button><button size="mini" class="{{consultationUrgency === 'SOON' ? 'selected' : ''}}" data-value="SOON" bindtap="onConsultationUrgency">尽快</button><button size="mini" class="{{consultationUrgency === 'URGENT' ? 'selected urgent' : ''}}" data-value="URGENT" bindtap="onConsultationUrgency">紧急</button></view><button type="primary" bindtap="createConsultation" loading="{{consultationSaving}}" disabled="{{consultationSaving || !consultationTopic}}">发起会诊申请</button></view><button wx:if="{{consultationError}}" class="secondary recovery-button" bindtap="refreshConsultations" disabled="{{consultationSaving}}">刷新会诊状态</button></view>
+  </block>
+  <block wx:if="{{activeSection === 'care'}}">
+    <view class="support-heading"><view class="title">照护与支持</view><view class="hint">查看团队安排、复诊准备和应急资料。</view></view>
+    <view class="card mood-entry"><view><view class="card-title">最近感觉怎么样</view><view class="hint">复诊前记录状态，也可以选择不回答。</view></view><button class="text-action" bindtap="openAssessment">去看看 ›</button></view>
+  <block wx:for="{{cards}}" wx:key="key">
+    <view class="card">
+      <view class="card-title">{{item.title}}</view>
+      <view wx:if="{{item.state === 'LOADING'}}" class="hint">读取中…</view>
+      <view wx:elif="{{item.state === 'UNAVAILABLE'}}" class="error" role="alert">{{item.message}}</view>
+      <view wx:elif="{{item.items.length === 0}}" class="hint">{{item.message}}</view>
+      <view wx:if="{{item.key === 'followups'}}" class="detail-hint">已显示时间与处理状态，方便复诊时快速核对。</view>
+      <block wx:else><view wx:for="{{item.items}}" wx:for-item="line" wx:key="*this" class="line">{{line}}</view></block>
+      <block wx:if="{{item.key === 'followups'}}"><view wx:for="{{item.items}}" wx:for-item="line" wx:key="*this" class="line">{{line}}</view></block>
+      <block wx:if="{{item.key === 'care'}}">
+        <block wx:if="{{showCareInvite}}">
+          <view class="hint">已加入且关系有效的会诊 / 受邀医生会列在上方，可在邀请页管理。</view>
+          <button class="secondary" size="mini" bindtap="openCareInvite">邀请我的医生加入</button>
+        </block>
+        <view wx:elif="{{careInviteNote}}" class="hint">{{careInviteNote}}</view>
+      </block>
+    </view>
+  </block>
+    <view class="card"><view class="card-title">健康教育</view><view wx:if="{{educationError}}" class="error" role="alert">{{educationError}}</view><view wx:elif="{{!loading && !education.length}}" class="hint">暂无已推送的健康教育内容。</view><view wx:for="{{education}}" wx:key="id" class="resource-row"><button class="education-heading" data-id="{{item.id}}" bindtap="toggleEducation"><text>{{item.title}}</text><text>{{expandedEducationId === item.id ? '⌃' : '›'}}</text></button><block wx:if="{{expandedEducationId === item.id}}"><view class="message-body">{{item.body || '内容暂未提供，请联系照护团队核对。'}}</view><button wx:if="{{!item.read && item.body}}" class="secondary" size="mini" data-id="{{item.id}}" bindtap="readEducation" loading="{{readSaving}}" disabled="{{readSaving}}">我已阅读</button><view wx:elif="{{item.read}}" class="hint">已读</view></block></view></view>
+  <view class="card emergency-card">
+    <view class="card-title">家庭应急与急诊卡</view>
+    <view wx:if="{{emergencyLoading}}" class="hint">正在读取应急信息…</view>
+    <view wx:elif="{{emergencyError}}" class="error" role="alert">{{emergencyError}}</view>
+    <block wx:else>
+      <view wx:if="{{supportPlan}}" class="line">预案：{{supportPlan.status === 'DRAFT' ? '准备中' : supportPlan.status === 'PENDING_CLINICIAN' ? '待医生确认' : supportPlan.status === 'CONFIRMED' ? '医生已确认' : '待重新核对'}}<text wx:if="{{supportPlan.hospital}}"> · {{supportPlan.hospital.name}}</text></view>
+      <view wx:if="{{supportPlan.thresholds.length}}" class="section-title">必须立刻就医的情况</view>
+      <view wx:for="{{supportPlan.thresholds}}" wx:key="code" class="line">• {{item.label}}</view>
+      <view wx:if="{{supportKit}}" class="line">急诊包：{{supportKit.completedCount}}/{{supportKit.totalCount}} 已准备 · {{supportKit.status === 'CURRENT' ? '已核对' : supportKit.status === 'DUE' ? '需重新核对' : '待家庭核对'}}</view>
+      <view wx:if="{{supportCard}}" class="line">急诊流程卡：{{supportCard.needsReprint ? '需要重新打印' : '当前有效'}} · 医院 {{supportCard.destination.hospitalName}}</view>
+      <view wx:if="{{!supportPlan && !supportKit && !supportCard}}" class="hint">可以先准备家庭预案和急诊包；正式流程卡需要医生确认。</view>
+    </block>
+    <button wx:if="{{emergencyError && !emergencyLoading}}" class="secondary recovery-button" bindtap="refreshEmergency" disabled="{{emergencyLoading}}">刷新应急资料</button>
+    <button class="secondary" bindtap="openEmergency">打开应急中心</button>
+  </view>
+  <view id="crisis-support" class="card crisis-card">
+    <view class="card-title">需要立即帮助？</view>
+    <view class="hint">需要支持时，可以拨打已核验的热线或联系照护团队。紧急医疗情况请直接就医。</view>
+    <button wx:if="{{!crisis}}" bindtap="loadCrisis" loading="{{crisisLoading}}" disabled="{{crisisLoading}}">打开危机联系方式</button>
+    <view wx:if="{{crisisError}}" class="error" role="alert">{{crisisError}}</view>
+    <block wx:if="{{crisis}}">
+      <view wx:if="{{crisis.degraded}}" class="crisis-degraded-notice">
+        <text wx:if="{{crisis.degraded === 'ON_CALL_UNAVAILABLE'}}">暂时没有可联系的值班医生，你仍然可以直接拨打下面的热线。</text>
+        <text wx:elif="{{crisis.degraded === 'AUTHORIZED_CONTACT_UNAVAILABLE'}}">暂时没有已授权的联系人，你仍然可以直接拨打下面的热线。</text>
+        <text wx:else>暂时没有可联系的值班医生和已授权联系人，你仍然可以直接拨打下面的热线。</text>
+      </view>
+      <view wx:for="{{crisis.contacts}}" wx:key="id" class="contact-row"><view><view class="contact-label">{{item.label}}</view><view class="hint">{{item.availability}}</view></view><button size="mini" data-id="{{item.id}}" data-phone="{{item.phone}}" data-kind="{{item.kind}}" bindtap="callCrisis" loading="{{callingCrisisId === item.id}}" disabled="{{callingCrisisId || crisisLoading}}">拨打</button></view>
+    </block>
+  </view>
+  </block>
+  <button wx:if="{{(error || emergencyError || messagesError || educationError || !careCapabilities) && !loading}}" class="secondary recovery-button" bindtap="load" disabled="{{loading || sending}}">重新读取照护服务</button>
+  <button wx:if="{{crisisError && !crisisLoading}}" class="secondary recovery-button" bindtap="loadCrisis" disabled="{{crisisLoading}}">重新读取危机联系方式</button>
+</view>

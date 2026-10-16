@@ -1,0 +1,79 @@
+{
+  "pages": [
+    "pages/cover/index",
+    "pages/auth/index",
+    "pages/auth/bind",
+    "pages/home/index",
+    "pages/patient/records",
+    "pages/patient/report",
+    "pages/patient/observation",
+    "pages/patient/vitals",
+    "pages/patient/archive",
+    "pages/patient/scan",
+    "pages/patient/visit-report",
+    "pages/patient/trend",
+    "pages/patient/joint",
+    "pages/patient/emergency",
+    "pages/patient/life-event",
+    "pages/patient/work-support",
+    "pages/patient/transition",
+    "pages/patient/pregnancy",
+    "pages/patient/support",
+    "pages/patient/care-invite",
+    "pages/patient/health",
+    "pages/patient/screening",
+    "pages/patient/school",
+    "pages/patient/audit",
+    "pages/patient/account",
+    "pages/patient/sharing",
+    "pages/patient/contacts",
+    "pages/patient/living",
+    "pages/patient/inbox",
+    "pages/patient/more",
+    "pages/patient/menstrual",
+    "pages/patient/medications",
+    "pages/contact/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "无恙",
+    "navigationBarBackgroundColor": "#F7F9FA",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F7F9FA",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#6B7C8A",
+    "selectedColor": "#0F6E78",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "指标",
+        "iconPath": "assets/tabbar/metrics-normal.png",
+        "selectedIconPath": "assets/tabbar/metrics-active.png"
+      },
+      {
+        "pagePath": "pages/patient/records",
+        "text": "记录",
+        "iconPath": "assets/tabbar/records-normal.png",
+        "selectedIconPath": "assets/tabbar/records-active.png"
+      },
+      {
+        "pagePath": "pages/patient/report",
+        "text": "报告",
+        "iconPath": "assets/tabbar/report-normal.png",
+        "selectedIconPath": "assets/tabbar/report-active.png"
+      },
+      {
+        "pagePath": "pages/patient/account",
+        "text": "个人档案",
+        "iconPath": "assets/tabbar/profile-normal.png",
+        "selectedIconPath": "assets/tabbar/profile-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

@@ -1,0 +1,107 @@
+<view class="page patient-page">
+  <view class="page-heading"><view><view class="eyebrow">提前准备 · 需要时出示</view><view class="title">急诊摘要与应急预案</view></view></view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{message}}" class="message" role="status">{{message}}</view>
+  <view wx:if="{{loading}}" class="hint loading-hint">正在核对最新应急资料…</view>
+
+  <view class="emergency-summary">
+    <view class="summary-topline"><view class="summary-kicker">家庭应急流程卡</view><view class="summary-status">{{cardStatusText}}</view></view>
+    <view class="summary-title">急诊摘要</view>
+    <view class="summary-copy">{{card ? '就诊时可将这张卡出示给医护人员。' : '先把医院、路线和需要携带的物品准备好。'}}</view>
+    <view wx:if="{{card}}" class="triage-summary"><view class="summary-label">到了医院这样说</view><view class="triage-script">{{card.destination.triageScript}}</view></view>
+    <view wx:if="{{card}}" class="summary-destination">
+      <view class="summary-label">首选医院</view><view class="summary-destination-name">{{card.destination.hospitalName}}</view>
+      <view wx:if="{{card.destination.address}}" class="summary-destination-detail">{{card.destination.address}}</view>
+      <view class="summary-destination-detail">预计夜间到院 {{card.destination.arrivalMinutesNight}} 分钟<text wx:if="{{card.destination.nightEntrance}}"> · {{card.destination.nightEntrance}}</text></view>
+    </view>
+    <view class="summary-metrics">
+      <view class="summary-metric"><view class="summary-metric-value">{{planStatusText}}</view><view class="summary-metric-label">家庭预案</view></view>
+      <view class="summary-metric"><view class="summary-metric-value">{{kit ? kit.completedCount + '/' + kit.totalCount : '待准备'}}</view><view class="summary-metric-label">急诊包物品</view></view>
+      <view class="summary-metric"><view class="summary-metric-value">{{cardStatusText}}</view><view class="summary-metric-label">流程卡</view></view>
+    </view>
+    <view wx:if="{{cardGeneratedText}}" class="summary-updated">最近生成：{{cardGeneratedText}}</view>
+  </view>
+
+  <view class="export-card">
+    <view class="export-heading"><view class="card-title">{{card ? '随身保存一份' : '准备应急流程卡'}}</view><view class="pdf-tag">PDF · A4</view></view>
+    <view class="hint">{{card ? '打开 PDF 后，可从右上角菜单保存供离线查看，或按 A4 纵向黑白打印。此页面本身需要联网读取。' : '家庭预案须经医生确认，再结合急诊包设置生成正式流程卡；现在可先准备基础资料。'}}</view>
+    <view wx:if="{{card && card.needsReprint}}" class="reprint-note">资料已经更新，请先生成新版本，再替换之前保存或打印的卡片。</view>
+    <view wx:if="{{card || cardReady}}" class="export-actions"><button wx:if="{{card}}" class="primary" bindtap="exportCard" loading="{{exporting}}" disabled="{{loading || syncing || exporting || card.needsReprint}}">{{exporting ? '正在准备 PDF…' : '打开 / 保存 PDF'}}</button><button class="secondary" bindtap="generateCard" disabled="{{loading || syncing || exporting || !canCardWrite || !cardReady}}">{{card ? '更新流程卡' : '生成流程卡'}}</button></view>
+    <view wx:if="{{!loading && !cardReady && cardPrerequisiteHint}}" class="card-prerequisite"><view class="hint">{{cardPrerequisiteHint}}</view><button wx:if="{{cardSetupTarget}}" class="secondary" bindtap="openCardSetup" disabled="{{syncing || exporting}}">{{cardSetupLabel}}</button></view>
+    <view wx:if="{{exportNotice}}" class="message" role="status">{{exportNotice}}</view>
+  </view>
+
+  <view class="card emergency-card">
+      <view class="card-title">需要立即就医的情况</view>
+      <view wx:for="{{card ? card.thresholds : generalGuidance.thresholds}}" wx:key="code" class="threshold-row"><view class="threshold-dot"></view><view>{{item.label}}</view></view>
+    </view>
+    <view wx:if="{{card}}" class="card emergency-contact-card">
+      <view class="card-title">路线与联系信息</view>
+      <view wx:if="{{card.destination.routeNotes}}" class="info-row"><view class="info-label">路线备注</view><view class="info-value">{{card.destination.routeNotes}}</view></view>
+      <view class="info-row"><view class="info-label">随诊医生</view><view class="info-value">{{card.destination.followUpClinicianPhone}}</view></view>
+      <view class="info-row"><view class="info-label">{{card.destination.onCallContact.label}}</view><view class="info-value">{{card.destination.onCallContact.phone}}</view></view>
+      <view wx:if="{{card.destination.driverName || card.destination.driverPhone}}" class="info-row"><view class="info-label">司机 / 陪同</view><view class="info-value">{{card.destination.driverName}} {{card.destination.driverPhone}}</view></view>
+      <view class="info-row"><view class="info-label">急诊包存放</view><view class="info-value">{{card.kitLocation}}</view></view>
+    </view>
+    <view class="card action-checklist"><view class="card-title">可以做什么</view><view wx:for="{{card ? card.canDo : generalGuidance.canDo}}" wx:key="*this" class="action-row"><view class="action-icon">✓</view><view>{{item}}</view></view></view>
+    <view class="card action-checklist avoid-card"><view class="card-title">绝对不要做</view><view wx:for="{{card ? card.neverDo : generalGuidance.neverDo}}" wx:key="*this" class="action-row"><view class="action-icon">!</view><view>{{item}}</view></view></view>
+
+  <view class="section-heading">平时做好准备</view>
+  <view id="emergency-kit" class="card emergency-kit">
+    <view class="card-heading"><view class="card-title">急诊包</view><view class="small-status">{{kitStatusText}}</view></view>
+    <view wx:if="{{kit}}" class="kit-progress"><view class="kit-progress-number">{{kit.completedCount}}<text>/{{kit.totalCount}}</text></view><view class="hint">项物品已准备</view></view>
+    <view wx:elif="{{!loading && cardSetupTarget !== 'reload'}}" class="kit-empty"><view class="kit-empty-title">先约定一个固定的存放位置</view><view class="hint">{{canKitWrite ? '保存位置后会显示物品清单，再和家人逐项准备、核对。' : '请患者、监护人或照护者先设置存放位置，再共同准备急诊包。'}}</view></view>
+    <view class="field-label">放在哪里</view><input value="{{kitLocation}}" data-field="kitLocation" bindinput="input" maxlength="500" placeholder="例如：门边鞋柜第二层" disabled="{{syncing || !canKitWrite}}" />
+    <label class="check"><checkbox-group class="inline-check" bindchange="changeFamily" ><checkbox checked="{{familyInformed}}" value="familyInformed" disabled="{{syncing || !canKitWrite}}" /></checkbox-group>全家都知道这个位置</label>
+    <button class="secondary" bindtap="saveKit" disabled="{{loading || syncing || !canKitWrite || (!kit && !kitLocation)}}">{{kit ? '保存存放位置' : '建立急诊包清单'}}</button>
+    <view wx:if="{{kit}}" class="items"><view wx:for="{{kit.items}}" wx:key="id" class="item"><checkbox-group class="inline-check" bindchange="toggleItem" data-id="{{item.id}}"><checkbox value="{{item.id}}" checked="{{item.prepared}}" disabled="{{syncing || !canKitWrite}}" /></checkbox-group><view><view>{{item.label}}</view><view class="hint">{{item.prepared ? '已准备' : '待准备'}}<text wx:if="{{item.needsReprint}}"> · 需重新打印</text></view></view></view></view>
+    <button wx:if="{{kit}}" class="secondary" bindtap="verifyKit" disabled="{{syncing || !canKitWrite}}">核对急诊包</button>
+  </view>
+
+  <view id="emergency-plan" class="card emergency-plan">
+    <button class="disclosure" bindtap="togglePlanSettings" aria-expanded="{{planSettingsOpen}}"><view><view class="card-title">家庭应急预案</view><view class="hint">{{planStatusText}} · 医院、路线与陪同安排</view></view><view class="disclosure-arrow">{{planSettingsOpen ? '−' : '＋'}}</view></button>
+    <view wx:if="{{plan && !planSettingsOpen}}" class="plan-overview">
+      <view class="info-row"><view class="info-label">首选医院</view><view class="info-value">{{plan.hospital.name || '待填写'}}</view></view>
+      <view class="info-row"><view class="info-label">夜间收治</view><view class="info-value">{{plan.clinicianNightCapable === 'TRUE' ? '医生已确认' : '待医生确认'}}</view></view>
+      <view class="info-row"><view class="info-label">路线时间</view><view class="info-value">{{plan.route ? '白天 ' + plan.route.minutesDay + ' 分钟 · 夜间 ' + plan.route.minutesNight + ' 分钟' : '待填写'}}</view></view>
+      <view class="info-row"><view class="info-label">交通方式</view><view class="info-value">{{transportText}}</view></view>
+      <view class="info-row"><view class="info-label">就医阈值</view><view class="info-value">{{plan.thresholds.length ? '按上方就医指引执行' : '待医生确认'}}</view></view>
+    </view>
+    <view wx:if="{{planSettingsOpen}}" class="disclosure-body">
+      <view wx:if="{{careCapabilities && !careCapabilities.hasTreatmentClinician}}" class="hint">当前没有可确认预案的医生，可先保存草稿、准备急诊包，并与就诊医生核对。</view>
+      <button wx:if="{{careCapabilities && !careCapabilities.hasTreatmentClinician}}" class="secondary" bindtap="openCareSupport">查看照护团队 / 邀请医生</button>
+      <view wx:if="{{!careCapabilities}}" class="hint">医生接收状态尚未确认，可先保存家庭预案草稿。</view>
+      <view wx:if="{{plan && plan.status === 'PENDING_CLINICIAN'}}" class="hint">预案已提交，等待医生确认期间暂不可修改。</view>
+      <view wx:if="{{!canPlanWrite}}" class="hint">当前身份可查看预案；修改由患者本人或法定监护人完成。</view>
+      <view class="field-label">居住地 / 所在城市</view><input value="{{locationKey}}" data-field="locationKey" bindinput="input" maxlength="200" placeholder="例如：上海浦东" disabled="{{loading || syncing || !canPlanWrite || (plan && plan.status === 'PENDING_CLINICIAN')}}" />
+      <view class="field-label">首选医院</view><input value="{{hospitalName}}" data-field="hospitalName" bindinput="input" maxlength="200" placeholder="医院名称" disabled="{{loading || syncing || !canPlanWrite || (plan && plan.status === 'PENDING_CLINICIAN')}}" />
+      <input value="{{hospitalAddress}}" data-field="hospitalAddress" bindinput="input" maxlength="500" placeholder="医院地址（可选）" disabled="{{loading || syncing || !canPlanWrite || (plan && plan.status === 'PENDING_CLINICIAN')}}" />
+      <view class="field-label">夜间收治能力</view><picker mode="selector" range="{{['可以','不可以','待医生确认']}}" value="{{hospitalNightCapable === 'TRUE' ? 0 : hospitalNightCapable === 'FALSE' ? 1 : 2}}" bindchange="pickNight" disabled="{{loading || syncing || !canPlanWrite || (plan && plan.status === 'PENDING_CLINICIAN')}}"><view class="picker">{{nightText}}</view></picker>
+      <view class="field-label">到院用时（分钟）</view><view class="row"><input type="number" value="{{routeNight}}" data-field="routeNight" bindinput="input" maxlength="4" placeholder="夜间" disabled="{{loading || syncing || !canPlanWrite || (plan && plan.status === 'PENDING_CLINICIAN')}}" /><input type="number" value="{{routeDay}}" data-field="routeDay" bindinput="input" maxlength="4" placeholder="白天" disabled="{{loading || syncing || !canPlanWrite || (plan && plan.status === 'PENDING_CLINICIAN')}}" /></view>
+      <input value="{{routeNotes}}" data-field="routeNotes" bindinput="input" maxlength="1000" placeholder="路线备注（可选）" disabled="{{loading || syncing || !canPlanWrite || (plan && plan.status === 'PENDING_CLINICIAN')}}" />
+      <view class="field-label">交通方式</view><picker mode="selector" range="{{['自驾','出租车/网约车','救护车','其他']}}" value="{{transportPrimary === 'DRIVE' ? 0 : transportPrimary === 'TAXI' ? 1 : transportPrimary === 'AMBULANCE' ? 2 : 3}}" bindchange="pickTransport" disabled="{{loading || syncing || !canPlanWrite || (plan && plan.status === 'PENDING_CLINICIAN')}}"><view class="picker">{{transportText}}</view></picker>
+      <input value="{{transportBackup}}" data-field="transportBackup" bindinput="input" maxlength="500" placeholder="备用交通方式" disabled="{{loading || syncing || !canPlanWrite || (plan && plan.status === 'PENDING_CLINICIAN')}}" />
+      <input value="{{driverName}}" data-field="driverName" bindinput="input" maxlength="200" placeholder="司机 / 陪同人姓名" disabled="{{loading || syncing || !canPlanWrite || (plan && plan.status === 'PENDING_CLINICIAN')}}" />
+      <input value="{{driverPhone}}" data-field="driverPhone" bindinput="input" maxlength="80" placeholder="司机电话（可选）" disabled="{{loading || syncing || !canPlanWrite || (plan && plan.status === 'PENDING_CLINICIAN')}}" />
+      <button type="primary" bindtap="savePlan" disabled="{{loading || syncing || !canPlanWrite || (plan && plan.status === 'PENDING_CLINICIAN')}}">保存预案草稿</button>
+      <button wx:if="{{plan && plan.status === 'DRAFT'}}" class="secondary" bindtap="submitPlan" disabled="{{loading || syncing || !careCapabilities.hasTreatmentClinician || !canPlanWrite || (plan && plan.status === 'PENDING_CLINICIAN')}}">提交医生确认</button>
+      <view wx:if="{{plan && plan.thresholds.length}}" class="thresholds"><view class="field-label">必须立刻就医的情况</view><view wx:for="{{plan.thresholds}}" wx:key="code" class="line">• {{item.label}}</view></view>
+    </view>
+  </view>
+
+  <view class="card share-card">
+    <button class="disclosure" bindtap="toggleShareSettings" aria-expanded="{{shareSettingsOpen}}"><view><view class="card-title">分享简化应急卡</view><view class="hint">给家中长辈或临时陪同人一份行动指引</view></view><view class="disclosure-arrow">{{shareSettingsOpen ? '−' : '＋'}}</view></button>
+    <view wx:if="{{shareSettingsOpen}}" class="disclosure-body">
+      <view class="hint">只分享行动指引，不包含完整病历或用药明细；到期后将无法访问。</view>
+      <view wx:for="{{recipients}}" wx:key="code" class="check"><checkbox-group class="inline-check" bindchange="toggleRecipient" data-code="{{item.code}}"><checkbox value="{{item.code}}" checked="{{item.selected}}" disabled="{{syncing || !canShare}}" /></checkbox-group>{{item.label}}</view>
+      <button class="secondary" bindtap="share" disabled="{{syncing || !canShare}}">生成联系人分享链接</button>
+      <view wx:if="{{sharePath}}" class="hint">分享卡已准备好，可预览后转发给联系人。</view>
+      <button wx:if="{{shareCode}}" class="secondary" bindtap="openShare">打开联系人应急分享</button>
+      <button wx:if="{{shareCode}}" class="secondary" open-type="share">转发给联系人（微信卡片）</button>
+      <view wx:if="{{shares.length}}" class="section-title">已创建的分享</view>
+      <view wx:for="{{shares}}" wx:key="code" class="share-row"><view class="line">分享 {{index + 1}} · 有效至 {{item.expiresText}}</view><button size="mini" class="secondary" data-code="{{item.code}}" bindtap="revoke" disabled="{{syncing || !canShare || item.revokedAt}}">{{item.revokedAt ? '已撤回' : '撤回分享'}}</button></view>
+    </view>
+  </view>
+  <view wx:if="{{pendingCount || rejectedCount}}" class="card queue-card"><view class="card-title">待确认操作</view><view class="hint">等待同步 {{pendingCount}} 条 · 需要重试 {{rejectedCount}} 条</view><button class="secondary" bindtap="retry" disabled="{{syncing || (!pendingCount && !rejectedCount)}}">{{syncing ? '同步中…' : '联网重试'}}</button></view>
+  <button class="refresh-button" bindtap="refresh" loading="{{loading}}" disabled="{{loading || syncing || exporting}}">{{loading ? '正在核对…' : '刷新应急资料'}}</button>
+</view>

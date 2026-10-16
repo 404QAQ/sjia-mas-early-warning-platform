@@ -1,0 +1,5 @@
+@import "../../styles/patient.wxss";
+
+.communication-template { margin: 24rpx 0; padding: 24rpx; color: var(--mas-text-muted); background: var(--mas-surface-soft); border-left: 4rpx solid var(--mas-primary); border-radius: var(--mas-radius-small); font-size: 27rpx; line-height: 1.75; }
+.communication-template .field-label { margin: 0 0 12rpx; color: var(--mas-text-strong); font-weight: 600; }
+.completion-note { margin-top: 20rpx; color: var(--mas-success); font-size: 24rpx; }

@@ -1,0 +1,14 @@
+@import "../../styles/patient.wxss";
+
+.readonly { padding: 18rpx; background: var(--mas-surface-muted); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-control); }
+.code-card { border-color: var(--mas-focus); background: var(--mas-surface); }
+.section-title { margin-top: 22rpx; color: var(--mas-text-muted); font-weight: 700; }
+.code { display: block; margin: 22rpx 0 8rpx; color: var(--mas-primary); font-family: Menlo, Consolas, monospace; font-size: 60rpx; font-weight: 700; letter-spacing: 8rpx; text-align: center; }
+.script { display: block; margin-top: 12rpx; padding: 18rpx; color: var(--mas-text-muted); background: var(--mas-surface-soft); border-radius: var(--mas-radius-small); line-height: 1.7; }
+.row { padding: 18rpx 0; border-bottom: 1rpx solid var(--mas-border-soft); }
+.tag { margin-left: 12rpx; padding: 5rpx 12rpx; color: var(--mas-text-muted); background: var(--mas-surface-soft); border-radius: 999rpx; font-size: 22rpx; }
+button.danger { color: var(--mas-on-primary); background: var(--mas-danger); }
+.action-row { display: flex; align-items: stretch; gap: 16rpx; margin-top: 16rpx; }
+.page .action-row button { flex: 1; width: 0; margin: 0; }
+.recovery-area { margin: 28rpx 0 8rpx; padding-top: 20rpx; border-top: 1rpx solid var(--mas-border); }
+.recovery-button { width: 100%; }

@@ -1,0 +1,54 @@
+@import "../../styles/patient.wxss";
+
+.support-page { background: var(--mas-bg); }
+.support-status { display: flex; align-items: center; gap: 12rpx; margin-top: 20rpx; color: var(--mas-text-muted); font-size: 22rpx; }
+.support-status text { margin-left: auto; color: var(--mas-text-subtle); }
+.support-dot { width: 12rpx; height: 12rpx; background: var(--mas-success); border-radius: 50%; }
+.support-page .card, .mood-hero { padding: var(--mas-card-padding); }
+.message-hero { padding: var(--mas-card-padding); color: var(--mas-on-primary); background: var(--mas-primary); border-radius: var(--mas-radius-card); box-shadow: var(--mas-shadow-card); }
+.hero-title { font-size: 31rpx; font-weight: 700; }
+.hero-copy { margin-top: 12rpx; color: rgba(255,255,255,.84); font-size: 24rpx; line-height: 1.7; }
+.section-tabs { display: flex; gap: 12rpx; margin: 0 0 24rpx; padding: 6rpx; border-radius: var(--mas-radius-card); background: var(--mas-surface-soft); }
+.page .section-tabs button { flex: 1; min-height: var(--mas-control-height); margin: 0; padding: 12rpx; border-radius: var(--mas-radius-control); color: var(--mas-text-muted); background: transparent; font-size: 25rpx; line-height: 1.8; }
+.page .section-tabs button.selected { color: var(--mas-primary); background: var(--mas-surface); font-weight: 600; box-shadow: var(--mas-shadow-card); }
+.doctor-message.unread { border-color: var(--mas-focus); }
+.message-head { display: flex; align-items: center; gap: 12rpx; }
+.message-tag { flex: none; padding: 5rpx 12rpx; color: var(--mas-primary); background: var(--mas-surface-soft); border-radius: var(--mas-radius-small); font-size: 21rpx; }
+.message-tag.outgoing { color: var(--mas-on-primary); background: var(--mas-primary); }
+.message-title { flex: 1; color: var(--mas-text); font-size: 27rpx; font-weight: 600; }
+.unread-dot { flex: none; width: 12rpx; height: 12rpx; background: var(--mas-danger); border-radius: 50%; }
+.message-body { margin-top: 22rpx; color: var(--mas-text-muted); font-size: 26rpx; line-height: 1.8; white-space: pre-wrap; word-break: break-all; }
+.message-footer { display: flex; align-items: center; justify-content: space-between; gap: 12rpx; margin-top: 18rpx; color: var(--mas-text-subtle); font-size: 21rpx; }
+.page button.text-action { width: auto; min-height: var(--mas-control-height); margin: -12rpx 0; padding: 12rpx 0; color: var(--mas-primary); background: transparent; font-size: 24rpx; }
+.page .compose-card button { min-height: var(--mas-control-height); }
+.compose-card textarea { min-height: 220rpx; background: var(--mas-bg); }
+.footnote { margin-top: 14rpx; color: var(--mas-text-subtle); font-size: 21rpx; line-height: 1.65; }
+.loading-copy, .empty-copy { padding: 32rpx 0; color: var(--mas-text-subtle); font-size: 25rpx; text-align: center; }
+.mood-entry { display: flex; align-items: center; justify-content: space-between; gap: 18rpx; }
+.mood-entry > view { flex: 1; }
+.detail-hint { margin-top: 4rpx; color: var(--mas-text-subtle); font-size: 22rpx; line-height: 1.6; }
+.pending { margin-top: 14rpx; color: var(--mas-warning); font-size: 24rpx; line-height: 1.6; }
+.resource-row { padding: 18rpx 0; border-bottom: 1rpx solid var(--mas-border-soft); }
+.resource-row:last-child { border-bottom: 0; }
+.section-title { margin-top: 20rpx; color: var(--mas-text); font-size: 26rpx; font-weight: 700; }
+.page button.education-heading { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; min-height: var(--mas-control-height); margin: 0; padding: 8rpx 0; color: var(--mas-text); background: transparent; text-align: left; font-size: 26rpx; }
+.education-heading text:first-child { flex: 1; }
+.emergency-card { border-left: 5rpx solid var(--mas-warning); }
+.crisis-card { border-left: 5rpx solid var(--mas-danger); }
+.contact-row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; margin-top: 16rpx; padding-top: 16rpx; border-top: 1rpx solid var(--mas-border-soft); }
+.contact-label { color: var(--mas-text); font-size: 27rpx; font-weight: 700; }
+.page .contact-row button { width: auto; flex: 0 0 auto; margin-top: 0; }
+.crisis-degraded-notice { margin: 14rpx 0; padding: 16rpx; color: var(--mas-warning); background: var(--mas-warning-soft); border: 1rpx solid var(--mas-warning); border-radius: var(--mas-radius-control); font-size: 24rpx; line-height: 1.6; }
+.page button.recovery-button { width: 100%; min-height: var(--mas-control-height); margin: 28rpx 0 16rpx; }
+.consultation-card { border-left: 5rpx solid var(--mas-primary); }
+.consultation-row { margin-top: 18rpx; padding: 18rpx 0; border-top: 1rpx solid var(--mas-border-soft); }
+.consultation-head { display: flex; align-items: center; gap: 12rpx; }
+.consultation-head .message-title { flex: 1; }
+.consultation-event { display: flex; flex-direction: column; gap: 6rpx; margin-top: 12rpx; padding: 12rpx 16rpx; color: var(--mas-text-muted); background: var(--mas-surface-soft); border-radius: var(--mas-radius-small); font-size: 22rpx; line-height: 1.6; }
+.consultation-compose { margin-top: 16rpx; padding-top: 18rpx; border-top: 1rpx dashed var(--mas-border-soft); }
+.consultation-compose input, .consultation-compose textarea { box-sizing: border-box; width: 100%; margin-top: 12rpx; padding: 18rpx; color: var(--mas-text); background: var(--mas-bg); border: 1rpx solid var(--mas-border-soft); border-radius: var(--mas-radius-control); font-size: 25rpx; }
+.consultation-compose textarea { min-height: 160rpx; }
+.consultation-urgency { display: flex; gap: 12rpx; margin: 14rpx 0; }
+.consultation-urgency button { flex: 1; margin: 0; color: var(--mas-text-muted); background: var(--mas-surface-soft); }
+.consultation-urgency button.selected { color: var(--mas-primary); background: var(--mas-primary-soft); }
+.consultation-urgency button.selected.urgent { color: var(--mas-danger); background: var(--mas-danger-soft); }

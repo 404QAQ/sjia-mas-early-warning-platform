@@ -1,0 +1,7 @@
+@import "../../styles/patient.wxss";
+
+.choices { display: flex; flex-direction: column; gap: 12rpx; }
+.page button.choice { margin: 0; padding: 18rpx; color: var(--mas-text-muted); background: var(--mas-surface); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-control); text-align: left; }
+.page button.choice.selected { color: var(--mas-primary); background: var(--mas-surface-soft); border-color: var(--mas-focus); }
+.field { margin: 18rpx 0; }
+.field-label { margin-bottom: 8rpx; color: var(--mas-text); font-size: 27rpx; font-weight: 600; }

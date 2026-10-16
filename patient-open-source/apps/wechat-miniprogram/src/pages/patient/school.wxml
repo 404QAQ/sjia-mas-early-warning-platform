@@ -1,0 +1,75 @@
+<view class="page patient-page">
+  <view class="title">上学这件事</view>
+  <view class="hint">告诉学校多少，是很多家长都纠结的事。说太少，出事时没人会应对；说太多，孩子可能被贴标签。这里按接收对象分层设置，不会一键全告诉。</view>
+  <view class="hint">{{view.guidance}}</view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{notice}}" class="message" role="status">{{notice}}</view>
+  <view wx:if="{{pendingText}}" class="warn" role="status">{{pendingText}}<button size="mini" bindtap="retry" disabled="{{saving}}">重试原操作</button></view>
+  <view wx:if="{{loading && !view}}" class="hint">正在读取校园告知设置…</view>
+
+  <block wx:if="{{view}}">
+    <view class="card">
+      <view class="card-title">向学校告知多少</view>
+      <checkbox-group bindchange="changeRecipients">
+        <label wx:for="{{tiers}}" wx:key="role" class="tier">
+          <checkbox value="{{item.role}}" checked="{{item.selected}}" disabled="{{saving}}" />
+          <view class="tier-body">
+            <view class="tier-head">{{item.title}} · {{item.levelText}}</view>
+            <view class="hint">{{item.detail}}</view>
+            <view wx:if="{{item.generatedAt}}" class="hint">已保存沟通准备</view>
+          </view>
+        </label>
+        <view class="hint">学期</view>
+        <picker range="{{termOptions}}" range-key="label" value="{{termIndex}}" bindchange="pickTerm" disabled="{{saving}}"><view class="picker">{{termOptions[termIndex].label || '选择学期'}}</view></picker>
+      </checkbox-group>
+      <button class="primary" size="mini" bindtap="saveSettings" disabled="{{saving}}">保存分层设置</button>
+      <view class="hint">勾选后按「保存分层设置」生效；改动不会自动提交。</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">向学校沟通前的准备</view>
+      <view class="hint">以下准备单来自已保存的告知设置，方便逐项沟通。它不是医疗证明，也未发送给学校。</view>
+      <view wx:for="{{communicationNotes}}" wx:key="role" class="communication-note">
+        <view class="field-label">{{item.title}}</view>
+        <view wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this" class="line">{{line}}</view>
+        <view wx:if="{{item.prepared}}" class="hint">沟通准备已保存</view>
+        <button class="secondary" size="mini" data-role="{{item.role}}" bindtap="generate" disabled="{{saving}}">{{item.prepared ? '更新准备记录' : '保存沟通准备'}}</button>
+      </view>
+      <view wx:if="{{!communicationNotes.length}}" class="hint">先在上方选择需要沟通的老师并保存，准备单会显示在这里。</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">体育课</view>
+      <picker range="{{peOptions}}" range-key="label" value="{{peIndex}}" bindchange="changePe" disabled="{{saving}}">
+        <view class="picker">{{peText}}</view>
+      </picker>
+      <view class="hint">体育课怎么安排，按孩子自己的情况来。不是免修就更好——能参与对他也重要。</view>
+      <view wx:if="{{peOptions[peIndex].value === 'EXEMPT'}}" class="hint">免修需要医生先给证明编号；这不会生成或核验医疗证明。</view>
+      <input wx:if="{{peOptions[peIndex].value === 'EXEMPT'}}" value="{{noteRef}}" bindinput="changeNote" maxlength="200" placeholder="医生证明编号" disabled="{{saving}}" />
+      <button class="secondary" size="mini" bindtap="savePe" disabled="{{saving}}">保存体育课安排</button>
+      <view class="hint">当前：{{peText}}</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">同学这一层</view>
+      <view class="hint">{{peerNotice}}</view>
+      <block wx:if="{{canChoosePeer && !view.disclosure.peerDecision}}">
+        <view class="button-row peer-actions">
+          <button class="secondary" size="mini" data-decision="SHARE" bindtap="choosePeer" disabled="{{saving}}">愿意分享</button>
+          <button class="tertiary" size="mini" data-decision="DO_NOT_SHARE" bindtap="choosePeer" disabled="{{saving}}">暂不分享</button>
+        </view>
+      </block>
+    </view>
+
+    <view class="card">
+      <view class="card-title">学校联系人</view>
+      <view wx:if="{{view.disclosure.schoolEmergencyContact}}" class="line">
+        {{view.disclosure.schoolEmergencyContact.name}} · {{view.disclosure.schoolEmergencyContact.relation}} · {{view.disclosure.schoolEmergencyContact.phoneMasked}} · {{view.disclosure.schoolEmergencyContact.authorized ? '已授权' : '未授权'}}
+      </view>
+      <view wx:else class="hint">尚未设置学校联系人。需要学校在最坏的时刻找得到人，这一项不能空着。</view>
+    </view>
+  </block>
+
+  <view wx:if="{{view && view.disclosure.term}}" class="hint">新学期如果换了班主任，记得重新核对告知设置（当前 {{savedTermLabel}}）。</view>
+  <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading || saving}}">重新读取校园告知</button>
+</view>

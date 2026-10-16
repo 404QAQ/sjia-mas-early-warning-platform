@@ -1,0 +1,20 @@
+<view class="page patient-page">
+  <view class="title">化验与长期监测</view>
+  <view class="hint">查看化验历史、监测安排与缓解期资料，复诊时逐项核对。</view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+
+  <view wx:if="{{loading}}" class="hint">正在读取健康资料…</view>
+  <block wx:for="{{sections}}" wx:key="key">
+    <view id="section-{{item.key}}" class="card">
+      <view class="card-title">{{item.title}}</view>
+      <view wx:if="{{item.state === 'LOADING'}}" class="hint">读取中…</view>
+      <view wx:elif="{{item.state === 'DENIED'}}" class="error" role="alert">{{item.message}}<text class="subhint">当前身份无权查看这部分内容。</text></view>
+      <view wx:elif="{{item.state === 'UNAVAILABLE'}}" class="error" role="alert">{{item.message}}</view>
+      <view wx:elif="{{item.items.length === 0}}" class="hint">{{item.message || '暂无已确认内容。'}}</view>
+      <block wx:else>
+        <view wx:for="{{item.items}}" wx:for-item="line" wx:key="*this" class="line">{{line}}</view>
+      </block>
+    </view>
+  </block>
+  <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading}}">重新读取健康资料</button>
+</view>

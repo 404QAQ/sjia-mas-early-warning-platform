@@ -1,0 +1,54 @@
+<view class="page patient-page">
+  <view class="support-hero"><view class="support-hero-title">需要的话，随时可以</view><button class="support-route" bindtap="openCrisis"><view><view class="support-route-title">现在想找人聊聊</view><view class="support-route-note">查看经核验的热线与当前可联系的人</view></view><text>›</text></button><button class="support-route" bindtap="openCareMessage"><view><view class="support-route-title">给随诊医生留言</view><view class="support-route-note">记录最近的感受，复诊时一起沟通</view></view><text>›</text></button></view>
+  <view class="assessment-status assessment-{{assessmentState === '已提交' || assessmentState === '已完成' ? 'done' : assessmentState === '待完成' ? 'ready' : assessmentState === '暂未开放' ? 'muted' : 'loading'}}">
+    <view class="assessment-status-icon">{{assessmentState === '已提交' || assessmentState === '已完成' ? '✓' : assessmentState === '待完成' ? '○' : '·'}}</view>
+    <view class="assessment-status-copy">
+      <view class="assessment-status-title">{{assessmentState}}</view>
+      <view class="assessment-status-detail">{{assessmentDetail}}</view>
+    </view>
+    <view wx:if="{{visit && answers.length}}" class="assessment-progress">{{answeredCount}}/{{answers.length}}</view>
+  </view>
+  <view wx:if="{{pendingCount || rejectedCount}}" class="queue" role="status">
+    <view>本机待确认问卷：{{pendingCount}} 条<text wx:if="{{rejectedCount}}">，需要处理：{{rejectedCount}} 条</text></view>
+    <button size="mini" bindtap="retry" loading="{{saving}}" disabled="{{saving}}">重试提交</button>
+  </view>
+  <view wx:if="{{loading}}" class="card"><view class="hint">正在读取…</view></view>
+  <view wx:elif="{{error}}" class="error" role="alert">{{error}}</view>
+  <block wx:if="{{!loading && form}}">
+      <view class="card form-intro-card"><view class="card-title">一个小问卷 · {{form.title}}</view><view class="hint">{{form.intro}}</view><view class="privacy-note"><text>仅用于复诊沟通，每题都可以选择“不想回答”。</text></view></view>
+    <view wx:if="{{!visit}}" class="card"><view class="card-title">当前没有待填写事项</view><view class="hint">当前没有已开放的复诊事项。可以先记下要沟通的问题，并按医院预约信息安排复诊。</view></view>
+    <view wx:else class="card">
+      <view class="visit-banner"><view class="visit-label">本次复诊</view><view class="visit-date">{{visitDateLabel}}</view><view class="visit-note">建议在复诊前完成，回答会保存在当前照护档案；提交不代表医生已经查看。</view></view>
+      <view wx:for="{{answers}}" wx:key="code" class="question">
+        <view class="question-title">{{index + 1}}. {{item.prompt}}</view>
+        <view class="answer-options"><button wx:for="{{item.options}}" wx:for-item="option" wx:for-index="optionIndex" wx:key="value" class="answer-option {{item.selected === option.value ? 'is-selected' : ''}}" data-code="{{item.code}}" data-index="{{optionIndex}}" bindtap="selectAnswer" disabled="{{saving}}" aria-pressed="{{item.selected === option.value}}">{{option.label}}</button></view>
+      </view>
+      <button class="primary submit-button" bindtap="submit" loading="{{saving}}" disabled="{{saving}}">{{saving ? '正在提交…' : '提交本次记录'}}</button>
+    </view>
+  </block>
+  <view wx:if="{{notice}}" class="message" role="status">{{notice}}</view>
+  <view wx:if="{{responseLoading}}" class="card" role="status"><view class="hint">正在读取提交后的安排…</view></view>
+  <view wx:if="{{nextStep}}" class="card next-step-card">
+    <view class="card-title">提交后的安排</view>
+    <view wx:if="{{nextStep.status === 'OFFERED'}}">
+      <view class="hint">照护团队提供了几个可选时段。你可以先选一个，最终预约仍需人工确认。</view>
+      <view wx:for="{{nextStep.slots}}" wx:key="id" class="resource-row">
+        <view class="line">{{item.label}}</view>
+        <button class="secondary" size="mini" data-id="{{item.id}}" bindtap="chooseReferral" loading="{{referralSaving}}" disabled="{{referralSaving}}">选择此时段</button>
+      </view>
+    </view>
+    <view wx:elif="{{nextStep.status === 'ACCEPTED_PENDING_BOOKING'}}" class="hint">已记录你的时段选择，照护团队确认后会再通知你。</view>
+    <view wx:elif="{{nextStep.status === 'DECLINED'}}" class="hint">你暂不选择时段；复诊时仍可以直接和照护团队聊聊最近的状态。</view>
+    <view wx:elif="{{nextStep.status === 'UNAVAILABLE'}}" class="hint">当前没有可用时段，请在复诊时告诉照护团队你需要支持。</view>
+    <view wx:else class="hint">请在复诊时与医生核对是否需要后续安排。</view>
+  </view>
+  <view wx:if="{{crisisSupport}}" class="card crisis-card">
+    <view class="card-title">现在可以联系这些人</view>
+    <view class="hint">你刚才填的内容里有一些需要立刻回应的部分。这里是可以现在就联系的真人，不是让你等复诊。</view>
+    <view class="hint">你可以自己决定是否拨打；系统不会替你联系任何人，也不代替急诊。</view>
+    <button class="primary" bindtap="openCrisis">打开可联系的人</button>
+  </view>
+  <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="load" disabled="{{loading || saving}}">重新读取复诊事项</button>
+  <view wx:if="{{visitHistory.length}}" class="card history-card"><view class="card-title">最近的记录</view><view class="hint">按复诊回顾最近的状态，不作单次评判。</view><view wx:for="{{visitHistory}}" wx:key="id" class="history-row"><text>{{item.date}}</text><view>{{item.status}}</view></view></view>
+  <view wx:if="{{canWriteDiary}}" class="card vent-card"><view><view class="card-title">今天很烦</view><view class="hint">留给自己的记录，不会自动通知医生。</view></view><button class="secondary" bindtap="openPrivateDiary">说说</button></view>
+</view>

@@ -1,0 +1,10 @@
+@import "../../styles/patient.wxss";
+@import "./safety-common.wxss";
+
+.subhint { display: block; margin-top: 10rpx; color: var(--mas-text-subtle); }
+.line:last-child { border-bottom: 0; }
+.family-settings-card { border-left: 6rpx solid var(--mas-primary); }
+.screening-entry-card { border-left: 6rpx solid var(--mas-text-muted); }
+.action-stack { margin-top: 18rpx; }
+.action-stack button { width: 100%; margin: 12rpx 0; }
+.recovery-button { width: 100%; }

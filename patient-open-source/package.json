@@ -1,0 +1,19 @@
+{
+  "name": "sjia-patient-platform",
+  "private": true,
+  "version": "0.1.0",
+  "description": "sJIA 患者端微信小程序与患者 API 公开版",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20.10 <21"
+  },
+  "scripts": {
+    "build": "pnpm -r --if-present build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "build:miniprogram": "pnpm --filter @mas/wechat-miniprogram build",
+    "start:patient-api": "pnpm --filter @mas/patient-api start",
+    "test:patient-api": "pnpm --filter @mas/patient-api test",
+    "check:wxml": "node scripts/check-wxml.mjs apps/wechat-miniprogram/src"
+  }
+}

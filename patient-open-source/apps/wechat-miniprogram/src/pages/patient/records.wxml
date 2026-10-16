@@ -1,0 +1,61 @@
+<view class="page patient-page tab-page">
+  <view class="page-subtitle">日常监测 · 每条记录都会留下记录人与时间</view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}<button class="text-button" bindtap="load" disabled="{{loading}}">重新读取</button></view>
+  <view wx:if="{{message}}" class="message" role="status">{{message}}</view>
+  <view wx:if="{{trend && trend.decisionCard.actionLevel === 'ACT_NOW'}}" class="error" role="alert"><view>{{trend.decisionCard.title}}</view><view>{{trend.decisionCard.action}}</view></view>
+
+  <button class="entry-card symptom-entry" bindtap="openSymptomEntry">
+    <view class="entry-icon orange">🩹</view>
+    <view class="entry-copy"><view class="entry-title">症状速记</view><view class="entry-desc">点选症状，留下变化</view></view>
+    <text class="entry-arrow">›</text>
+  </button>
+  <view class="entry-grid">
+    <button class="entry-card" bindtap="openFollowupEntry">
+      <view class="entry-copy"><view class="entry-icon blue">📅</view><view class="entry-title">随访日期</view><view class="entry-desc">设定复诊提醒</view></view>
+      <view class="entry-summary"><view class="summary-main blue-text">{{followupSummary}}</view><view wx:if="{{followupPlace}}" class="summary-sub">{{followupPlace}}</view></view>
+    </button>
+    <button class="entry-card" bindtap="openAssessmentEntry">
+      <view class="entry-copy"><view class="entry-icon violet">💬</view><view class="entry-title">心理评估</view><view class="entry-desc">填写最近的状态</view></view>
+      <view class="entry-summary"><view class="summary-main violet-text">{{screeningStatus}}</view><view class="summary-sub">复诊前状态</view></view>
+    </button>
+    <button class="entry-card" bindtap="openVaccinationEntry">
+      <view class="entry-copy"><view class="entry-icon teal">💉</view><view class="entry-title">疫苗日历</view><view class="entry-desc">接种记录 / 流感窗口</view></view>
+      <view class="entry-summary"><view class="summary-main teal-text">{{vaccinationSummary}}</view><view class="summary-sub">查看接种安排</view></view>
+    </button>
+    <button class="entry-card" bindtap="openDiaryEntry">
+      <view class="entry-copy"><view class="entry-icon gray">🔒</view><view class="entry-title">私人记录</view><view class="entry-desc">仅患者本人可见</view></view>
+      <view class="entry-summary"><view class="summary-main muted-text">{{canOpenDiary ? '私人空间' : '隐私保护'}}</view><view class="summary-sub">{{canOpenDiary ? '记录自己的感受' : '家属不可代看'}}</view></view>
+    </button>
+  </view>
+
+  <view class="section-heading"><view class="section-title">最近症状</view><button class="text-button" bindtap="openSymptomEntry">去速记</button></view>
+  <view class="card symptoms-card">
+    <view wx:if="{{loading}}" class="empty-copy">正在读取最近症状…</view>
+    <view wx:elif="{{observationsNotice}}" class="empty-copy">{{observationsNotice}}</view>
+    <view wx:elif="{{!hubSymptoms.length}}" class="empty-copy">暂无症状记录，可从「症状速记」开始。</view>
+    <view wx:for="{{hubSymptoms}}" wx:key="id" class="symptom-row">
+      <view class="symptom-tags"><text wx:for="{{item.items}}" wx:for-item="label" wx:key="*this" class="symptom-tag">{{label}}</text></view>
+      <view class="row-meta">{{item.at}} · {{item.source}}</view>
+    </view>
+  </view>
+
+  <view class="section-heading"><view class="section-title">用药记录</view><button class="text-button" bindtap="openMedicationEntry">+ 新增用药</button></view>
+  <view class="card medication-card">
+    <view wx:if="{{loading}}" class="empty-copy">正在读取用药记录…</view>
+    <view wx:elif="{{medicationNotice}}" class="empty-copy">{{medicationNotice}}</view>
+    <view wx:elif="{{!medicationRecords.length}}" class="empty-copy">暂无已确认的用药记录，可进入用药管理核对计划。</view>
+    <view wx:for="{{medicationRecords}}" wx:key="id" class="medication-row">
+      <view class="medication-head"><view class="medication-name">{{item.drug}}<text class="medication-dose">{{item.dose}}</text></view><text class="status-tag">已服</text></view>
+      <view class="row-meta">{{item.recordedAt}} · 已确认服药记录</view>
+    </view>
+    <button class="text-button all-medications" bindtap="openMedicationEntry">查看全部用药 / 打卡</button>
+  </view>
+
+  <view class="section-heading"><view class="section-title">随访日期</view><button class="text-button" bindtap="openFollowupEntry">管理</button></view>
+  <view class="card followup-card"><view class="followup-date">{{followupLabel}}</view><view class="row-meta">复诊前核对近期症状、化验和用药情况</view></view>
+  <view class="section-heading"><view class="section-title">心理评估</view><button class="text-button" bindtap="openAssessmentEntry">去评估</button></view>
+  <view class="card"><view class="assessment-head"><text>最近一次</text><text class="assessment-status">{{screeningStatus}}</text></view><view class="row-meta">{{screeningLastRecord}}</view><view class="assessment-copy">{{screeningDetail}}</view></view>
+  <button class="temperature-entry" bindtap="openTemperatureEntry"><view><view class="entry-title">体温记录</view><view class="entry-desc">{{lastTemperatureLabel ? '上次 ' + lastTemperatureLabel : '填写体温计的实测数值'}}</view></view><text class="entry-arrow">›</text></button>
+  <button class="temperature-entry" bindtap="openJoint"><view><view class="entry-title">关节情况</view><view class="entry-desc">晨僵、疼痛和活动变化</view></view><text class="entry-arrow">›</text></button>
+  <view wx:if="{{pendingCount || rejectedCount}}" class="queue-card"><view>尚未同步：待提交 {{pendingCount}} 条 · 需重试 {{rejectedCount}} 条</view><button class="text-button" bindtap="retryQueue" disabled="{{syncing}}">{{syncing ? '同步中…' : '重新同步'}}</button></view>
+</view>

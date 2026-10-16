@@ -1,0 +1,98 @@
+/* 生活封面只呈现天气、出行与家庭备忘录类内容，不展示身份、病种、告警或用药信息。 */
+page { background: #f2f5f8; }
+
+.page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding-bottom: calc(42rpx + env(safe-area-inset-bottom));
+  background: #f2f5f8;
+  color: #243142;
+}
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 96rpx;
+  box-sizing: border-box;
+  padding: 0 36rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #eef1f4;
+}
+.nav-title { color: #202c3d; font-size: 32rpx; font-weight: 700; letter-spacing: 1rpx; }
+.nav-meta { position: absolute; right: 36rpx; color: #98a5b5; font-size: 21rpx; }
+
+.weather-hero {
+  position: relative;
+  box-sizing: border-box;
+  min-height: 406rpx;
+  padding: 31rpx 32rpx 34rpx;
+  overflow: hidden;
+  border-radius: 0 0 42rpx 42rpx;
+  background: #09a9e6;
+  color: #fff;
+}
+.weather-hero::after {
+  content: '';
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -96rpx;
+  height: 162rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .11);
+}
+.hero-topline { display: flex; gap: 16rpx; color: rgba(255, 255, 255, .92); font-size: 23rpx; line-height: 1.5; }
+.hero-row { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; margin-top: 18rpx; }
+.hero-copy { flex: 1; min-width: 0; }
+.hero-title { max-width: 460rpx; font-size: 53rpx; font-weight: 700; line-height: 1.22; letter-spacing: 1rpx; }
+.hero-subtitle { margin-top: 7rpx; color: rgba(255, 255, 255, .93); font-size: 25rpx; }
+.hero-sun { display: flex; align-items: center; justify-content: center; width: 104rpx; height: 104rpx; border-radius: 50%; background: rgba(255, 255, 255, .14); }
+.hero-sun-core { width: 50rpx; height: 50rpx; border-radius: 50%; background: #ffe38d; box-shadow: 0 0 0 10rpx rgba(255, 227, 141, .22); }
+.hero-pills { display: flex; gap: 16rpx; position: relative; z-index: 1; margin-top: 27rpx; }
+.hero-pill { flex: 1; min-width: 0; box-sizing: border-box; min-height: 102rpx; padding: 18rpx 16rpx; border-radius: 28rpx; background: rgba(255, 255, 255, .21); }
+.pill-label { color: rgba(255, 255, 255, .84); font-size: 21rpx; }
+.pill-value { display: -webkit-box; overflow: hidden; margin-top: 6rpx; color: #fff; font-size: 25rpx; font-weight: 650; line-height: 1.35; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+
+.content { padding: 0 28rpx; }
+.section-card, .tip-card, .memo-card { box-sizing: border-box; border: 1rpx solid #dfe5eb; border-radius: 18rpx; background: #fff; box-shadow: 0 2rpx 8rpx rgba(26, 45, 67, .025); }
+.section-card { position: relative; z-index: 2; margin-top: -26rpx; padding: 29rpx 28rpx 22rpx; }
+.weather-index { overflow: hidden; }
+.section-heading, .memo-heading { display: flex; align-items: center; justify-content: space-between; }
+.section-title, .memo-title { color: #243142; font-size: 28rpx; font-weight: 700; }
+.live-badge { padding: 8rpx 19rpx; border-radius: 28rpx; background: #f3f5f7; color: #8a97a6; font-size: 20rpx; }
+.index-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18rpx; margin-top: 23rpx; }
+.index-cell { min-height: 102rpx; box-sizing: border-box; padding: 20rpx 22rpx; border-radius: 18rpx; background: #f6f8fa; }
+.index-label { color: #94a0ae; font-size: 21rpx; }
+.index-value { margin-top: 8rpx; color: #263346; font-size: 28rpx; font-weight: 700; }
+.index-list { margin-top: 18rpx; }
+.index-line { display: flex; align-items: center; justify-content: space-between; min-height: 67rpx; border-bottom: 1rpx solid #f0f2f4; color: #667487; font-size: 23rpx; }
+.index-line:last-child { border-bottom: 0; }
+.index-strong { color: #273448; font-size: 24rpx; font-weight: 650; }
+.index-muted { margin-left: 13rpx; color: #9aa6b4; font-size: 20rpx; }
+
+.tip-card { display: flex; align-items: center; gap: 20rpx; margin-top: 20rpx; padding: 22rpx 24rpx; }
+.tip-icon { display: flex; align-items: center; justify-content: center; flex: none; width: 66rpx; height: 66rpx; border-radius: 50%; background: #eef8ff; color: #0b9ed5; font-size: 27rpx; font-weight: 700; }
+.tip-copy { flex: 1; min-width: 0; }
+.tip-title { color: #273448; font-size: 27rpx; font-weight: 700; }
+.tip-detail { overflow: hidden; margin-top: 7rpx; color: #68778a; font-size: 23rpx; line-height: 1.45; text-overflow: ellipsis; white-space: nowrap; }
+.tip-chevron { width: 13rpx; height: 13rpx; border-top: 3rpx solid #b6c1ce; border-right: 3rpx solid #b6c1ce; transform: rotate(45deg); }
+
+.memo-card { margin-top: 20rpx; padding: 27rpx 24rpx 19rpx; }
+.memo-title { display: flex; align-items: center; gap: 11rpx; }
+.memo-icon { display: flex; align-items: center; justify-content: center; width: 31rpx; height: 31rpx; border-radius: 7rpx; background: #edf6ff; color: #5c95c5; font-size: 20rpx; }
+.memo-count { color: #98a5b4; font-size: 21rpx; }
+.memo-item { display: flex; align-items: flex-start; gap: 13rpx; margin-top: 22rpx; padding-bottom: 17rpx; border-bottom: 1rpx solid #f0f2f5; }
+.memo-item:last-child { padding-bottom: 0; border-bottom: 0; }
+.memo-bullet { flex: none; width: 11rpx; height: 11rpx; margin-top: 11rpx; border-radius: 50%; background: #56afd9; }
+.memo-text { color: #69788b; font-size: 24rpx; line-height: 1.6; }
+
+.page button.entry { display: flex; align-items: center; justify-content: center; gap: 20rpx; box-sizing: border-box; width: 100%; min-height: 88rpx; margin: 30rpx 0 0; padding: 22rpx; border-radius: 14rpx; background: #078e89; color: #fff; font-size: 28rpx; font-weight: 650; line-height: 1.5; }
+.page button.entry::after { border: 0; }
+.entry[disabled] { opacity: .65; }
+.entry-arrow { width: 12rpx; height: 12rpx; border-top: 3rpx solid currentColor; border-right: 3rpx solid currentColor; transform: rotate(45deg); }
+.entry-note { margin-top: 15rpx; color: #97a2ae; font-size: 21rpx; text-align: center; }
+.entry-error { box-sizing: border-box; margin-top: 20rpx; padding: 22rpx 24rpx; border: 1rpx solid #f1c8c5; border-radius: 16rpx; background: #fff8f7; }
+.entry-error-title { color: #a83f36; font-size: 25rpx; font-weight: 700; }
+.entry-error-detail { margin-top: 9rpx; color: #8a5a55; font-size: 22rpx; line-height: 1.55; }

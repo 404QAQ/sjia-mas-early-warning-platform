@@ -1,0 +1,85 @@
+<view class="page patient-page tab-page">
+  <view class="profile-card">
+    <view class="profile-top"><view class="profile-avatar">{{profileInitial}}</view><view class="profile-main">
+      <view class="profile-name">{{profileName}}</view>
+      <view class="profile-subtitle">{{profileSexLabel === '男性' ? '男' : profileSexLabel === '女性' ? '女' : profileSexLabel}}<text wx:if="{{profileAgeLabel}}"> · {{profileAgeLabel}}</text> · {{profileStage === '儿童期' ? '儿童 · 家长照护' : profileStage === '过渡期' ? '青少年 · 逐步接手' : profileStage === '成人期' ? '成人 · 自主管理' : profileStage}}</view>
+      <view wx:if="{{profileDiagnosis}}" class="profile-diagnosis">{{profileDiagnosis}}</view>
+    </view></view>
+    <view class="profile-badges"><text class="profile-badge">{{profileMsScore ? 'MS ' + profileMsScore : '记录 ' + profileRecordCount + ' 项'}}</text><text wx:if="{{profileMsChange}}" class="profile-badge">{{profileMsChange}}</text><text wx:if="{{profileLastActive}}" class="profile-badge">最后活跃 {{profileLastActive}}</text><text wx:elif="{{!profileMsChange}}" class="profile-badge">{{profileSubtitle}}</text></view>
+  </view>
+  <view wx:if="{{profileLoading}}" class="profile-note">正在核对当前档案…</view>
+  <view wx:if="{{profileNotice}}" class="profile-note" role="status">{{profileNotice}} 可刷新后重试。</view>
+  <view class="section-heading">安全与就诊</view>
+  <view class="entry-list safety-list">
+    <button class="entry-row" data-key="contacts" bindtap="openFeature"><view class="reference-icon">🛟</view><view class="entry-copy"><view class="entry-title">紧急联系人</view><view class="entry-detail">联系人授权 · 级联通知</view></view><view class="entry-chevron">›</view></button>
+    <button class="entry-row" data-key="emergency" bindtap="openFeature"><view class="reference-icon">🏥</view><view class="entry-copy"><view class="entry-title">急诊摘要卡</view><view class="entry-detail">应急预案 · 就医准备</view></view><view class="entry-chevron">›</view></button>
+    <button class="entry-row" data-key="transition" bindtap="openFeature"><view class="reference-icon">🤝</view><view class="entry-copy"><view class="entry-title">交接与隐私边界</view><view class="entry-detail">青少年渐进权限 / 18岁交接</view></view><view class="entry-chevron">›</view></button>
+    <button class="entry-row" data-key="inbox" bindtap="openFeature"><view class="reference-icon">🔔</view><view class="entry-copy"><view class="entry-title">消息通知</view><view class="entry-detail">用药提醒与站内通知</view></view><text wx:if="{{notificationCount}}" class="notification-badge">{{notificationCount}}</text><view class="entry-chevron">›</view></button>
+  </view>
+  <button class="more-settings" bindtap="toggleMore" aria-expanded="{{moreExpanded}}"><text>更多健康与隐私设置</text><text>{{moreExpanded ? '收起 ⌃' : '展开 ›'}}</text></button>
+  <block wx:if="{{moreExpanded}}">
+    <view class="profile-section" wx:for="{{profileGroups}}" wx:key="title">
+      <view class="section-heading">{{item.title}}</view><view class="entry-list">
+        <button wx:for="{{item.entries}}" wx:for-item="entry" wx:key="key" class="entry-row" data-key="{{entry.key}}" bindtap="openFeature"><view class="entry-icon entry-{{entry.tone}}" aria-hidden="true"><view class="entry-glyph glyph-{{entry.icon}}"></view></view><view class="entry-copy"><view class="entry-title">{{entry.title}}</view><view class="entry-detail">{{entry.detail}}</view></view><view class="entry-chevron">›</view></button>
+      </view>
+    </view>
+    <button class="cover-button" bindtap="openCover">返回生活首页</button>
+  <view class="privacy-footer">你的资料按当前身份和授权范围展示，私密内容由你掌握。</view>
+
+  <view class="archive-heading">档案管理</view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{notice}}" class="message" role="status">{{notice}}</view>
+  <view wx:if="{{pendingText}}" class="warn" role="status">{{pendingText}}<button size="mini" bindtap="retry" disabled="{{saving}}">重试原操作</button></view>
+  <view wx:if="{{loading && !lifecycle}}" class="hint">正在读取档案状态…</view>
+
+  <block wx:if="{{lifecycle}}">
+    <view class="card">
+      <!-- 这一段默认不展开：灰色按钮是一道缓冲，避免每次进来自动读一遍「孩子不在了」这种字眼。
+           点开后展示的内容与措辞与收起前完全一致，没有增加也没有删减任何选项。 -->
+      <view wx:if="{{!showingChoices}}">
+        <button class="quiet" bindtap="showChoices">了解档案可以怎么处置</button>
+      </view>
+      <block wx:else>
+        <view class="card-title">{{profileStage === '儿童期' ? '如果孩子不在了' : '档案保留与停止提醒'}}</view>
+        <view class="line">你可以告诉我们。我们会停止所有提醒 —— 不会再有任何消息发过来。</view>
+        <view class="line">你可以选择：</view>
+        <view class="line">· 转为纪念档案 —— 记录会保留，你随时可以看，但不会再有任何提醒</view>
+        <view class="line">· 全部删除 —— 我们会删除所有记录</view>
+        <view class="hint">{{note}}</view>
+      </block>
+    </view>
+
+    <view wx:for="{{sections}}" wx:key="title" class="card">
+      <view class="card-title">{{item.title}}</view>
+      <view class="line">{{item.body}}</view>
+    </view>
+
+    <!-- 真正的动作只在展开后出现，并且各自还有一层确认，不会在一次点击里完成。 -->
+    <block wx:if="{{showingChoices}}">
+      <view wx:if="{{canMemorial}}" class="card">
+        <view class="card-title">转为纪念档案</view>
+        <view class="line">记录会保留，你随时可以回来看。不会有人再看到它，也不会用于任何统计或研究。</view>
+        <button class="secondary" bindtap="memorial" disabled="{{saving}}">转为纪念档案</button>
+      </view>
+
+      <view wx:if="{{canDelete}}" class="card">
+        <view class="card-title">全部删除</view>
+        <view class="line">我们会删除所有记录。这件事不需要你现在决定。</view>
+        <block wx:if="{{!confirmingDelete}}">
+          <button class="secondary" bindtap="askDelete" disabled="{{saving}}">了解详情</button>
+        </block>
+        <block wx:else>
+          <view class="line">删除会在申请后 3 天生效，期间可以撤回。删除之后无法恢复。</view>
+          <button class="danger" bindtap="requestDelete" disabled="{{saving}}">确认申请删除</button>
+          <button class="secondary" bindtap="cancelDeleteAsk" disabled="{{saving}}">先不删除</button>
+        </block>
+      </view>
+    </block>
+
+
+  </block>
+
+  <button wx:if="{{error || profileNotice}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading || saving}}">重新读取个人档案</button>
+  </block>
+  <view wx:if="{{lifecycle && canCancel}}" class="card"><view class="card-title">撤回删除申请</view><button class="secondary" bindtap="cancelDelete" disabled="{{saving}}">撤回删除申请</button></view>
+</view>

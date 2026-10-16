@@ -1,0 +1,408 @@
+@import "../../styles/patient.wxss";
+.page { min-height: 100vh; box-sizing: border-box; background: var(--mas-bg); color: var(--mas-text); }
+button { box-sizing: border-box; }
+.profile-head, .card-heading, .profile-foot { display: flex; align-items: center; justify-content: space-between; gap: 12rpx; }
+.profile-head { padding: 4rpx 4rpx 22rpx; }
+.profile-main { flex: 1; min-width: 0; }
+.patient-name { font-size: 36rpx; font-weight: 700; line-height: 1.4; }
+.patient-age { margin-left: 6rpx; color: var(--mas-text-muted); font-size: 24rpx; font-weight: 400; }
+.profile-meta { line-height: 1.7; margin-top: 6rpx; font-size: 23rpx; color: var(--mas-text-muted); }
+.record-count { display: inline-block; margin-left: 10rpx; }
+.profile-notice { margin: 0 4rpx 18rpx; font-size: 23rpx; line-height: 1.6; color: var(--mas-text-muted); }
+.card { padding: 22rpx; margin-bottom: 16rpx; border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); background: var(--mas-surface); box-shadow: var(--mas-shadow-card); }
+.card-title { font-size: 29rpx; font-weight: 600; line-height: 1.45; }
+.card-text { margin-top: 12rpx; font-size: 25rpx; line-height: 1.65; color: var(--mas-text-muted); }
+.meta { margin-top: 10rpx; color: var(--mas-text-muted); font-size: 22rpx; line-height: 1.55; }
+.card-heading .meta { margin: 0; }
+.page button.text-button { width: auto; white-space: normal; flex: none; display: flex; align-items: center; justify-content: center; min-height: var(--mas-control-height); margin: 0; padding: 0 8rpx; color: var(--mas-primary); background: transparent; font-size: 24rpx; line-height: 1.4; border-radius: 8rpx; }
+.chevron { font-size: 30rpx; margin-left: 8rpx; }
+.page button.primary-button, .page button.secondary-button, .page button.danger-button { width: 100%; display: flex; align-items: center; justify-content: center; min-height: var(--mas-control-height); margin: 22rpx 0 0; padding: 14rpx 18rpx; font-size: 27rpx; line-height: 1.5; border-radius: var(--mas-radius-control); font-weight: 500; }
+.page button.primary-button { color: var(--mas-on-primary); background: var(--mas-primary); }
+.page button.secondary-button { color: var(--mas-primary); background: var(--mas-surface); border: 1rpx solid var(--mas-border); }
+.page button.danger-button { color: var(--mas-danger); background: var(--mas-danger-soft); border: 1rpx solid #e8c5c0; }
+.page button.actor { width: 100%; min-height: 88rpx; margin: 14rpx 0 0; padding: 14rpx 18rpx; color: var(--mas-text); background: var(--mas-bg); font-size: 25rpx; line-height: 1.6; border-radius: 12rpx; }
+.page button.actor.selected { color: var(--mas-on-primary); background: var(--mas-primary); }
+.follow-up { display: flex; align-items: center; gap: 16rpx; padding: 20rpx; margin-bottom: 20rpx; background: var(--mas-surface-soft); border: 1rpx solid var(--mas-info-soft); border-radius: var(--mas-radius-card); }
+.calendar-icon { flex: none; width: 32rpx; height: 30rpx; border: 3rpx solid var(--mas-primary); border-radius: 5rpx; position: relative; box-sizing: border-box; }
+.calendar-icon::before { content: ''; position: absolute; top: 6rpx; left: 0; right: 0; border-top: 3rpx solid var(--mas-primary); }
+.calendar-icon::after { content: ''; position: absolute; top: -8rpx; left: 6rpx; width: 13rpx; height: 9rpx; border-left: 3rpx solid var(--mas-primary); border-right: 3rpx solid var(--mas-primary); }
+.follow-copy { flex: 1; min-width: 0; }
+.follow-title { font-size: 25rpx; font-weight: 600; line-height: 1.5; }
+.follow-detail { margin-top: 4rpx; color: var(--mas-text-muted); font-size: 21rpx; line-height: 1.5; }
+.follow-status { flex: none; color: var(--mas-primary); font-size: 22rpx; }
+.snapshot-notice, .error { margin: 0 0 20rpx; padding: 18rpx; border-radius: 12rpx; font-size: 24rpx; line-height: 1.6; background: var(--mas-warning-soft); color: var(--mas-warning); }
+.error { color: var(--mas-danger); background: var(--mas-danger-soft); }
+.unread { margin-left: 10rpx; padding: 4rpx 10rpx; border-radius: 7rpx; font-size: 21rpx; font-weight: 400; color: var(--mas-primary); background: var(--mas-surface-soft); }
+.message-title { margin-top: 16rpx; font-size: 26rpx; font-weight: 500; }
+.message-body { margin-top: 8rpx; color: var(--mas-text-muted); font-size: 25rpx; line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.trend-summary { margin-top: 6rpx; font-size: 42rpx; line-height: 1.4; font-weight: 700; }
+.trend-summary text { margin-left: 14rpx; color: var(--mas-text-muted); font-size: 22rpx; font-weight: 400; }
+.temperature-chart { display: flex; margin: 28rpx 0 0; }
+.chart-axis { display: flex; flex-direction: column; justify-content: space-between; flex: none; width: 56rpx; height: 182rpx; margin-top: -8rpx; padding-bottom: 4rpx; box-sizing: border-box; color: var(--mas-text-muted); font-size: 20rpx; }
+.chart-body { flex: 1; min-width: 0; position: relative; }
+.chart-grid { position: absolute; top: 0; left: 0; right: 0; height: 168rpx; display: flex; flex-direction: column; justify-content: space-between; }
+.chart-grid view { border-top: 1rpx dashed var(--mas-border); }
+.temp-chart { display: flex; position: relative; gap: 8rpx; }
+.temp-column { flex: 1; min-width: 0; text-align: center; }
+.temp-track { height: 168rpx; display: flex; align-items: flex-end; justify-content: center; }
+.temp-bar { width: 32rpx; position: relative; border-radius: 6rpx 6rpx 0 0; background: var(--mas-success); }
+.temp-watch { background: var(--mas-warning); }.temp-alert { background: var(--mas-danger); }
+.temp-value { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(100% + 6rpx); white-space: nowrap; font-size: 18rpx; color: var(--mas-text-muted); }
+.temp-label { margin-top: 10rpx; font-size: 20rpx; color: var(--mas-text-muted); }
+.chart-caption { margin-top: 14rpx; color: var(--mas-text-muted); font-size: 20rpx; text-align: right; }
+.snapshot-empty { padding: 34rpx 12rpx; text-align: center; color: var(--mas-text-muted); font-size: 25rpx; line-height: 1.7; }
+.metric-grid, .lab-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16rpx; margin-top: 18rpx; }
+.metric-grid .metric:only-child { grid-column: 1 / -1; }
+.metric, .lab-item { min-width: 0; padding: 14rpx 0; border-top: 1rpx solid var(--mas-border); }
+.metric-label { color: var(--mas-text-muted); font-size: 23rpx; line-height: 1.4; }
+.metric-value, .lab-value { overflow-wrap: anywhere; margin-top: 10rpx; font-size: 36rpx; font-weight: 700; line-height: 1.2; }
+.metric-value text, .lab-unit { font-size: 21rpx; color: var(--mas-text-muted); font-weight: 400; }.lab-unit { margin-top: 5rpx; }
+.lab-direction { margin-left: 8rpx; font-size: 23rpx; color: var(--mas-text-muted); }.metric-alert { background: var(--mas-danger-soft); }.metric-alert .metric-value { color: var(--mas-danger); }
+.urgent-card { border-left: 6rpx solid var(--mas-danger); background: var(--mas-danger-soft); }
+.urgent-title { display: flex; align-items: center; gap: 12rpx; color: var(--mas-danger); font-size: 28rpx; font-weight: 600; }
+.status-dot { flex: none; width: 12rpx; height: 12rpx; border-radius: 50%; background: currentColor; }.urgent-card .card-text { color: var(--mas-danger); }
+.urgent-watch { background: var(--mas-warning-soft); border-left-color: var(--mas-warning); }.urgent-watch .urgent-title, .urgent-watch .card-text { color: var(--mas-warning); }
+.urgent-actions { display: flex; gap: 12rpx; }.page .urgent-actions button { flex: 1 1 0; width: 0; min-width: 0; font-size: 24rpx; }
+.daily-guidance { margin-top: 20rpx; padding-top: 18rpx; border-top: 1rpx solid var(--mas-border); }.guidance-title { color: var(--mas-primary); font-size: 24rpx; font-weight: 500; }
+.adherence-row { display: flex; align-items: baseline; gap: 16rpx; margin-top: 14rpx; }.adherence { color: var(--mas-primary); font-size: 42rpx; font-weight: 700; }
+.progress-track { height: 10rpx; margin-top: 14rpx; border-radius: 20rpx; overflow: hidden; background: var(--mas-bg); }.progress-fill { height: 100%; background: var(--mas-success); }
+.medication-tags { display: flex; flex-wrap: wrap; gap: 10rpx; margin-top: 14rpx; }.medication-tag { padding: 7rpx 12rpx; border-radius: 8rpx; color: var(--mas-primary); background: var(--mas-surface-soft); font-size: 22rpx; }
+.page .medication-card > button.secondary-button { min-height: var(--mas-control-height); margin-top: 18rpx; background: var(--mas-surface-soft); border-color: transparent; font-size: 25rpx; }
+.push-enabled { display: block; margin-top: 18rpx; padding: 16rpx 18rpx; border: 1rpx solid var(--mas-border-soft); border-radius: var(--mas-radius-control); color: var(--mas-success); background: var(--mas-success-soft); font-size: 23rpx; line-height: 1.5; }
+.profile-foot { margin-top: 22rpx; padding-top: 18rpx; border-top: 1rpx solid var(--mas-border); }.profile-foot .meta { margin: 0; }
+.page button.account-toggle { width: 100%; margin: 12rpx 0 0; min-height: var(--mas-control-height); padding: 14rpx 0; background: transparent; text-align: left; color: var(--mas-text-muted); font-size: 23rpx; line-height: 1.7; }.account-actions { display: flex; gap: 12rpx; }.page .account-actions button { flex: 1 1 0; width: 0; min-width: 0; font-size: 23rpx; margin-top: 10rpx; }
+
+.page button.footer-entry { width: 100%; min-height: 88rpx; display: flex; align-items: center; justify-content: space-between; margin: 0 0 24rpx; padding: 8rpx 0; text-align: left; background: transparent; border: 0; }.page button.footer-entry::after { border: 0; }.footer-arrow { color: var(--mas-text-muted); font-size: 38rpx; }
+
+.emergency-summary-entry { border-left: 6rpx solid var(--mas-warning); background: #fffaf1; }
+.emergency-summary-entry .card-title { color: var(--mas-warning); }
+
+/* 首页先看行动和数据，辅助事项保持低强调。 */
+.snapshot-notice { display: flex; align-items: center; justify-content: space-between; gap: 12rpx; }
+.snapshot-notice > view { flex: 1; min-width: 0; }
+.observation-card { border-left: 6rpx solid var(--mas-text-subtle); background: #f0f3f5; }
+.observation-title { display: flex; align-items: center; gap: 10rpx; font-size: 25rpx; font-weight: 600; color: var(--mas-text-muted); line-height: 1.5; }
+.observation-card .meta { margin-top: 0; }
+.observation-card .text-button { max-width: 132rpx; }
+.page .urgent-alert .primary-button { background: var(--mas-danger); }
+.page .urgent-watch .primary-button { background: var(--mas-warning); }
+.page .record-actions { display: flex; align-items: stretch; gap: 12rpx; }
+.page .record-actions > .primary-button { flex: 1.5; width: 0; min-width: 0; font-size: 26rpx; }
+.page .record-actions > .secondary-button { flex: 1; width: 0; min-width: 0; font-size: 25rpx; }
+.metric-time { margin-top: 8rpx; color: var(--mas-text-muted); font-size: 21rpx; line-height: 1.5; overflow-wrap: anywhere; }
+.follow-up { margin-top: 4rpx; margin-bottom: 16rpx; background: var(--mas-surface); border-color: var(--mas-border); }
+.follow-status { display: block; text-align: right; color: var(--mas-text-muted); }
+.follow-up .text-button { max-width: 158rpx; }
+.urgent-title, .card-title { overflow-wrap: break-word; }
+@media (max-width: 350px) {
+  .profile-head { align-items: flex-start; }
+  .profile-head .text-button { max-width: 120rpx; min-height: 88rpx; }
+  .patient-age { display: inline-block; }
+  .record-count { margin-left: 0; }
+  .metric-grid, .lab-grid { gap: 18rpx; }
+}
+
+/* 健康中心统一视觉：患者每天先看状态，再看趋势与后续安排。 */
+.health-center-page {
+  min-height: 100vh;
+  background: var(--mas-bg);
+}
+.health-center-page .home-snapshot { max-width: 700rpx; margin: 0 auto; }
+.health-center-page .patient-hero {
+  align-items: flex-start;
+  padding: 12rpx 4rpx 24rpx;
+}
+.health-center-page .patient-name {
+  font-size: 38rpx;
+  line-height: 1.32;
+  letter-spacing: -.3rpx;
+}
+.health-center-page .patient-age {
+  margin-left: 8rpx;
+  padding: 4rpx 10rpx;
+  border-radius: 999rpx;
+  background: #edf2f4;
+  color: var(--mas-text-muted);
+  font-size: 22rpx;
+}
+.health-center-page .profile-meta {
+  margin-top: 8rpx;
+  color: var(--mas-text-muted);
+  font-size: 23rpx;
+}
+.health-center-page .record-count { color: var(--mas-text-subtle); }
+.health-center-page .profile-head .text-button {
+  min-height: 88rpx;
+  padding: 0 4rpx 0 12rpx;
+  font-weight: 600;
+}
+.health-center-page .card {
+  margin-bottom: 18rpx;
+  padding: 24rpx;
+  border-radius: 20rpx;
+  box-shadow: 0 1rpx 2rpx rgba(19, 26, 31, .04), 0 5rpx 18rpx rgba(19, 26, 31, .045);
+}
+.health-center-page .card-heading { min-height: 44rpx; }
+.health-center-page .card-title { font-size: 30rpx; line-height: 1.35; font-weight: 700; }
+.health-center-page .text-button {
+  min-height: 44rpx;
+  padding: 0 4rpx 0 10rpx;
+  color: var(--mas-primary);
+  font-size: 24rpx;
+  font-weight: 600;
+}
+.health-center-page .meta { color: var(--mas-text-subtle); font-size: 21rpx; }
+.health-center-page .snapshot-notice { margin-bottom: 18rpx; }
+
+/* 生命阶段卡：保持同一张数据卡语言，只改变信息层级和按钮目的。 */
+.health-center-page .mode-card { padding: 22rpx 24rpx; }
+.health-center-page .mode-card .mode-chip {
+  flex: none;
+  padding: 6rpx 12rpx;
+  border-radius: 999rpx;
+  color: var(--mas-primary);
+  background: var(--mas-surface-soft);
+  font-size: 20rpx;
+  line-height: 1.3;
+}
+.health-center-page .mode-data-row,
+.health-center-page .privacy-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+  padding: 16rpx 0;
+  border-top: 1rpx solid var(--mas-border);
+}
+.health-center-page .mode-data-row { justify-content: space-between; }
+.health-center-page .mode-label,
+.health-center-page .privacy-title { color: var(--mas-text-muted); font-size: 22rpx; line-height: 1.45; }
+.health-center-page .mode-value { margin-top: 6rpx; font-size: 32rpx; font-weight: 700; line-height: 1.25; }
+.health-center-page .mode-value-small { font-size: 26rpx; }
+.health-center-page .mode-data-note { max-width: 240rpx; padding-top: 20rpx; text-align: right; color: var(--mas-text-subtle); font-size: 21rpx; line-height: 1.45; }
+.health-center-page .mode-actions { display: flex; gap: 12rpx; margin-top: 4rpx; }
+.health-center-page .mode-actions button { flex: 1 1 0; width: 0; min-width: 0; margin-top: 12rpx; font-size: 24rpx; }
+.health-center-page .privacy-mark { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 48rpx; min-height: 34rpx; margin-top: 2rpx; border-radius: 7rpx; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 19rpx; font-weight: 700; }
+.health-center-page .privacy-g1 { color: var(--mas-text-muted); background: var(--mas-border-soft); }
+.health-center-page .privacy-g2 { color: #2e6b47; background: #e4f1e8; }
+.health-center-page .privacy-g3 { color: var(--mas-primary); background: var(--mas-info-soft); }
+.health-center-page .privacy-row > view { display: flex; min-width: 0; flex-direction: column; gap: 4rpx; }
+.health-center-page .privacy-copy { color: var(--mas-text-muted); font-size: 23rpx; line-height: 1.55; }
+.health-center-page .adult-choice { padding: 14rpx 16rpx; border: 1rpx solid #e5e9eb; border-radius: 12rpx; background: #fafbfb; }
+.health-center-page .adult-choice-title { font-size: 27rpx; font-weight: 700; line-height: 1.4; }
+.health-center-page .adult-choice-copy { margin-top: 6rpx; color: var(--mas-text-muted); font-size: 22rpx; line-height: 1.55; }
+.health-center-page .child-mode-card { border-left: 5rpx solid var(--mas-success); }
+.health-center-page .transition-mode-card { border-left: 5rpx solid var(--mas-info); }
+.health-center-page .adult-mode-card { border-left: 5rpx solid var(--mas-text-subtle); }
+.health-center-page .adult-privacy-card { border-left: 5rpx solid var(--mas-primary); }
+
+/* 重要状态卡保持高对比，但只占用一层视觉。 */
+.health-center-page .urgent-card,
+.health-center-page .observation-card {
+  padding: 22rpx 24rpx;
+  border-radius: 18rpx;
+}
+.health-center-page .urgent-title,
+.health-center-page .observation-title { font-size: 27rpx; }
+.health-center-page .action-card .card-heading { align-items: flex-start; }
+.health-center-page .observation-card .meta { margin-top: 8rpx; }
+
+/* 预约卡与医生消息卡采用同一张白底卡片语言，信息密度更接近参考界面。 */
+.health-center-page .appointment-card {
+  min-height: 100rpx;
+  box-sizing: border-box;
+  margin: 0 0 18rpx;
+  padding: 20rpx 22rpx;
+  border: 1rpx solid var(--mas-border);
+  border-left: 5rpx solid var(--mas-success);
+  border-radius: 18rpx;
+  background: var(--mas-surface);
+  box-shadow: 0 1rpx 2rpx rgba(19, 26, 31, .04), 0 5rpx 16rpx rgba(19, 26, 31, .04);
+}
+.health-center-page .appointment-card .calendar-icon { width: 34rpx; height: 32rpx; }
+.health-center-page .follow-title { font-size: 26rpx; font-weight: 700; }
+.health-center-page .follow-detail { font-size: 22rpx; }
+.health-center-page .follow-status { color: var(--mas-primary); font-size: 21rpx; font-weight: 600; }
+.health-center-page .message-card { padding-bottom: 22rpx; }
+.health-center-page .message-card .message-title {
+  margin-top: 16rpx;
+  font-size: 27rpx;
+  font-weight: 700;
+}
+.health-center-page .message-card .message-body {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  line-height: 1.62;
+}
+.health-center-page .unread {
+  padding: 5rpx 12rpx;
+  border-radius: 999rpx;
+  background: #fff0f0;
+  color: var(--mas-danger);
+  font-size: 20rpx;
+}
+
+/* 趋势卡是首页的主要数据区域，图表与主操作保持同一层级。 */
+.health-center-page .body-trend-card { padding-bottom: 22rpx; }
+.health-center-page .body-trend-card .trend-summary {
+  margin-top: 14rpx;
+  font-size: 44rpx;
+  letter-spacing: -.6rpx;
+}
+.health-center-page .body-trend-card .trend-summary text { font-size: 21rpx; }
+.health-center-page .body-trend-card .temperature-chart { margin-top: 24rpx; }
+.health-center-page .body-trend-card .temp-bar { width: 36rpx; border-radius: 7rpx 7rpx 2rpx 2rpx; }
+.health-center-page .body-trend-card .temp-value { font-size: 18rpx; }
+.health-center-page .body-trend-card .record-actions { margin-top: 8rpx; }
+.health-center-page .record-actions > button { min-height: 88rpx; }
+
+/* 其余数据卡继续保留，但通过统一标题、空态和操作间距降低噪声。 */
+.health-center-page .metric-grid,
+.health-center-page .lab-grid { margin-top: 14rpx; gap: 14rpx 20rpx; }
+.health-center-page .metric,
+.health-center-page .lab-item { padding: 14rpx 0 10rpx; }
+.health-center-page .metric-value,
+.health-center-page .lab-value { font-size: 34rpx; }
+.health-center-page .card > .secondary-button,
+.health-center-page .card > .primary-button { min-height: 88rpx; }
+.health-center-page .home-footer { margin-bottom: 0; }
+.health-center-page .home-footer .footer-entry { min-height: 88rpx; margin-bottom: 18rpx; }
+.health-center-page .home-footer .account-toggle { color: var(--mas-text-subtle); }
+
+/* 与无恙健康中心参考稿对齐：首页从“复诊—医生消息—趋势—行动”开始，
+ * 让家属在首屏先看到下一步要做什么和数据变化。 */
+.health-center-page .patient-hero {
+  padding-top: 8rpx;
+  padding-bottom: 18rpx;
+}
+.health-center-page .profile-diagnosis {
+  margin-top: 6rpx;
+  color: var(--mas-text-subtle);
+  font-size: 23rpx;
+  line-height: 1.5;
+}
+.health-center-page .profile-meta {
+  margin-top: 4rpx;
+  color: var(--mas-text-subtle);
+  font-size: 21rpx;
+}
+.health-center-page .record-count { margin-left: 0; }
+.health-center-page .appointment-card {
+  margin-bottom: 16rpx;
+  border-left-width: 4rpx;
+  padding: 20rpx 20rpx;
+}
+.health-center-page .follow-action {
+  flex: none;
+  min-width: 132rpx;
+  text-align: right;
+}
+.health-center-page .follow-action .text-button {
+  max-width: none;
+  padding-right: 0;
+  font-size: 22rpx;
+}
+.health-center-page .message-card {
+  margin-bottom: 16rpx;
+  padding: 20rpx;
+}
+.health-center-page .message-preview {
+  margin-top: 14rpx;
+  padding: 18rpx 18rpx 16rpx;
+  border-radius: 16rpx;
+  background: var(--mas-bg);
+}
+.health-center-page .message-preview .message-title { margin-top: 0; }
+.health-center-page .message-preview .message-body { color: var(--mas-text-muted); }
+.health-center-page .message-preview .meta { margin-top: 10rpx; font-size: 19rpx; }
+.health-center-page .body-trend-card {
+  margin-bottom: 16rpx;
+  padding: 22rpx 20rpx 18rpx;
+}
+.health-center-page .body-trend-card .trend-summary {
+  margin-top: 12rpx;
+  color: var(--mas-text-muted);
+  font-size: 28rpx;
+  line-height: 1.6;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.health-center-page .body-trend-card .trend-summary text {
+  display: none;
+}
+.health-center-page .body-trend-card > .meta {
+  margin-top: 6rpx;
+  font-size: 21rpx;
+}
+.health-center-page .body-trend-card .temperature-chart { margin-top: 16rpx; }
+.health-center-page .body-trend-card .chart-axis {
+  width: 42rpx;
+  height: 152rpx;
+  font-size: 18rpx;
+}
+.health-center-page .body-trend-card .chart-grid { height: 140rpx; }
+.health-center-page .body-trend-card .temp-track { height: 140rpx; }
+.health-center-page .body-trend-card .temp-bar { width: 44rpx; }
+.health-center-page .body-trend-card .temp-label { font-size: 18rpx; }
+.health-center-page .body-trend-card .chart-caption { margin-top: 10rpx; font-size: 19rpx; }
+.health-center-page .body-trend-card .record-actions { margin-top: 14rpx; }
+.health-center-page .body-trend-card .record-actions > .primary-button {
+  flex: 1 1 100%;
+  width: 100%;
+  min-height: 88rpx;
+}
+.health-center-page .body-trend-card .record-actions > .secondary-button {
+  flex: 0 0 180rpx;
+  width: 180rpx;
+  min-height: 88rpx;
+  font-size: 23rpx;
+}
+.health-center-page .urgent-card,
+.health-center-page .observation-card { margin-bottom: 16rpx; }
+.health-center-page .urgent-card .card-text { line-height: 1.65; }
+.health-center-page .metric-grid,
+.health-center-page .lab-grid { margin-top: 10rpx; }
+.health-center-page .metric-grid .metric,
+.health-center-page .lab-grid .lab-item { padding-top: 10rpx; }
+.health-center-page .card.medication-card,
+.health-center-page .card.emergency-summary-entry { margin-bottom: 16rpx; }
+
+/* 健康中心：与参考稿统一 16px 留白与卡片密度。 */
+.health-center-page { min-height: 100vh; }
+.health-center-page .profile-head { padding: 2rpx 0 20rpx; }
+.health-center-page .profile-diagnosis { margin-top: 5rpx; color: var(--mas-text-subtle); font-size: 23rpx; }
+.health-center-page .card { margin-bottom: 28rpx; padding: 30rpx; border-radius: 16rpx; box-shadow: 0 2rpx 4rpx rgba(0,0,0,.04); }
+.health-center-page .appointment-card { margin-bottom: 28rpx; padding: 22rpx 24rpx; }
+.health-center-page .follow-copy { flex: 1; min-width: 0; }
+.health-center-page button.follow-status { width: auto; min-width: 100rpx; min-height: 88rpx; padding: 8rpx 12rpx; margin: 0 0 0 8rpx; border-radius: 36rpx; font-size: 21rpx; line-height: 1.4; color: var(--mas-primary); background: var(--mas-success-soft); }
+.health-center-page .card-title { font-size: 30rpx; color: var(--mas-text-strong); }
+.health-center-page .trend-narrative { margin-top: 16rpx; color: var(--mas-text-muted); font-size: 26rpx; line-height: 1.65; }
+.health-center-page .record-actions { display: block; }
+.health-center-page .record-actions .primary-button { width: 100%; margin: 16rpx 0 0; font-size: 26rpx; }
+.health-center-page .message-preview { padding: 22rpx; }
+.health-center-page .message-body { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 26rpx; line-height: 1.65; }
+.health-center-page .small-title { font-size: 26rpx; font-weight: 600; }
+.health-center-page .summary-inset { margin-top: 18rpx; padding: 18rpx 20rpx; background: var(--mas-bg); border-radius: 18rpx; }
+
+/* 成年端安全网：对应设计稿中的 CL2 商量卡。状态和时间来自服务端投影，
+ * 页面只做展示与倒计时刷新，不在本地触发通知或补造联系人。 */
+.health-center-page .safety-net-card {
+  border: 2rpx solid #b4232c;
+  border-radius: 18rpx;
+  background: #fffafb;
+  box-shadow: 0 2rpx 5rpx rgba(180, 35, 44, .08);
+}
+.safety-net-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12rpx; }
+.safety-net-title { display: flex; align-items: center; gap: 12rpx; min-width: 0; color: #b4232c; font-size: 29rpx; line-height: 1.45; font-weight: 700; }
+.safety-dot { flex: none; width: 14rpx; height: 14rpx; border-radius: 50%; background: #b4232c; }
+.safety-state { flex: none; padding: 5rpx 10rpx; border-radius: 999rpx; color: var(--mas-danger); background: #fbe9ea; font-size: 20rpx; line-height: 1.4; }
+.safety-countdown { margin: 22rpx 0 8rpx; color: #b4232c; text-align: center; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 50rpx; font-weight: 600; letter-spacing: 2rpx; font-variant-numeric: tabular-nums; }
+.safety-net-card .card-text { color: var(--mas-danger); }
+.safety-contact { display: flex; align-items: center; gap: 12rpx; margin-top: 16rpx; padding: 14rpx 16rpx; border-radius: 12rpx; background: #fff2f2; }
+.safety-contact-label { color: var(--mas-danger); font-size: 22rpx; }
+.safety-contact-name { color: var(--mas-danger); font-size: 26rpx; font-weight: 600; }
+.safety-explain { margin-top: 16rpx; padding-top: 14rpx; border-top: 1rpx dashed #e5bfc1; color: var(--mas-danger); }
+.safety-notice { margin-top: 14rpx; padding: 12rpx 14rpx; border-radius: 10rpx; color: var(--mas-danger); background: #fbe9ea; font-size: 22rpx; line-height: 1.55; }
+.safety-actions { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 8rpx; }
+.safety-actions button { flex: 1 1 calc(50% - 6rpx); width: auto !important; min-width: 0; margin-top: 12rpx !important; font-size: 24rpx !important; }
+.safety-actions button.primary-button { flex-basis: 100%; }
+.safety-actions button.danger-button { color: #b4232c; background: var(--mas-surface); border-color: #e5bfc1; }

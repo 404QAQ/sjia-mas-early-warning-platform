@@ -1,0 +1,28 @@
+<view class="page patient-page">
+  <view class="title">独居模式</view>
+  <view class="hint">这一项由你自己设置。开启或关闭都可以随时再改。</view>
+
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{notice}}" class="message" role="status">{{notice}}</view>
+  <view wx:if="{{pendingText}}" class="warn" role="status">{{pendingText}}<button size="mini" bindtap="retry" disabled="{{saving}}">重试原操作</button></view>
+  <view wx:if="{{loading && !living}}" class="hint">正在读取独居模式…</view>
+
+  <view class="card">
+    <view class="card-title">你目前是否独居</view>
+    <block wx:if="{{canOperate}}">
+      <view class="living-switch-row"><view><view class="living-label">开启独居安全网</view><view class="hint">仅本人可修改，按实际授权联系亲友</view></view><switch checked="{{living.enabled}}" bindchange="onToggle" color="#0d9488" disabled="{{saving}}" aria-label="独居模式" /></view>
+      <view class="hint">{{living.enabled ? '当前：已开启。' : '当前：未开启。'}}</view>
+    </block>
+    <block wx:else>
+      <view class="line">{{living ? (living.enabled ? '当前：已开启。' : '当前：未开启。') : '当前状态暂不可见。'}}</view>
+      <view wx:if="{{readOnlyReason}}" class="hint">{{readOnlyReason}}</view>
+    </block>
+  </view>
+
+  <view class="card">
+    <view class="card-title">这项设置会做什么</view>
+    <view wx:for="{{factLines}}" wx:key="*this" class="line">{{item}}</view>
+  </view>
+
+  <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading || saving}}">重新读取独居设置</button>
+</view>

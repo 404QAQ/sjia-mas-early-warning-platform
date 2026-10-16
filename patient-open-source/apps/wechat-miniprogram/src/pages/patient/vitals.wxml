@@ -1,0 +1,16 @@
+<view class="page patient-page">
+  <view class="intro">记录健康指标</view><view wx:if="{{loading}}" class="hint">正在读取最近测量…</view><view wx:if="{{lastMeasured}}" class="hint">最近测量 {{lastMeasured}}</view>
+  <view class="card">
+    <view class="label">血压 <text>mmHg</text></view>
+    <view class="pressure"><input type="number" maxlength="3" placeholder="收缩压" value="{{systolic}}" data-key="systolic" bindinput="change" aria-label="收缩压"/><text>/</text><input type="number" maxlength="3" placeholder="舒张压" value="{{diastolic}}" data-key="diastolic" bindinput="change" aria-label="舒张压"/></view>
+    <view class="label">血氧 <text>%</text></view><input type="number" maxlength="3" placeholder="填写血氧饱和度" value="{{spo2}}" data-key="spo2" bindinput="change" aria-label="血氧饱和度"/>
+    <view class="label">心率 <text>次/分</text></view><input type="number" maxlength="3" placeholder="填写每分钟心率" value="{{heartRate}}" data-key="heartRate" bindinput="change" aria-label="心率"/>
+    <view class="hint">请按仪器实际测量值记录，保存后照护医生可查看。体温请在“记录体温”中填写。</view>
+  </view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{saved}}" class="message" role="status">{{saved}}</view>
+  <button class="primary" bindtap="save" disabled="{{saving || loading}}" loading="{{saving}}">{{saving ? '正在保存…' : '保存测量'}}</button>
+  <button wx:if="{{saved}}" class="secondary" bindtap="back">返回首页</button>
+  <button wx:if="{{demo}}" class="sample" bindtap="useSample" disabled="{{saving}}">填入演示体征</button>
+  <view wx:if="{{history.length}}" class="card"><view class="label">测量记录</view><view wx:for="{{history}}" wx:key="id" class="vital-history"><view>{{item.systolic}}/{{item.diastolic}} mmHg · 血氧 {{item.spo2}}%</view><view>心率 {{item.heartRate}} 次/分</view><view class="hint">{{item.measured}}</view></view></view>
+</view>

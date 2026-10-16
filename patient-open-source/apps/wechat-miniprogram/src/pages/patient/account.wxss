@@ -1,0 +1,74 @@
+@import "../../styles/patient.wxss";
+
+/* 个人档案与导航页共用同一白卡体系，内容入口保留各自语义图标。 */
+.page { color: var(--mas-text); background: var(--mas-bg); }
+.title { margin-top: 7rpx; color: var(--mas-text-strong); font-size: 36rpx; font-weight: 700; line-height: 1.3; }
+.eyebrow { color: var(--mas-text-muted); font-size: 22rpx; letter-spacing: 1rpx; }
+button::after { border: none; }
+.page button.cover-button { width: auto; flex: none; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; min-height: var(--mas-control-height); margin: 0; padding: 14rpx 18rpx; border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-control); color: var(--mas-primary); background: var(--mas-surface); font-size: 22rpx; line-height: 1.4; }
+.profile-card { display: block; padding: var(--mas-card-padding); margin: 0 0 24rpx; border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); background: var(--mas-surface); box-shadow: var(--mas-shadow-card); }
+.profile-top { display: flex; align-items: center; gap: 22rpx; }
+.profile-avatar { display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: 96rpx; height: 96rpx; border: 0; border-radius: 50%; color: var(--mas-primary); background: var(--mas-success-soft); font-size: 36rpx; font-weight: 700; }
+.profile-main { flex: 1; min-width: 0; }
+.profile-name { color: var(--mas-text); font-size: 34rpx; font-weight: 700; line-height: 1.35; }
+.profile-subtitle, .profile-diagnosis { margin-top: 8rpx; color: var(--mas-text-subtle); font-size: 23rpx; line-height: 1.5; }
+.profile-diagnosis { margin-top: 4rpx; }
+.profile-badges { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 22rpx; }
+.profile-badge { padding: 8rpx 18rpx; border-radius: 999rpx; color: var(--mas-text-muted); background: var(--mas-surface-soft); font-size: 22rpx; line-height: 1.4; }
+.profile-note { margin: 14rpx 4rpx; color: var(--mas-text-muted); font-size: 23rpx; line-height: 1.5; }
+.profile-section { margin-top: 24rpx; }
+.section-heading { margin: 0 4rpx 12rpx; color: var(--mas-text-muted); font-size: 27rpx; font-weight: 700; }
+.entry-list { padding: 0 22rpx; border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); overflow: hidden; background: var(--mas-surface); box-shadow: var(--mas-shadow-card); }
+.page button.entry-row { display: flex; align-items: center; width: 100%; min-height: 108rpx; margin: 0; padding: 20rpx 0; border-bottom: 1rpx solid var(--mas-border); border-radius: 0; background: transparent; text-align: left; box-sizing: border-box; line-height: 1.4; }
+.page button.entry-row:last-child { border-bottom: 0; }
+.reference-icon, .entry-icon { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 58rpx; height: 58rpx; margin-right: 18rpx; border-radius: var(--mas-radius-control); background: var(--mas-surface-soft); font-size: 26rpx; }
+.entry-copy { flex: 1; min-width: 0; }
+.entry-title { color: var(--mas-text); font-size: 27rpx; font-weight: 600; }
+.entry-detail { margin-top: 5rpx; color: var(--mas-text-subtle); font-size: 22rpx; line-height: 1.45; }
+.entry-chevron { flex-shrink: 0; margin-left: 12rpx; color: var(--mas-text-subtle); font-size: 36rpx; font-weight: 300; }
+.entry-teal { color: var(--mas-primary); background: var(--mas-info-soft); }.entry-blue { color: var(--mas-info); background: var(--mas-info-soft); }.entry-lavender { color: #857397; background: #f4f0f8; }.entry-rose { color: #aa7184; background: #fbf0f4; }.entry-coral { color: #af7166; background: #fff1ee; }.entry-amber { color: var(--mas-warning); background: var(--mas-warning-soft); }
+.notification-badge { display: flex; align-items: center; justify-content: center; min-width: 48rpx; height: 48rpx; margin-left: 12rpx; padding: 0 8rpx; box-sizing: border-box; border-radius: 999rpx; color: var(--mas-on-primary); background: var(--mas-danger); font-size: 24rpx; font-weight: 600; }
+.page button.more-settings { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: var(--mas-control-height); margin: 20rpx 0 0; padding: 18rpx 2rpx; color: var(--mas-text-muted); background: transparent; font-size: 23rpx; text-align: left; }
+.privacy-footer { margin: 24rpx 14rpx 30rpx; color: var(--mas-text-subtle); font-size: 22rpx; text-align: center; line-height: 1.6; }
+.archive-heading { margin: 32rpx 4rpx 10rpx; color: var(--mas-text-subtle); font-size: 23rpx; }
+.hint, .line { margin: 10rpx 0; color: var(--mas-text-muted); font-size: 24rpx; line-height: 1.65; }
+.card { margin: var(--mas-section-gap) 0; padding: var(--mas-card-padding); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); background: var(--mas-surface); box-shadow: var(--mas-shadow-card); }
+.card-title { margin-bottom: 12rpx; color: var(--mas-text); font-size: 29rpx; font-weight: 700; line-height: 1.4; }
+.page button { min-height: var(--mas-control-height); margin: 16rpx 0; border-radius: var(--mas-radius-control); font-size: 26rpx; }
+.page button.secondary { color: var(--mas-primary); background: var(--mas-surface-soft); border: 1rpx solid var(--mas-border); }
+.page button.danger { color: var(--mas-danger); background: var(--mas-danger-soft); border: 1rpx solid var(--mas-danger); }
+.page button.recovery-button { width: 100%; min-height: var(--mas-control-height); margin-top: 24rpx; }
+.message { padding: 16rpx; border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-control); color: var(--mas-success); background: var(--mas-success-soft); font-size: 24rpx; }
+.warn { margin: 12rpx 0; padding: 16rpx; border: 1rpx solid var(--mas-warning); border-radius: var(--mas-radius-control); color: var(--mas-warning); background: var(--mas-warning-soft); font-size: 24rpx; }
+.error { padding: 16rpx; border: 1rpx solid var(--mas-danger); border-radius: var(--mas-radius-control); color: var(--mas-danger); background: var(--mas-danger-soft); font-size: 24rpx; }
+.page button.quiet { margin: 0; padding: 18rpx 0; border: none; border-radius: var(--mas-radius-control); color: var(--mas-text-subtle); background: var(--mas-surface-soft); font-size: 25rpx; line-height: 1.6; }
+/* 入口使用与导航一致的线形图标；图标只辅助识别，入口名称保留文字。 */
+.entry-glyph { position: relative; display: block; width: 30rpx; height: 30rpx; box-sizing: border-box; }
+.entry-glyph::before, .entry-glyph::after { position: absolute; display: block; content: ""; box-sizing: border-box; }
+.glyph-file, .glyph-clipboard { width: 24rpx; height: 30rpx; border: 2.5rpx solid currentColor; border-radius: 3rpx; }
+.glyph-file::before, .glyph-clipboard::before { left: 4rpx; right: 4rpx; top: 10rpx; height: 2rpx; background: currentColor; box-shadow: 0 7rpx 0 currentColor; }
+.glyph-clipboard::after { width: 12rpx; height: 6rpx; left: 3.5rpx; top: -4rpx; border: 2rpx solid currentColor; border-radius: 2rpx; background: #f4f7f8; }
+.glyph-pill { width: 17rpx; height: 32rpx; border: 2.5rpx solid currentColor; border-radius: 12rpx; transform: rotate(38deg); }
+.glyph-pill::before { left: 0; top: 13rpx; width: 100%; border-top: 2.5rpx solid currentColor; }
+.glyph-drop { width: 23rpx; height: 27rpx; border: 2.5rpx solid currentColor; border-radius: 4rpx 16rpx 16rpx 16rpx; transform: rotate(45deg); }
+.glyph-person::before, .glyph-people::before { width: 12rpx; height: 12rpx; left: 9rpx; top: 0; border: 2.5rpx solid currentColor; border-radius: 50%; }
+.glyph-person::after, .glyph-people::after { width: 27rpx; height: 14rpx; left: 1.5rpx; bottom: 0; border: 2.5rpx solid currentColor; border-radius: 15rpx 15rpx 4rpx 4rpx; }
+.glyph-people::before { left: 5rpx; box-shadow: 8rpx 3rpx 0 -2rpx #e9f5f2, 8rpx 3rpx 0 0 currentColor; }
+.glyph-cross::before, .glyph-plus::before { width: 26rpx; height: 2.5rpx; left: 2rpx; top: 14rpx; background: currentColor; }
+.glyph-cross::after, .glyph-plus::after { height: 26rpx; width: 2.5rpx; top: 2rpx; left: 14rpx; background: currentColor; }
+.glyph-cross { border: 2rpx solid currentColor; border-radius: 7rpx; }
+.glyph-cross::before { width: 16rpx; left: 5rpx; top: 12rpx; }.glyph-cross::after { height: 16rpx; top: 5rpx; left: 12rpx; }
+.glyph-case { width: 31rpx; height: 23rpx; top: 3rpx; border: 2.5rpx solid currentColor; border-radius: 4rpx; }
+.glyph-case::before { width: 13rpx; height: 7rpx; top: -8rpx; left: 6.5rpx; border: 2.5rpx solid currentColor; border-bottom: 0; border-radius: 3rpx 3rpx 0 0; }
+.glyph-case::after { left: 0; top: 8rpx; width: 100%; border-top: 2rpx solid currentColor; }
+.glyph-share::before { left: 3rpx; top: 13rpx; width: 25rpx; height: 2.5rpx; background: currentColor; transform: rotate(-28deg); box-shadow: -4rpx 10rpx 0 -0.3rpx currentColor; }
+.glyph-share::after { width: 8rpx; height: 8rpx; left: 1rpx; top: 11rpx; border: 2rpx solid currentColor; border-radius: 50%; background: #e9f5f2; box-shadow: 22rpx -11rpx 0 -2rpx #e9f5f2, 22rpx -11rpx 0 0 currentColor, 22rpx 11rpx 0 -2rpx #e9f5f2, 22rpx 11rpx 0 0 currentColor; }
+.glyph-eye { top: 5rpx; height: 21rpx; border: 2.5rpx solid currentColor; border-radius: 60% 40%; transform: rotate(45deg); }
+.glyph-eye::after { width: 9rpx; height: 9rpx; top: 3.5rpx; left: 8rpx; border: 2rpx solid currentColor; border-radius: 50%; }
+.glyph-house::before { width: 22rpx; height: 22rpx; left: 4rpx; top: 7rpx; border: 2.5rpx solid currentColor; border-top: 0; border-radius: 2rpx; }
+.glyph-house::after { width: 23rpx; height: 23rpx; left: 3.5rpx; top: 0; border-top: 2.5rpx solid currentColor; border-left: 2.5rpx solid currentColor; transform: rotate(45deg); }
+.glyph-route::before { left: 2rpx; top: 14rpx; width: 26rpx; border-top: 2.5rpx solid currentColor; }
+.glyph-route::after { width: 15rpx; height: 15rpx; top: 7.5rpx; right: 2rpx; border-top: 2.5rpx solid currentColor; border-right: 2.5rpx solid currentColor; transform: rotate(45deg); }
+.glyph-book { width: 31rpx; height: 27rpx; border: 2.5rpx solid currentColor; border-radius: 4rpx 4rpx 2rpx 2rpx; }.glyph-book::after { width: 2.5rpx; height: 100%; background: currentColor; left: 12rpx; }
+.glyph-calendar { width: 30rpx; height: 28rpx; border: 2.5rpx solid currentColor; border-radius: 4rpx; }.glyph-calendar::before { width: 100%; top: 7rpx; border-top: 2rpx solid currentColor; }.glyph-calendar::after { width: 2.5rpx; height: 7rpx; top: -5rpx; left: 6rpx; background: currentColor; box-shadow: 12rpx 0 0 currentColor; }
+.glyph-bell::before { width: 24rpx; height: 24rpx; top: 1rpx; left: 3rpx; border: 2.5rpx solid currentColor; border-radius: 13rpx 13rpx 4rpx 4rpx; }.glyph-bell::after { width: 8rpx; height: 3rpx; left: 11rpx; bottom: 0; border-radius: 2rpx; background: currentColor; }

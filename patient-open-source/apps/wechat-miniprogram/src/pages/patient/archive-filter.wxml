@@ -1,0 +1,13 @@
+<template name="archive-filter">
+  <input class="search-input" value="{{filter.keyword}}" placeholder="搜索医院 / 医师 / 诊断 / 异常指标" maxlength="200" data-field="keyword" bindinput="changeFilter" confirm-type="search" bindconfirm="search" />
+  <view class="filter-grid">
+    <picker mode="selector" range="{{timeOptions}}" data-field="time" data-options="timeOptions" bindchange="changeFilter"><view class="filter-cell {{filter.time !== '全部时间' ? 'selected' : ''}}">{{filter.time}}<text>⌄</text></view></picker>
+    <picker mode="selector" range="{{hospitalOptions}}" data-field="hospital" data-options="hospitalOptions" bindchange="changeFilter"><view class="filter-cell {{filter.hospital ? 'selected' : ''}}">{{filter.hospital || '全部医院'}}<text>⌄</text></view></picker>
+    <picker mode="selector" range="{{departmentOptions}}" data-field="department" data-options="departmentOptions" bindchange="changeFilter"><view class="filter-cell {{filter.department ? 'selected' : ''}}">{{filter.department || '全部科室'}}<text>⌄</text></view></picker>
+    <picker mode="selector" range="{{diseaseOptions}}" data-field="disease" data-options="diseaseOptions" bindchange="changeFilter"><view class="filter-cell {{filter.disease ? 'selected' : ''}}">{{filter.disease || '全部疾病'}}<text>⌄</text></view></picker>
+  </view>
+  <view wx:if="{{filter.time === '自定义'}}" class="filter-grid">
+    <picker mode="date" value="{{filter.start}}" data-field="start" bindchange="changeFilter"><view class="filter-cell">{{filter.start || '开始日期'}}<text>⌄</text></view></picker>
+    <picker mode="date" value="{{filter.end}}" data-field="end" bindchange="changeFilter"><view class="filter-cell">{{filter.end || '结束日期'}}<text>⌄</text></view></picker>
+  </view>
+</template>

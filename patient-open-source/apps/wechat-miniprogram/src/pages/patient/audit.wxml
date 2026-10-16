@@ -1,0 +1,18 @@
+<view class="page patient-page">
+  <view class="title">谁看过我的数据</view>
+  <view class="hint">最近 30 天的访问情况，不包含你自己的查看记录。</view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{loading && !items.length}}" class="card"><view class="hint">正在读取访问记录…</view></view>
+  <view wx:elif="{{!loading && !items.length && !denied}}" class="card"><view class="hint">最近 30 天没有人看过你的记录。（你自己看的不算）</view></view>
+  <view wx:if="{{items.length}}" class="audit-summary"><text>最近 30 天</text><text>已读取 {{items.length}} 条{{nextAfter ? ' · 还有更多' : ''}}</text></view>
+  <view wx:for="{{items}}" wx:key="*this" class="card audit-item">
+    <view class="audit-heading"><view class="viewer">{{item.viewer.displayName}}</view><view class="audit-relation">{{item.viewer.context}}</view></view><view class="time">{{item.timeLabel}}</view>
+    <view class="action">{{item.action}}</view>
+    <view class="category">{{item.category}}</view>
+  </view>
+  <view class="action-stack">
+    <button wx:if="{{nextAfter}}" class="secondary" bindtap="loadMore" loading="{{loadingMore}}" disabled="{{loadingMore || loading}}">查看更多访问记录</button>
+    <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="refresh" loading="{{loading}}" disabled="{{loading || loadingMore}}">重新读取访问记录</button>
+  </view>
+  <view class="hint footer-note">如发现不认识的访问，请联系照护团队核对。</view>
+</view>

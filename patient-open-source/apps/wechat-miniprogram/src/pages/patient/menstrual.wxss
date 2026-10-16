@@ -1,0 +1,5 @@
+@import "../../styles/patient.wxss";
+
+.label { margin-bottom: 12rpx; color: var(--mas-text); font-weight: 700; }
+.phase-card { border-left: 6rpx solid var(--mas-primary); }
+.phase-value { margin-top: 8rpx; color: var(--mas-text-strong); font-size: 38rpx; font-weight: 700; }

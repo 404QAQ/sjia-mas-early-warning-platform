@@ -1,0 +1,23 @@
+<view class="page patient-page">
+  <view class="title">工作与职场支持</view>
+  <view class="hint">为工作安排、疲劳管理和复工沟通做准备，按自己的节奏查看。</view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{notice}}" class="message" role="status">{{notice}}</view>
+  <view wx:if="{{loading}}" class="hint">正在读取工作支持…</view>
+  <block wx:for="{{view.cards}}" wx:key="type">
+    <view class="card">
+      <view class="card-title">{{item.title}}</view>
+      <view class="hint">{{item.intro}}</view>
+      <view wx:for="{{item.links}}" wx:for-item="link" wx:key="*this" class="line">• {{link}}</view>
+      <view wx:if="{{item.template}}" class="communication-template"><view class="field-label">可以这样说</view><text user-select="true">{{item.template}}</text></view>
+      <view wx:if="{{item.questions && item.questions.length}}" class="hint">可以和医生或信任的人讨论这些问题：</view>
+      <view wx:for="{{item.questions}}" wx:for-item="question" wx:key="id" class="line">{{question.prompt}}</view>
+      <button class="secondary" wx:if="{{!item.usage}}" size="mini" data-type="{{item.type}}" data-status="OPENED" bindtap="mark" disabled="{{saving}}">开始记录进度</button>
+      <button class="secondary" wx:if="{{item.usage && item.usage.status === 'OPENED'}}" size="mini" data-type="{{item.type}}" data-status="COMPLETED" bindtap="mark" disabled="{{saving}}">标记已完成</button>
+      <view wx:if="{{item.usage.status === 'COMPLETED'}}" class="completion-note">已完成这部分准备</view>
+    </view>
+  </block>
+  <view wx:if="{{view && !view.cards.length && !loading}}" class="hint">当前没有可用的工作支持内容。</view>
+  <button wx:if="{{pendingCount}}" class="secondary" bindtap="retry" disabled="{{saving}}">重试待确认操作</button>
+  <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading || saving}}">重新读取工作支持</button>
+</view>

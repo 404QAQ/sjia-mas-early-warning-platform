@@ -1,0 +1,11 @@
+{
+  "description": "MAS 预警平台微信小程序（患者、监护人、照护者、联系人）",
+  "packOptions": { "ignore": [] },
+  "setting": { "es6": true, "enhance": true, "postcss": true, "minified": false, "urlCheck": false },
+  "compileType": "miniprogram",
+  "libVersion": "3.7.12",
+  "appid": "touristappid",
+  "projectname": "mas-wechat-miniprogram",
+  "miniprogramRoot": "dist/",
+  "condition": {}
+}

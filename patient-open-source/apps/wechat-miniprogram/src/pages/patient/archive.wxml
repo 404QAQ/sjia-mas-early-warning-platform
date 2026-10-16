@@ -1,0 +1,57 @@
+<view class="page archive-page patient-page">
+<import src="./archive-filter.wxml" />
+  <view class="top-row"><view><view class="page-heading">{{mode === 'edit' ? (draft.id ? '编辑' : '新增') + title : mode === 'detail' ? '档案详情' : title}}</view><view class="page-copy">{{mode === 'list' ? subtitle : '当前患者 · 医疗档案'}}</view></view><button wx:if="{{mode === 'list' && kind !== 'history'}}" class="primary-button compact" bindtap="add">＋ 新增</button><button wx:elif="{{mode === 'list'}}" class="text-button compact" bindtap="resetFilter">重置</button></view>
+  <view wx:if="{{loading}}" class="page-copy" role="status">正在读取医疗档案…</view>
+  <view wx:if="{{error}}" class="error-banner">{{error}}</view>
+  <block wx:if="{{mode === 'list'}}">
+    <view class="filters"><template is="archive-filter" data="{{filter,timeOptions,hospitalOptions,departmentOptions,diseaseOptions}}" /></view>
+    <view class="result-heading">共 {{rows.length}} 条{{kind === 'history' ? '匹配档案' : title}}<text>已同步</text></view>
+    <button wx:for="{{rows}}" wx:key="id" class="record-card" data-id="{{item.id}}" bindtap="openDetail">
+      <view class="record-top"><text class="card-title">{{item.title}}</text><text class="badge">{{item.statusLabel}}</text></view>
+      <view class="card-meta">{{item.hospital}} · {{item.date}}{{item.dischargeDate ? ' 至 ' + item.dischargeDate : ''}}</view>
+      <view wx:if="{{item.department || item.doctor}}" class="doctor-line">{{item.department}}{{item.department && item.doctor ? ' · ' : ''}}{{item.doctor}}</view>
+      <view wx:if="{{item.diagnosis}}" class="record-diagnosis">{{item.diagnosis}}</view>
+      <view wx:if="{{item.abnormal}}" class="record-preview">{{item.abnormal}}</view>
+      <view wx:elif="{{item.content}}" class="record-preview">{{item.content}}</view>
+      <view class="record-footer"><text class="badge {{item.demo ? 'demo' : ''}}">{{item.demo ? '演示资料' : item.imageLabel}}</text><text>{{kind === 'history' ? item.kindLabel + ' · ' : ''}}查看详情 ›</text></view>
+    </button>
+    <view wx:if="{{!rows.length && !error}}" class="card empty-state"><view class="card-title">{{total ? '没有符合条件的档案' : '暂无' + title}}</view><view class="page-copy">{{total ? '可以更换筛选条件或清空关键词。' : '添加已有的诊疗资料，复诊时随时查看。'}}</view><button wx:if="{{total}}" class="text-button" bindtap="resetFilter">清空筛选</button><button wx:elif="{{kind === 'history'}}" class="text-button" bindtap="openScan">添加报告</button><button wx:else class="text-button" bindtap="add">新增{{title}}</button></view>
+    <view class="local-caption">当前列表来自医疗档案服务，仅有权限的照护医生可查看。<view>网络未确认时请保留医院原始资料并重新读取。</view></view>
+  </block>
+  <block wx:elif="{{mode === 'detail' && detail}}">
+    <view class="card"><view class="record-top"><view class="card-title">{{detail.title}}</view><text class="badge">{{detail.statusLabel}}</text></view><view class="card-meta">{{detail.kindLabel}} · {{detail.date}}</view><view wx:if="{{detail.demo}}" class="notice">演示资料，仅用于功能展示，不用于临床判断。</view>
+      <view class="detail-row"><view class="field-label">医院 / 科室</view><view class="detail-value">{{detail.hospital}}{{detail.department ? ' · ' + detail.department : ''}}</view></view>
+      <view class="detail-row"><view class="field-label">医师</view><view class="detail-value">{{detail.doctor || '未填写'}}</view></view>
+      <view class="detail-row"><view class="field-label">{{detail.dateLabel}}{{detail.kind === 'hospital' ? ' / 出院日期' : ''}}</view><view class="detail-value">{{detail.date}}{{detail.kind === 'hospital' ? (detail.dischargeDate ? ' 至 ' + detail.dischargeDate : ' · 尚未填写出院日期') : ''}}</view></view>
+      <view wx:if="{{detail.diagnosis}}" class="detail-row"><view class="field-label">疾病诊断 / 主要病情</view><view class="detail-value">{{detail.diagnosis}}</view></view>
+      <view wx:if="{{detail.content}}" class="detail-row"><view class="field-label">{{detail.kind === 'prescription' ? '医嘱与备注' : detail.kind === 'outpatient' ? '病情与处置' : '结论与记录'}}</view><view class="detail-value">{{detail.content}}</view></view>
+      <view wx:if="{{detail.abnormal}}" class="detail-row"><view class="field-label">异常数据 · 按原报告核对</view><view class="detail-value">{{detail.abnormal}}</view></view>
+    </view>
+    <view wx:if="{{detail.items.length}}" class="card"><view class="card-title">检查项目</view><view wx:for="{{detail.items}}" wx:key="index" class="detail-row"><view class="record-top"><view>{{item.name}}</view><view>{{item.value}} {{item.unit}}</view></view><view class="card-meta">参考范围：{{item.range || '见原报告'}}<text wx:if="{{item.abnormal}}" class="abnormal-label"> · 已标记异常</text></view></view></view>
+    <view wx:if="{{detail.drugs.length}}" class="card"><view class="card-title">处方药品</view><view wx:for="{{detail.drugs}}" wx:key="index" class="detail-row"><view class="detail-value">{{item.name}}<text wx:if="{{item.dose}}"> · {{item.dose}}</text></view><view class="card-meta">{{item.usage || '请核对原处方用法'}}</view></view><view class="notice">处方归档不等于用药计划。请严格按医生原处方执行。</view></view>
+    <view wx:if="{{detail.artifactId}}" class="card"><view class="card-title">报告原图</view><image class="preview-image" src="{{detail.artifactId}}" mode="aspectFit" bindtap="preview" /><button class="text-button" bindtap="preview">查看完整原图</button></view>
+    <view class="local-caption">已同步 · 最近更新 {{detail.recordedAt}}</view>
+    <view class="button-row"><button class="secondary-button" bindtap="backToList">返回列表</button><button class="primary-button" bindtap="edit">编辑档案</button></view>
+    <button wx:if="{{detail.kind === 'prescription'}}" class="text-button status-button" bindtap="togglePrescription" disabled="{{saving}}">{{detail.status === 'active' ? '标记处方已结束' : '恢复为使用中'}}</button>
+    <button class="text-button danger-text delete-button" bindtap="remove" disabled="{{saving}}">删除医疗档案</button>
+  </block>
+  <block wx:elif="{{mode === 'edit'}}">
+    <view class="card form-card">
+      <view class="field"><view class="field-label">{{draft.kind === 'check' ? '检查名称' : draft.kind === 'outpatient' ? '病历标题' : '档案名称'}} *</view><input class="form-input" value="{{draft.title}}" data-field="title" bindinput="changeField" maxlength="200" placeholder="请输入名称" /></view>
+      <view wx:if="{{draft.kind === 'check'}}" class="field"><view class="field-label">检查类型</view><picker range="{{checkCategories}}" bindchange="changeCategory"><view class="filter-cell">{{draft.checkCategory === 'lab' ? '化验' : draft.checkCategory === 'imaging' ? '影像' : '其他'}}<text>⌄</text></view></picker></view>
+      <view class="field"><view class="field-label">医院 *</view><input class="form-input" value="{{draft.hospital}}" data-field="hospital" bindinput="changeField" maxlength="200" placeholder="医院名称" /></view>
+      <view class="field"><view class="field-label">科室 / 病房</view><input class="form-input" value="{{draft.department}}" data-field="department" bindinput="changeField" maxlength="200" placeholder="如风湿免疫科" /></view>
+      <view class="field"><view class="field-label">{{draft.kind === 'hospital' ? '主管医生' : '医师'}}</view><input class="form-input" value="{{draft.doctor}}" data-field="doctor" bindinput="changeField" maxlength="200" placeholder="按原始资料填写" /></view>
+      <view class="field"><view class="field-label">{{dateLabel}} *</view><picker mode="date" value="{{draft.date}}" data-field="date" bindchange="changeField"><view class="filter-cell selected">{{draft.date}}<text>⌄</text></view></picker></view>
+      <view wx:if="{{draft.kind === 'hospital'}}" class="field"><view class="field-label">出院日期（可选）</view><picker mode="date" value="{{draft.dischargeDate || draft.date}}" start="{{draft.date}}" data-field="dischargeDate" bindchange="changeField"><view class="filter-cell">{{draft.dischargeDate || '尚未出院 / 未填写'}}<text>⌄</text></view></picker><button wx:if="{{draft.dischargeDate}}" class="text-button" bindtap="clearDischarge">清空出院日期</button></view>
+      <view class="field"><view class="field-label">{{draft.kind === 'hospital' ? '入院诊断 / 主要病情 *' : '疾病诊断'}}</view><input class="form-input" value="{{draft.diagnosis}}" data-field="diagnosis" bindinput="changeField" maxlength="200" placeholder="按原报告或医生说明填写" /></view>
+      <view class="field"><view class="field-label">{{draft.kind === 'outpatient' ? '病情与处置 *' : draft.kind === 'prescription' ? '医嘱与备注' : '结论与记录'}}</view><textarea class="form-textarea" value="{{draft.content}}" data-field="content" bindinput="changeField" maxlength="5000" placeholder="记录原始资料中的内容" /></view>
+      <view wx:if="{{draft.kind === 'check'}}" class="field"><view class="field-label">异常数据</view><textarea class="form-textarea" value="{{draft.abnormal}}" data-field="abnormal" bindinput="changeField" maxlength="2000" placeholder="如：铁蛋白数值、单位及参考范围" /></view>
+    </view>
+    <view wx:if="{{draft.kind === 'check'}}" class="card"><view class="card-title">检查项目</view><view wx:for="{{draft.items}}" wx:key="index" class="line-editor"><view class="line-head">项目 {{index + 1}}<button class="text-button" data-list="items" data-index="{{index}}" bindtap="removeLine">移除</button></view><input class="form-input" value="{{item.name}}" data-list="items" data-index="{{index}}" data-field="name" bindinput="changeLine" maxlength="200" placeholder="指标名称" /><view class="filter-grid"><input class="form-input" value="{{item.value}}" data-list="items" data-index="{{index}}" data-field="value" bindinput="changeLine" maxlength="200" placeholder="结果数值" /><input class="form-input" value="{{item.unit}}" data-list="items" data-index="{{index}}" data-field="unit" bindinput="changeLine" maxlength="200" placeholder="单位" /></view><input class="form-input line-gap" value="{{item.range}}" data-list="items" data-index="{{index}}" data-field="range" bindinput="changeLine" maxlength="200" placeholder="参考范围" /><view class="switch-line"><text>按原报告标记异常</text><switch checked="{{item.abnormal}}" color="#0f766e" data-list="items" data-index="{{index}}" data-field="abnormal" bindchange="changeLine" /></view></view><button class="secondary-button" bindtap="addItem" disabled="{{draft.items.length >= 50}}">＋ 添加检查项目</button></view>
+    <view wx:if="{{draft.kind === 'prescription'}}" class="card"><view class="card-title">处方药品 *</view><view wx:for="{{draft.drugs}}" wx:key="index" class="line-editor"><view class="line-head">药品 {{index + 1}}<button class="text-button" data-list="drugs" data-index="{{index}}" bindtap="removeLine">移除</button></view><input class="form-input" value="{{item.name}}" data-list="drugs" data-index="{{index}}" data-field="name" bindinput="changeLine" maxlength="200" placeholder="药品名称" /><input class="form-input line-gap" value="{{item.dose}}" data-list="drugs" data-index="{{index}}" data-field="dose" bindinput="changeLine" maxlength="200" placeholder="剂量 / 规格，按原处方填写" /><input class="form-input line-gap" value="{{item.usage}}" data-list="drugs" data-index="{{index}}" data-field="usage" bindinput="changeLine" maxlength="1000" placeholder="用法与频次" /></view><button class="secondary-button" bindtap="addDrug" disabled="{{draft.drugs.length >= 30}}">＋ 添加药品</button></view>
+    <view class="notice">资料保存后可由有权限的照护医生查看。报告内容不替代医嘱，不会自动调整治疗。</view>
+    <view wx:if="{{error}}" class="error-banner">{{error}}</view>
+    <view class="button-row"><button class="secondary-button" bindtap="cancelEdit" disabled="{{saving}}">取消</button><button class="primary-button" bindtap="save" loading="{{saving}}" disabled="{{saving}}">保存档案</button></view>
+  </block>
+</view>

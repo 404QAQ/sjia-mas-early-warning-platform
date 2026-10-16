@@ -1,0 +1,8 @@
+@import "../../styles/patient.wxss";
+@import "./safety-common.wxss";
+
+.choice { display: flex; align-items: center; min-height: var(--mas-control-height); margin-top: 12rpx; color: var(--mas-text-muted); line-height: 1.6; }
+.choice checkbox { margin-right: 14rpx; }
+.living-switch-row { display: flex; align-items: center; justify-content: space-between; gap: 18rpx; min-height: var(--mas-control-height); padding: 14rpx 0 22rpx; }
+.living-label { color: var(--mas-text); font-size: 28rpx; font-weight: 600; }
+.living-switch-row switch { flex-shrink: 0; }

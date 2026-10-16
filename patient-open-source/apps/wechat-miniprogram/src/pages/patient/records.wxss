@@ -1,0 +1,32 @@
+@import "../../styles/patient.wxss";
+
+page { background: var(--mas-bg); }
+.page { min-height: 100vh; box-sizing: border-box; color: var(--mas-text); background: var(--mas-bg); }
+.page-subtitle { margin: 0 0 28rpx; color: var(--mas-text-subtle); font-size: 23rpx; line-height: 1.6; }
+.page button { box-sizing: border-box; line-height: 1.4; }
+.page button::after { border: 0; }
+.page button.entry-card { display: flex; align-items: center; width: 100%; min-height: 238rpx; margin: 0; padding: 24rpx; background: var(--mas-surface); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); text-align: left; box-shadow: var(--mas-shadow-card); }
+.page button.entry-card:active, .page button.temperature-entry:active { background: var(--mas-surface-soft); }
+.page button.symptom-entry { min-height: 142rpx; margin-bottom: 24rpx; padding: 28rpx; }
+.entry-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24rpx; }
+.entry-copy { flex: 1; min-width: 0; }
+.entry-icon { display: flex; align-items: center; justify-content: center; width: 76rpx; height: 76rpx; margin-bottom: 14rpx; border-radius: 20rpx; font-size: 35rpx; }
+.symptom-entry .entry-icon { flex-shrink: 0; width: 84rpx; height: 84rpx; margin: 0 24rpx 0 0; font-size: 40rpx; }
+.orange { background: var(--mas-warning-soft); }.blue { background: #eff6ff; }.violet { background: #f5f3ff; }.teal { background: #f0fdfa; }.gray { background: #f3f4f6; }
+.entry-title { font-size: 27rpx; font-weight: 600; color: var(--mas-text); line-height: 1.45; }
+.entry-desc { margin-top: 7rpx; color: var(--mas-text-subtle); font-size: 20rpx; line-height: 1.4; }
+.entry-summary { width: 124rpx; flex-shrink: 0; margin-left: 6rpx; }
+.summary-main { font-size: 25rpx; font-weight: 700; line-height: 1.45; }.summary-sub { margin-top: 8rpx; color: var(--mas-text-subtle); font-size: 19rpx; line-height: 1.4; }
+.blue-text { color: #2563eb; }.violet-text { color: #7c3aed; }.teal-text { color: var(--mas-primary); }.muted-text { color: var(--mas-text-muted); }
+.entry-arrow { flex-shrink: 0; margin-left: 14rpx; font-size: 35rpx; font-weight: 300; color: var(--mas-border); }
+.section-heading { display: flex; align-items: center; justify-content: space-between; gap: 18rpx; margin: 30rpx 0 12rpx; min-height: 64rpx; }
+.section-title { font-size: 30rpx; font-weight: 600; line-height: 1.4; }
+.page button.text-button { display: flex; align-items: center; justify-content: center; width: auto; min-height: 88rpx; margin: 0; padding: 0 8rpx; background: transparent; color: var(--mas-text); font-size: 25rpx; font-weight: 500; border-radius: var(--mas-radius-control); }
+.card { padding: var(--mas-card-padding); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); background: var(--mas-surface); box-shadow: var(--mas-shadow-card); }
+.symptom-row { padding: 15rpx 0; border-bottom: 1rpx solid #f3f4f6; }.symptom-row:last-child { border: 0; }.symptom-tags { display: flex; flex-wrap: wrap; gap: 9rpx; }.symptom-tag { padding: 7rpx 20rpx; border-radius: 999rpx; color: var(--mas-warning); background: var(--mas-warning-soft); font-size: 23rpx; font-weight: 500; line-height: 1.45; }
+.row-meta { margin-top: 10rpx; color: var(--mas-text-subtle); font-size: 21rpx; line-height: 1.55; }.empty-copy { padding: 12rpx 0; color: var(--mas-text-subtle); font-size: 24rpx; line-height: 1.6; }
+.medication-card { padding: 0 var(--mas-card-padding); }.medication-row { padding: 24rpx 0; border-bottom: 1rpx solid var(--mas-bg); }.medication-head { display: flex; align-items: center; justify-content: space-between; gap: 14rpx; }.medication-name { flex: 1; min-width: 0; font-size: 27rpx; font-weight: 600; }.medication-dose { margin-left: 14rpx; font-size: 23rpx; color: var(--mas-text-subtle); font-weight: 400; }.status-tag { padding: 6rpx 20rpx; color: var(--mas-success); background: var(--mas-success-soft); border-radius: 999rpx; font-size: 23rpx; }.page button.all-medications { width: 100%; min-height: 88rpx; color: var(--mas-text-muted); }
+.followup-date { font-size: 26rpx; font-weight: 600; line-height: 1.6; }.assessment-head { display: flex; align-items: center; justify-content: space-between; font-size: 25rpx; color: var(--mas-text-muted); }.assessment-status { color: #7c3aed; font-weight: 600; }.assessment-copy { margin-top: 18rpx; color: var(--mas-text-muted); font-size: 23rpx; line-height: 1.6; }
+.page button.temperature-entry { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 112rpx; margin: 24rpx 0 0; padding: 24rpx 28rpx; border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); background: var(--mas-surface); text-align: left; }
+.error,.message,.queue-card { margin-bottom: 20rpx; padding: 20rpx; border-radius: var(--mas-radius-control); font-size: 24rpx; line-height: 1.6; }.error { color: var(--mas-danger); background: var(--mas-danger-soft); }.message { color: var(--mas-success); background: var(--mas-success-soft); }.queue-card { margin-top: 24rpx; color: var(--mas-warning); background: var(--mas-warning-soft); }
+@media (max-width: 350px) { .page { padding-left: 24rpx; padding-right: 24rpx; }.entry-grid { gap: 18rpx; }.page button.entry-card { padding: 20rpx; }.entry-summary { width: 104rpx; }.summary-main { font-size: 23rpx; }.entry-title { font-size: 26rpx; }.entry-desc { font-size: 19rpx; } }

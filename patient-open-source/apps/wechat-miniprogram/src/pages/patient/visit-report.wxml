@@ -1,0 +1,67 @@
+<view class="page patient-page">
+  <view class="page-header">
+    <view class="header-main">
+      <view class="eyebrow">健康报告 · 复诊摘要</view>
+      <view class="title">{{report.patientName || '我的健康报告'}}</view>
+      <view wx:if="{{report}}" class="report-time">整理于 {{report.asOfText}}</view>
+      <view wx:else class="subtitle">把最近的变化带给医生。</view>
+    </view>
+    <button wx:if="{{report}}" class="mini-link" bindtap="refresh" disabled="{{loading}}">{{loading ? '更新中' : '刷新'}}</button>
+  </view>
+
+  <view wx:if="{{loading && !report}}" class="state-card"><view class="state-title">正在整理报告</view><view class="state-copy">正在读取趋势、记录和用药概览…</view></view>
+  <view wx:if="{{loading && report}}" class="refresh-note">正在更新，以下为上次读取的内容。</view>
+  <view wx:if="{{error}}" class="state-card error-card" role="alert"><view class="state-title">报告暂时没打开</view><view class="state-copy">{{error}}</view><button class="outline-button" bindtap="refresh" disabled="{{loading}}">重新读取</button></view>
+
+  <block wx:if="{{report}}">
+    <view class="risk-hero risk-{{report.riskTone}}">
+      <view class="risk-top"><view class="risk-kicker">当前建议</view><view class="risk-label">{{report.riskLabel}}</view></view>
+      <view class="risk-title">{{report.actionTitle}}</view>
+      <view class="risk-detail">{{report.action}}</view>
+      <button wx:if="{{report.riskTone === 'urgent'}}" class="action-button urgent-button" bindtap="openEmergency">打开急诊摘要</button>
+      <button wx:elif="{{report.riskTone === 'watch'}}" class="action-button watch-button" bindtap="openTrend">查看行动详情</button>
+    </view>
+
+    <view class="section-heading"><view><view class="section-title">指标与变化</view><view class="section-caption">测量时间以每项记录为准</view></view><button class="mini-link" bindtap="openTrend">详细趋势 ›</button></view>
+    <view wx:if="{{report.series.length || report.narrative.length}}" class="data-card">
+      <view wx:for="{{report.series}}" wx:key="display" class="series-row">
+        <view class="series-head"><view class="series-name">{{item.display}}</view><view class="series-latest">{{item.latest}}</view></view>
+        <view wx:if="{{item.latestAt}}" class="series-date">最近测量 {{item.latestAt}}</view>
+        <view wx:if="{{item.points.length === 1}}" class="series-note">目前 1 次记录，尚不能形成趋势</view>
+        <view wx:elif="{{!item.comparable}}" class="series-note">记录单位不同，请在详细趋势中逐次核对。</view>
+        <view wx:elif="{{item.points.length > 1}}" class="series-note"><text class="series-change">{{item.direction === 'up' ? '↗' : item.direction === 'down' ? '↘' : '→'}} {{item.change}}</text><text> · 相比近 {{item.points.length}} 次记录中的首次</text></view>
+      </view>
+      <view wx:if="{{report.narrative.length}}" class="narrative-block">
+        <view class="narrative-title">变化说明</view>
+        <view wx:for="{{report.narrative}}" wx:key="*this" class="narrative-row"><text class="narrative-bullet">·</text><text>{{item}}</text></view>
+      </view>
+    </view>
+    <view wx:if="{{!report.series.length}}" class="empty-card {{report.trendUnavailable ? 'unavailable-card' : ''}}"><view>{{report.seriesNotice}}</view><button wx:if="{{report.trendUnavailable}}" class="mini-link" bindtap="refresh" disabled="{{loading}}">重新读取</button></view>
+    <view wx:elif="{{report.series.length}}" class="data-footnote">变化方向不代表临床判断，请结合上方行动建议。</view>
+
+    <view class="section-heading"><view class="section-title">症状记录</view><button class="mini-link" bindtap="openRecords">全部记录 ›</button></view>
+    <view class="symptom-card">
+      <view wx:for="{{report.symptoms}}" wx:key="index" class="symptom-row"><view class="symptom-name">{{item.display}}</view><view class="symptom-meta">{{item.atText}} · {{item.sourceLabel}}</view></view>
+      <view class="section-note">{{report.symptomsNotice}}</view>
+    </view>
+
+    <view class="section-heading"><view><view class="section-title">当前用药</view><view class="section-caption">核对方案，不等同于实际已服用</view></view><button class="mini-link" bindtap="openMedications">用药管理 ›</button></view>
+    <view wx:if="{{report.medicationsNotice}}" class="inline-notice">{{report.medicationsNotice}}</view>
+    <view wx:if="{{report.medications.length}}" class="med-card">
+      <view wx:for="{{report.medications}}" wx:key="index" class="med-row">
+        <view class="med-head"><view class="med-name">{{item.name}}</view><view class="med-status">{{item.status}}</view></view>
+        <view class="med-detail">{{item.detail}}</view>
+        <view class="med-source">{{item.sourceLabel}}</view>
+        <view wx:if="{{item.prescriptionNote}}" class="med-detail">医嘱来源：{{item.prescriptionNote}}</view>
+      </view>
+    </view>
+    <view wx:elif="{{!report.medicationsNotice}}" class="empty-card">当前没有用药计划。可在用药管理中录入已有处方或医嘱。</view>
+
+    <view class="section-heading"><view class="section-title">复诊准备</view><view class="record-count">{{report.recordCountLabel}}</view></view>
+    <view class="visit-card">
+      <view class="visit-row"><view class="visit-main"><view class="visit-title">{{report.screening.title}}</view><view class="visit-copy">{{report.screening.detail}}</view></view><button class="row-button" bindtap="openScreening">{{report.screening.buttonText}}</button></view>
+      <view class="visit-preparation"><view class="visit-title">带上最近的变化</view><view class="visit-copy">补充体温和症状，核对药名、剂量与实际用药记录。复诊时可直接出示这份摘要。</view><button class="primary-button" bindtap="openRecords">补充健康记录</button></view>
+    </view>
+    <view class="report-footer">{{report.reportStatus}}<view>药物调整与诊疗安排请与照护医生确认。</view></view>
+  </block>
+</view>

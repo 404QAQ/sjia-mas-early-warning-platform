@@ -1,0 +1,57 @@
+<view class="page patient-page">
+  <view class="title">{{section === 'followup' ? '随访安排' : '复诊与生活安排'}}</view>
+  <view class="hint">记下复诊日期，提前准备最近的症状和用药记录。</view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{notice}}" class="message" role="status">{{notice}}</view>
+  <view id="followup-section" class="followup-hero">
+    <view class="hero-kicker">自记安排 · 已有预约或医嘱</view>
+    <view class="hero-title">{{editingFollowupId ? '修改复诊安排' : '设定下次随访'}}</view>
+    <view class="hero-copy">按医院预约或医嘱记下日期、地点和检查项目，保存后可供照护医生查看。</view>
+
+    <picker mode="date" value="{{followupDate}}" start="{{today}}" bindchange="pickFollowupDate"><view class="picker followup-picker">{{followupDate || '选择复诊日期'}}<text wx:if="{{followupDate}}"> · 修改</text></view></picker>
+    <view class="field-label">医院（可选）</view>
+    <input aria-label="医院（可选）" class="followup-input" value="{{followupHospital}}" maxlength="200" placeholder="医院（可选）" bindinput="inputFollowupHospital" />
+    <view class="field-label">科室（可选）</view>
+    <input aria-label="科室（可选）" class="followup-input" value="{{followupDepartment}}" maxlength="200" placeholder="科室（可选）" bindinput="inputFollowupDepartment" />
+    <view class="field-label">医生（可选）</view>
+    <input aria-label="医生（可选）" class="followup-input" value="{{followupDoctor}}" maxlength="200" placeholder="随访医生（可选）" bindinput="inputFollowupDoctor" />
+    <view class="field-label">检查项目 / 复诊备注（可选）</view>
+    <textarea aria-label="检查项目或复诊备注，可选" value="{{followupExamItems}}" maxlength="200" placeholder="检查项目 / 随访备注（可选）" bindinput="inputFollowupExamItems"></textarea>
+    <button class="hero-button" bindtap="saveFollowup" disabled="{{savingFollowup}}">{{savingFollowup ? '正在保存…' : '保存随访安排'}}</button>
+  </view>
+  <button wx:if="{{editingFollowupId}}" class="secondary" bindtap="cancelFollowupEdit" disabled="{{savingFollowup}}">取消编辑</button>
+  <view class="card schedule-card">
+    <view class="section-head"><view class="card-title">随访日程</view><view class="hint">{{followupRows.length}} 条自记安排</view></view>
+    <view wx:if="{{followupLoading}}" class="hint">正在同步日程…</view>
+    <view wx:for="{{followupRows}}" wx:key="id" class="followup-record">
+      <view class="section-head"><view class="schedule-name">{{item.date}}</view><view class="schedule-badge">{{item.status === 'COMPLETED' ? '已复诊' : item.status === 'CANCELLED' ? '已取消' : '待复诊'}}</view></view>
+      <view class="hint">{{item.hospital || '医院待确认'}}{{item.department ? ' · ' + item.department : ''}}{{item.doctor ? ' · ' + item.doctor : ''}}</view><view class="hint">{{item.examItems || item.note || '请带上近期检查与用药记录'}}</view>
+      <view wx:if="{{item.status === 'SCHEDULED'}}" class="followup-actions"><button class="text-button" data-id="{{item.id}}" bindtap="editFollowup" disabled="{{savingFollowup}}">编辑</button><button class="text-button" data-id="{{item.id}}" data-status="COMPLETED" bindtap="updateFollowupStatus" disabled="{{savingFollowup}}">标记已复诊</button><button class="text-button muted" data-id="{{item.id}}" data-status="CANCELLED" bindtap="updateFollowupStatus" disabled="{{savingFollowup}}">取消安排</button></view>
+    </view>
+    <view wx:if="{{!followupLoading && !followupRows.length}}" class="hint">暂无随访安排，选择日期后即可保存。</view>
+  </view>
+  <block wx:if="{{section !== 'followup'}}">
+  <view class="card">
+    <view class="card-title">准备搬家或换城市</view>
+    <input value="{{fromRegion}}" maxlength="500" placeholder="原地区（可选）" bindinput="inputFrom" />
+    <input value="{{toRegion}}" maxlength="500" placeholder="要搬去的城市或地区" bindinput="inputTo" />
+    <button class="primary" bindtap="create" loading="{{saving}}" disabled="{{saving}}">{{saving ? '正在保存…' : '开始准备'}}</button>
+  </view>
+  <view wx:if="{{loading}}" class="hint">正在读取生活事件…</view>
+  <block wx:for="{{events}}" wx:key="id">
+    <view class="card">
+      <view class="card-title">{{item.fromRegion}}{{item.fromRegion ? ' → ' : ''}}{{item.toRegion}}</view>
+      <view class="line">{{item.status === 'DRAFT' ? '草稿' : item.status === 'IN_PROGRESS' ? '进行中' : '已完成'}} · 更新于 {{item.updatedText}}</view>
+      <view class="task">找医生：{{item.findDoctor.status === 'NOT_STARTED' ? '未开始' : item.findDoctor.status === 'IN_PROGRESS' ? '进行中' : '已完成'}}</view>
+      <button wx:if="{{item.findDoctor.status === 'NOT_STARTED'}}" size="mini" data-id="{{item.id}}" class="secondary" data-action="START_FIND_DOCTOR" bindtap="task" disabled="{{saving}}">开始找医生</button>
+      <view class="task">转诊摘要：{{item.referralSummary.status === 'NOT_STARTED' ? '未开始' : item.referralSummary.status === 'IN_PROGRESS' ? '准备中' : '医生已确认'}}</view>
+      <button wx:if="{{item.referralSummary.status === 'NOT_STARTED'}}" size="mini" data-id="{{item.id}}" class="secondary" data-action="GENERATE_REFERRAL_SUMMARY" bindtap="task" disabled="{{saving}}">生成转诊摘要</button>
+      <view class="task">应急重设：{{item.emergencyReset.status === 'NOT_STARTED' ? '未开始' : item.emergencyReset.status === 'IN_PROGRESS' ? '准备中' : '已完成'}}</view>
+      <button wx:if="{{item.emergencyReset.status === 'NOT_STARTED'}}" size="mini" data-id="{{item.id}}" class="secondary" data-action="START_EMERGENCY_RESET" bindtap="task" disabled="{{saving}}">开始重设应急方案</button>
+    </view>
+  </block>
+  <view wx:if="{{!loading && !events.length}}" class="hint">还没有搬迁安排。如准备换城市，可在上方开始准备。</view>
+  <button wx:if="{{pendingCount}}" class="secondary" bindtap="retry" disabled="{{saving}}">重试待确认操作</button>
+  </block>
+  <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading || saving || savingFollowup}}">重新读取生活安排</button>
+</view>

@@ -1,0 +1,17 @@
+{
+  "name": "@mas/engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" } },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.check.json",
+    "test": "vitest run",
+    "lint": "tsc -p tsconfig.check.json --noUnusedLocals --noUnusedParameters"
+  },
+  "dependencies": { "@mas/domain": "workspace:*" },
+  "devDependencies": { "typescript": "5.6.3", "vitest": "2.1.9", "yaml": "2.6.1" }
+}

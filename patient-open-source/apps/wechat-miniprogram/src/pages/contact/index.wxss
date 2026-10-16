@@ -1,0 +1,37 @@
+@import "../../styles/patient.wxss";
+.page-heading { display: flex; align-items: center; gap: 20rpx; margin: 6rpx 0 28rpx; }
+.page-heading .title { margin: 4rpx 0 0; font-size: 36rpx; }
+.eyebrow { color: var(--mas-text-muted); font-size: 23rpx; }
+.contact-mark { position: relative; flex: none; box-sizing: border-box; width: 66rpx; height: 66rpx; border: 2rpx solid #bcd6d7; border-radius: 20rpx; color: var(--mas-primary); background: var(--mas-surface-soft); }
+.contact-mark::before, .contact-mark::after { content: ''; position: absolute; border-radius: 2rpx; background: currentColor; }
+.contact-mark::before { left: 16rpx; right: 16rpx; top: 29rpx; height: 4rpx; }
+.contact-mark::after { top: 16rpx; bottom: 16rpx; left: 29rpx; width: 4rpx; }
+.state-card, .error { padding: 28rpx; border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); background: var(--mas-surface); }
+.state-title { color: var(--mas-text); font-size: 30rpx; font-weight: 600; }
+.state-card .hint, .error .hint { margin-top: 12rpx; }
+.error { border-color: #eed3cf; background: #fff9f8; }
+.action-copy { color: var(--mas-text-muted); font-size: 28rpx; line-height: 1.7; }
+.patient { display: flex; justify-content: space-between; gap: 20rpx; margin-top: 24rpx; padding: 20rpx 0; border-top: 1rpx solid var(--mas-border); border-bottom: 1rpx solid var(--mas-border); color: var(--mas-text-muted); font-size: 25rpx; }
+.patient text { color: var(--mas-text); font-weight: 600; }
+.done { margin-top: 26rpx; padding: 22rpx; border: 1rpx solid #cde5d9; color: var(--mas-success); background: var(--mas-success-soft); border-radius: var(--mas-radius-control); }
+.done-title { font-size: 28rpx; font-weight: 600; }
+.done .hint { margin-top: 6rpx; color: var(--mas-success); }
+.response-heading { margin-top: 30rpx; color: var(--mas-text-muted); font-size: 24rpx; }
+.page button { width: 100%; min-height: 88rpx; margin-top: 16rpx; padding: 20rpx; }
+.page button.quiet { margin-bottom: 0; color: var(--mas-text-muted); background: transparent; }
+.summary-card { padding: 28rpx; border-radius: var(--mas-radius-card); color: var(--mas-on-primary); background: #173a55; }
+.summary-label { color: #c0d1de; font-size: 23rpx; line-height: 1.5; }
+.summary-title { margin-top: 12rpx; font-size: 36rpx; font-weight: 700; line-height: 1.4; }
+.summary-copy { margin-top: 12rpx; color: #e0e9ee; font-size: 26rpx; line-height: 1.7; }
+.summary-patient { margin-top: 20rpx; color: #e0e9ee; font-size: 25rpx; }
+.triage { margin-top: 26rpx; padding: 22rpx; border-left: 4rpx solid #77a6b6; border-radius: 8rpx; background: #254760; }
+.triage-copy { margin-top: 10rpx; font-size: 28rpx; font-weight: 500; line-height: 1.75; }
+.list-row { display: flex; align-items: flex-start; gap: 14rpx; margin-top: 18rpx; color: var(--mas-text); font-size: 26rpx; line-height: 1.75; }
+.list-dot { flex: none; width: 8rpx; height: 8rpx; margin-top: 18rpx; border-radius: 50%; background: var(--mas-primary); }
+.alert-card .card-title { color: var(--mas-danger); }
+.alert-card .list-dot { background: var(--mas-danger); }
+.info-row { display: flex; align-items: flex-start; gap: 20rpx; padding: 18rpx 0; border-bottom: 1rpx solid var(--mas-border); font-size: 25rpx; line-height: 1.65; }
+.info-row:last-child { padding-bottom: 0; border-bottom: 0; }
+.info-label { flex: none; width: 112rpx; color: var(--mas-text-muted); }
+.info-value { flex: 1; min-width: 0; color: var(--mas-text); overflow-wrap: break-word; }
+.privacy-note { margin: 26rpx 8rpx 0; color: var(--mas-text-muted); font-size: 23rpx; line-height: 1.7; text-align: center; }

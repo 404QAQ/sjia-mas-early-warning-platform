@@ -1,0 +1,148 @@
+<view class="page health-center-page patient-page tab-page">
+  <view wx:if="{{homeSnapshot}}" class="home-snapshot">
+    <view class="profile-head patient-hero">
+      <view class="profile-main">
+        <view class="patient-name">{{patientName}} <text class="patient-age">{{patientAgeLabel || patientStageLabel}}</text></view>
+        <view class="profile-diagnosis">{{patientDiagnosis || patientSexLabel + ' · ' + roleText}}</view>
+      </view>
+      <button wx:if="{{actorOptions.length > 1}}" class="text-button" bindtap="toggleActors">{{showActorPicker ? '收起档案' : '切换档案'}}<text class="chevron">›</text></button>
+    </view>
+    <view wx:if="{{showActorPicker}}" class="card actor-picker">
+      <view class="card-title">选择要查看的患者</view>
+      <button wx:for="{{actorOptions}}" wx:key="id" class="actor {{item.selected ? 'selected' : ''}}" data-actor-id="{{item.id}}" bindtap="changeActor" disabled="{{switching}}">{{item.title}} · {{item.relationLabel}}{{item.selected ? '（当前）' : ''}}</button>
+    </view>
+    <view wx:if="{{entrySexIntentLabel || profileLoading}}" class="profile-notice">{{entrySexIntentLabel}}{{profileLoading ? ' 正在读取档案…' : ''}}</view>
+    <view wx:if="{{snapshotNotice || error || profileNotice}}" class="snapshot-notice" role="status">
+      <view>{{snapshotNotice || error || profileNotice}}</view>
+      <button class="text-button" bindtap="refreshSnapshot" loading="{{snapshotLoading || profileLoading}}" disabled="{{snapshotLoading || profileLoading}}">重新读取</button>
+    </view>
+
+    <!-- 三模式首页的第一层任务卡。数据来源仍是当前档案投影，只有入口和解释随生命阶段变化。 -->
+    <view wx:if="{{patientStageLabel === '儿童期'}}" class="card mode-card child-mode-card">
+      <view class="card-heading"><view><view class="card-title">今天先记录</view><view class="meta">体温和症状是今天最重要的两项信息</view></view><text class="mode-chip">儿童端</text></view>
+      <view class="mode-data-row"><view><view class="mode-label">最近体温</view><view class="mode-value">{{homeSnapshot.temperatureTrend.length ? homeSnapshot.temperatureSummary : '尚未记录'}}</view></view><view class="mode-data-note">{{homeSnapshot.temperatureRecordedAt || '记录后会显示时间'}}</view></view>
+      <view class="mode-data-row"><view><view class="mode-label">最近症状</view><view class="mode-value mode-value-small">{{homeSnapshot.symptomsAvailable ? homeSnapshot.symptomSummary : '尚未记录'}}</view></view><view class="mode-data-note">{{homeSnapshot.symptomUpdatedAt || '可从速记开始'}}</view></view>
+      <view class="mode-actions"><button class="secondary-button" bindtap="openTemperature">记录体温</button><button class="secondary-button" bindtap="openSymptoms">记录症状</button></view>
+    </view>
+
+    <view wx:if="{{patientStageLabel === '成长过渡期'}}" class="card mode-card transition-mode-card">
+      <view class="card-heading"><view><view class="card-title">你的数据由你决定</view><view class="meta">当前档案会按授权范围展示给照护团队</view></view><text class="mode-chip">过渡期</text></view>
+      <view class="privacy-row"><text class="privacy-mark privacy-g3">✓</text><view><text class="privacy-title">安全相关数据</text><text class="privacy-copy">体温、症状、用药和化验值，用于一起照护</text></view></view>
+      <view class="privacy-row"><text class="privacy-mark privacy-g1">—</text><view><text class="privacy-title">你想保留的内容</text><text class="privacy-copy">心情和不想说的话，可以只留给自己或你选择的人</text></view></view>
+      <view class="mode-actions"><button class="secondary-button" bindtap="openSharing">查看隐私设置</button><button class="secondary-button" bindtap="openDoctorMessages">单独找医生</button></view>
+    </view>
+
+    <view wx:if="{{patientStageLabel === '成人'}}" class="card mode-card adult-mode-card">
+      <view class="card-heading"><view><view class="card-title">需要告诉家里吗</view><view class="meta">默认不会自动通知紧急联系人，由你决定</view></view><text class="mode-chip">成人端</text></view>
+      <view class="adult-choice"><view class="adult-choice-title">{{contactSafety && contactSafety.contact ? contactSafety.contact.displayName : '还没有设置紧急联系人'}}</view><view class="adult-choice-copy">{{adultContactDecision === 'DEFERRED' ? '你已选择暂不通知，之后可在联系人授权中调整。' : contactSafety && contactSafety.contact ? '仅在你确认或安全网触发后按授权范围联系' : '可以在联系人授权中设置可联系的人'}}</view></view>
+      <view class="mode-actions"><button class="secondary-button" bindtap="deferContact" disabled="{{adultContactDecision === 'DEFERRED'}}">{{adultContactDecision === 'DEFERRED' ? '已选择暂不通知' : '先不说'}}</button><button class="secondary-button" bindtap="openContacts">管理联系人授权</button></view>
+    </view>
+
+    <view wx:if="{{patientStageLabel === '成人'}}" class="card mode-card adult-privacy-card">
+      <view class="card-heading"><view><view class="card-title">谁可以看我的数据</view><view class="meta">按当前授权粒度展示，随时可以查看和调整</view></view><button class="text-button" bindtap="openSharing">查看详情 →</button></view>
+      <view class="privacy-row"><text class="privacy-mark privacy-g2">G2</text><view><text class="privacy-title">紧急联系人</text><text class="privacy-copy">只知道你需要帮助，不会看到完整化验值</text></view></view>
+      <view class="privacy-row"><text class="privacy-mark privacy-g3">G3</text><view><text class="privacy-title">照护团队</text><text class="privacy-copy">查看完整临床记录和处置依据</text></view></view>
+      <view class="privacy-row"><text class="privacy-mark privacy-g1">G1</text><view><text class="privacy-title">临时支持者</text><text class="privacy-copy">只在你主动授权时知道必要信息</text></view></view>
+    </view>
+
+    <view class="follow-up appointment-card">
+      <view class="calendar-icon"><view></view></view>
+      <view class="follow-copy" bindtap="openFollowup" role="button"><view class="follow-title">下次随访：{{homeSnapshot.followUpCard.date}}</view><view class="follow-detail">{{homeSnapshot.followUpCard.hospital}}{{homeSnapshot.followUpCard.doctor ? ' · ' + homeSnapshot.followUpCard.doctor : ''}}</view></view>
+      <button class="follow-status" bindtap="openFollowup">{{homeSnapshot.followUpCard.status}}</button>
+    </view>
+
+    <view class="card doctor-card message-card" wx:if="{{homeSnapshot.doctorMessage.time}}">
+      <view class="card-heading"><view class="card-title">医生消息 <text wx:if="{{homeSnapshot.doctorMessage.unread}}" class="unread">{{homeSnapshot.doctorMessage.unread}} 条未读</text></view><button class="text-button" bindtap="openDoctorMessages">全部消息 →</button></view>
+      <view class="message-preview"><view class="message-title">{{homeSnapshot.doctorMessage.title}}</view><view class="message-body">{{homeSnapshot.doctorMessage.body}}</view><view class="meta">{{homeSnapshot.doctorMessage.time}}</view></view>
+    </view>
+
+    <!-- 成年端安全网只展示服务端返回的进行中流程；没有安全网事实时不渲染倒计时。 -->
+    <view wx:if="{{patientStageLabel === '成人' && contactSafety}}" class="card safety-net-card">
+      <view class="safety-net-heading"><view class="safety-net-title"><view class="safety-dot"></view>{{safetyHeading}}</view><text class="safety-state">{{contactSafety.state === 'COUNTDOWN' ? '等待你的决定' : '通知流程中'}}</text></view>
+      <view class="safety-countdown">{{contactSafety.state === 'COUNTDOWN' ? (safetyCountdown || '--:--:--') : '已开始'}}</view>
+      <view class="card-text"><block wx:if="{{contactSafety.state === 'COUNTDOWN'}}"><block wx:if="{{contactSafety.silentHours !== undefined}}">你已连续 {{contactSafety.silentHours}} 小时没有任何记录。</block><block wx:else>你已有一段时间没有任何记录。</block> 按你此前签署的授权，还有时间先自己联系需要帮助的人。</block><block wx:else>已按你此前签署的授权开始联系紧急联系人。请留意后续消息；如果你仍需要帮助，请直接联系医生或急诊。</block></view>
+      <view wx:if="{{contactSafety.contact}}" class="safety-contact"><text class="safety-contact-label">{{contactSafety.state === 'COUNTDOWN' ? '即将联系' : '当前联系'}}</text><text class="safety-contact-name">{{contactSafety.contact.displayName}}{{contactSafety.contact.relation ? '（' + contactSafety.contact.relation + '）' : ''}}</text></view>
+      <view wx:else class="meta">当前联系人姓名由服务端授权状态提供，读取后会显示在这里。</view>
+      <view class="meta safety-explain"><block wx:if="{{contactSafety.state === 'COUNTDOWN'}}">这不是偷袭 —— 你有充足时间自己决定要不要先说。</block><block wx:else>联系人通知已经发出，当前流程会继续等待回执；你仍可以自行联系并更新状态。</block></view>
+      <view wx:if="{{contactSafetyNotice}}" class="safety-notice" role="status">{{contactSafetyNotice}}</view>
+      <view class="safety-actions">
+        <button wx:if="{{contactSafety.canSelfContact}}" class="primary-button" bindtap="safetySelfContact" disabled="{{safetyActionBusy}}" loading="{{safetyActionBusy}}">我自己联系</button>
+        <button wx:if="{{contactSafety.canSnooze}}" class="secondary-button" bindtap="safetySnooze" disabled="{{safetyActionBusy}}">再等 2 小时</button>
+        <button wx:if="{{contactSafety.canCancel}}" class="danger-button" bindtap="safetyCancel" disabled="{{safetyActionBusy}}">取消授权</button>
+      </view>
+    </view>
+
+    <view class="card trend-card body-trend-card">
+      <view class="card-heading"><view class="card-title">身体状态趋势</view><button class="text-button" bindtap="openTrend">详细趋势 →</button></view>
+      <block wx:if="{{homeSnapshot.temperatureTrend.length}}">
+        <view class="trend-narrative">{{homeSnapshot.temperatureNarrative || '最近一次体温 ' + homeSnapshot.temperatureSummary + '，请结合身体状态持续记录。'}}</view>
+        <view wx:if="{{homeSnapshot.temperatureTrend.length > 1 && homeSnapshot.temperatureComparable}}" class="temperature-chart">
+          <view class="chart-axis"><text wx:for="{{homeSnapshot.temperatureTicks}}" wx:key="*this">{{item}}</text></view>
+          <view class="chart-body"><view class="chart-grid"><view></view><view></view><view></view></view><view class="temp-chart"><view wx:for="{{homeSnapshot.temperatureTrend}}" wx:key="key" class="temp-column"><view class="temp-track"><view class="temp-bar" style="height: {{item.height}}%;"><text class="temp-value">{{item.value}}</text></view></view><view class="temp-label">{{item.label}}</view></view></view></view>
+        </view>
+        <view wx:elif="{{homeSnapshot.temperatureTrend.length === 1}}" class="meta">{{homeSnapshot.temperatureTrend[0].label}} · 记录更多体温后可查看变化趋势</view>
+        <view wx:else class="meta">记录单位不同，请在详细趋势中核对各次记录。</view>
+        <view wx:if="{{homeSnapshot.temperatureTrend.length > 1 && homeSnapshot.temperatureComparable}}" class="chart-caption">最近 {{homeSnapshot.temperatureTrend.length}} 次记录 · 按记录顺序展示</view>
+      </block>
+      <view wx:else class="snapshot-empty">{{snapshotLoading ? '正在读取体温记录…' : homeSnapshot.trendAvailable ? '还没有体温记录，测量后记下今天的体温。' : '体温记录暂未读取，请重新读取。'}}</view>
+      <view class="record-actions"><button class="primary-button" bindtap="openTemperature">记录体温{{homeSnapshot.temperatureTrend.length ? '（上次 ' + homeSnapshot.temperatureSummary + '）' : ''}}</button></view>
+    </view>
+
+    <view wx:if="{{homeSnapshot.urgentCard.tone === 'alert' || homeSnapshot.urgentCard.tone === 'watch'}}" class="card urgent-card urgent-{{homeSnapshot.urgentCard.tone}}">
+      <view class="urgent-title"><view class="status-dot"></view>{{homeSnapshot.urgentCard.title}}</view>
+      <view class="card-text">{{homeSnapshot.urgentCard.body}}</view>
+      <view class="urgent-actions"><button class="primary-button" bindtap="contactDoctor">{{homeSnapshot.urgentCard.primary}}</button><button wx:if="{{homeSnapshot.urgentCard.tone !== 'alert'}}" class="secondary-button" bindtap="openEmergency">急诊须知</button></view>
+    </view>
+
+    <view wx:if="{{homeSnapshot.urgentCard.tone === 'normal'}}" class="card observation-card action-card">
+      <view class="card-heading"><view class="observation-title"><view class="status-dot"></view>{{homeSnapshot.urgentCard.title}}</view><button class="text-button" bindtap="toggleObservationDetails">{{showObservationDetails ? '收起' : '照护建议'}}</button></view>
+      <view class="meta">观察安排不代表指标正常，请按医嘱继续记录。</view>
+      <view wx:if="{{showObservationDetails}}" class="card-text">{{homeSnapshot.urgentCard.body}}</view>
+    </view>
+
+    <view class="card">
+      <view class="card-heading"><view class="card-title">当前健康指标</view><button class="text-button" bindtap="openVitals">记录指标 ›</button></view>
+      <view class="metric-grid"><view wx:for="{{homeSnapshot.dashboardMetrics}}" wx:key="label" class="metric metric-{{item.tone}}"><view class="metric-label">{{item.label}}</view><view class="metric-value">{{item.value}} <text>{{item.unit}}</text></view><view class="metric-time">{{item.recordedAt}}</view></view></view>
+      <view class="meta">{{homeSnapshot.vitalsNotice}}</view>
+    </view>
+
+    <view class="card">
+      <view class="card-heading"><view class="card-title">检验指标</view><button class="text-button" bindtap="openLabArchive">查看化验单 ›</button></view>
+      <view wx:if="{{homeSnapshot.labFindings.length}}" class="lab-grid"><view wx:for="{{homeSnapshot.labFindings}}" wx:key="label" class="lab-item"><view class="metric-label">{{item.label}}</view><view class="lab-value">{{item.value}}<text class="lab-direction">{{item.direction === 'up' ? '↑' : item.direction === 'down' ? '↓' : ''}}</text></view><view class="lab-unit">{{item.unit}}</view><view class="metric-time">{{item.recordedAt}}</view></view></view>
+      <view wx:else class="snapshot-empty">{{snapshotLoading ? '正在读取检验记录…' : homeSnapshot.trendAvailable ? '上传化验单后，在这里查看关键指标。' : '检验记录暂未读取，请重新读取。'}}</view>
+      <view wx:if="{{homeSnapshot.labFindings.length}}" class="meta">箭头表示较上次的变化，具体结果请与医生确认。</view>
+    </view>
+
+    <view class="card">
+      <view class="card-heading"><view class="card-title">症状与状态小结</view><button class="text-button" bindtap="openSymptoms">去速记 ›</button></view>
+      <view class="summary-inset"><view class="card-title small-title">最近症状</view><view class="card-text">{{homeSnapshot.symptomsAvailable ? homeSnapshot.symptomSummary : snapshotLoading ? '正在读取症状记录…' : '症状记录暂未读取，请重新读取。'}}</view><view wx:if="{{homeSnapshot.symptomUpdatedAt}}" class="meta">{{homeSnapshot.symptomUpdatedAt}}</view></view>
+      <view class="summary-inset"><view class="card-heading"><view class="card-title small-title">{{patientStageLabel === '儿童期' ? '孩子最近的状态' : '最近这两周'}}</view><button class="text-button" bindtap="openScreening">{{preVisitTask && !preVisitTask.completed ? '去填写' : '查看'}} →</button></view><view class="card-text">{{preVisitTask ? preVisitTask.detail : '复诊前记录睡眠、精力和情绪变化，与医生一起回顾。'}}</view></view>
+    </view>
+
+    <view class="card medication-card">
+      <view class="card-heading"><view class="card-title">服药情况</view></view>
+      <view class="adherence-row"><text class="adherence">{{homeSnapshot.medicationAdherence === null ? '—' : homeSnapshot.medicationAdherence + '%'}}</text><text class="meta">医嘱记录完成度</text></view>
+      <view wx:if="{{homeSnapshot.medicationAdherence !== null}}" class="progress-track"><view class="progress-fill" style="width: {{homeSnapshot.medicationAdherence}}%;"></view></view>
+      <view class="card-text">{{homeSnapshot.medicationsAvailable ? homeSnapshot.medicationSummary : snapshotLoading ? '正在读取用药记录…' : '用药记录暂未读取，请重新读取。'}}</view><view class="medication-tags"><text wx:for="{{homeSnapshot.medicationTags}}" wx:key="*this" class="medication-tag">{{item}}</text></view>
+      <button class="secondary-button" bindtap="openMedications">查看用药与月历</button>
+    </view>
+
+    <view class="card emergency-summary-entry">
+      <view class="card-heading"><view class="card-title">急诊摘要卡</view><button class="text-button" bindtap="openEmergency">打开摘要 ›</button></view>
+      <view class="card-text">需要就诊时，快速查看已核验的用药与应急流程信息。</view>
+      <view class="meta">只展示当前档案已核验内容；请以照护团队确认结果为准。</view>
+    </view>
+  </view>
+
+  <view wx:if="{{preVisitLoading || preVisitTask}}" class="card task-card">
+    <view class="card-title">复诊前，还有几件小事</view><view wx:if="{{preVisitLoading}}" class="card-text">正在读取待办事项…</view>
+    <block wx:elif="{{preVisitTask}}"><view class="card-text">{{preVisitTask.detail}}</view><view class="meta">关联复诊：{{preVisitTask.startsAt}} · 请按医院预约信息核对</view><button class="secondary-button" bindtap="openScreening">{{preVisitTask.completed ? '查看已记录事项' : '去填写'}}</button></block>
+  </view>
+  <view class="card home-footer">
+    <button class="footer-entry" bindtap="openAccount"><view><view class="card-title">个人档案</view><view class="meta">健康资料、照护团队与生活服务</view></view><text class="footer-arrow">›</text></button>
+    <view class="card-heading"><view class="card-title">消息提醒</view><button class="text-button" bindtap="openInbox">查看消息 ›</button></view>
+    <view wx:if="{{pushNotice}}" class="meta">{{pushNotice}}</view><block wx:if="{{pushReady && !pushSubscribed}}"><view class="meta">微信提醒只说明「有新消息」，不会显示内容。</view><button class="secondary-button" disabled="{{!pushReady}}" bindtap="askPushConsent">开通微信提醒</button></block><view wx:if="{{pushSubscribed}}" class="push-enabled">微信提醒已开启 · 仅提示有新消息</view>
+    <view class="profile-foot"><view class="meta">{{homeSnapshot.updatedAtLabel}}</view></view>
+    <button class="account-toggle" bindtap="toggleDetails">{{showDetails ? '收起账户设置' : '账户设置'}}</button><view wx:if="{{showDetails}}" class="account-actions"><button class="secondary-button" bindtap="logout">退出登录</button><button class="danger-button" bindtap="unbind" disabled="{{unbinding}}" loading="{{unbinding}}">解除微信绑定</button></view>
+  </view>
+</view>

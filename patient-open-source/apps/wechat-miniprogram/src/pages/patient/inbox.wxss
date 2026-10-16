@@ -1,0 +1,38 @@
+@import "../../styles/patient.wxss";
+@import "./safety-common.wxss";
+
+.medication-notice-card { border-top: 4rpx solid var(--mas-primary); }
+.notice-kicker { color: var(--mas-primary); font-size: 26rpx; font-weight: 650; letter-spacing: 1rpx; }
+.state-demo { margin-left: auto; color: var(--mas-primary); background: var(--mas-info-soft); }
+.medication-notice-title { color: var(--mas-text-strong); font-size: 34rpx; font-weight: 650; line-height: 1.35; margin-top: 12rpx; }
+.medication-notice-action { margin-top: 18rpx; width: 100%; }
+.entry-head { display: flex; align-items: center; margin-bottom: 8rpx; min-height: 42rpx; }
+.state { display: inline-flex; align-items: center; min-height: 42rpx; font-size: 22rpx; font-weight: 600; padding: 0 16rpx; border-radius: 999rpx; }
+.state-action { color: var(--mas-warning); background: var(--mas-warning-soft); }
+.state-info { color: var(--mas-info); background: var(--mas-surface-soft); }
+.state-ok { color: var(--mas-success); background: var(--mas-success-soft); }
+.state-bad { color: var(--mas-danger); background: var(--mas-danger-soft); }
+.timeline { margin-top: 12rpx; border-top: 1rpx solid var(--mas-border); padding-top: 12rpx; }
+.timeline-row { padding: 8rpx 0; }
+.timeline-text { display: flex; align-items: baseline; }
+.timeline-label { font-size: 27rpx; color: var(--mas-text-muted); font-weight: 600; }
+.timeline-at { margin-left: 16rpx; font-size: 24rpx; color: var(--mas-text-subtle); }
+
+.reminder-row { padding: 20rpx 0; border-bottom: 1rpx solid var(--mas-border); }
+.reminder-head { display: flex; justify-content: space-between; gap: 18rpx; align-items: center; }
+.reminder-title { color: var(--mas-text); font-size: 29rpx; font-weight: 600; }
+.reminder-status { flex-shrink: 0; font-size: 23rpx; color: var(--mas-warning); }
+.reminder-status.recorded { color: var(--mas-success); }
+.delivery-help { margin-top: 32rpx; }
+.help-toggle { min-height: var(--mas-control-height); margin: 0; padding: 12rpx 0; color: var(--mas-primary); background: transparent; text-align: left; }
+.page .timeline-action button { width: auto; min-width: 168rpx; margin: 8rpx 0 0; }
+.entry-head .card-title { margin-bottom: 0; }
+.notice-channel-card { margin-top: 18rpx; padding: 22rpx; background: var(--mas-surface-muted); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); }
+.notice-channel-card .card-title { margin-bottom: 8rpx; }
+.privacy-action { margin-top: 16rpx; width: 100%; }
+.recovery-button { margin-top: 28rpx; width: 100%; min-height: var(--mas-control-height); }
+.reminder-row:last-of-type { border-bottom: 0; }
+.timeline-label { font-size: 24rpx; font-weight: 500; }
+.timeline-at { margin-left: auto; font-size: 22rpx; }
+.timeline-text { gap: 12rpx; flex-wrap: wrap; }
+.page button.help-toggle { width: 100%; color: var(--mas-primary); background: transparent; text-align: left; padding-left: 4rpx; font-size: 23rpx; }

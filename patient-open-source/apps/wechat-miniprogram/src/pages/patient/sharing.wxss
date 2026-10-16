@@ -1,0 +1,5 @@
+@import "../../styles/patient.wxss";
+
+.badge { margin-left: 12rpx; padding: 5rpx 12rpx; color: var(--mas-primary); background: var(--mas-surface-soft); border-radius: 999rpx; font-size: 22rpx; }
+.choice { display: flex; align-items: center; min-height: var(--mas-control-height); padding: 14rpx 0; border-bottom: 1rpx solid var(--mas-border); color: var(--mas-text-muted); font-size: 28rpx; line-height: 1.6; }
+.box { width: 40rpx; height: 40rpx; margin-right: 16rpx; color: var(--mas-primary); border: 2rpx solid var(--mas-border); border-radius: var(--mas-radius-small); line-height: 40rpx; text-align: center; }

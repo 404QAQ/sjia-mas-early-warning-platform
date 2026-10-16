@@ -1,0 +1,18 @@
+<view class="page bind-page patient-page">
+  <view class="brand"><view class="brand-mark" aria-hidden="true"></view>无恙</view>
+  <view class="title">连接你的照护档案</view>
+  <view class="hint">输入主管医生提供的邀请码，开启后续记录与照护。</view>
+  <view class="entry-card bind-card">
+    <view class="field-label">8 位邀请码</view>
+    <view class="invite-expiry">10 分钟内有效，只能使用一次。</view>
+    <input class="code-input" type="text" maxlength="64" value="{{inviteCode}}" placeholder="ABCD-EFGH" placeholder-class="code-placeholder" confirm-type="done" bindinput="onCodeInput" bindconfirm="submit" disabled="{{submitting}}" aria-label="医生给的 8 位邀请码" />
+    <view wx:if="{{preview}}" class="preview">邀请码：{{preview}}</view>
+    <view class="note">不区分大小写，可直接粘贴。空格和短横线可以省略，代码中不含 0、1、I、O。</view>
+    <button class="primary-button" type="primary" bindtap="submit" loading="{{submitting}}" disabled="{{submitting || !inviteCode}}">绑定并进入</button>
+    <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  </view>
+  <view class="privacy-card">
+    <view class="privacy-icon" aria-hidden="true"></view>
+    <view><view class="privacy-title">只连接属于你的档案</view><view class="privacy-copy">绑定后，将以医生登记的患者或家属身份进入。邀请码请不要转发；如有人索要，请联系主管医生。</view></view>
+  </view>
+</view>

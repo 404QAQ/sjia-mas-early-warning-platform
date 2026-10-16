@@ -1,0 +1,247 @@
+@import '../../styles/patient.wxss';
+
+/* 档案类页面共用基线：与首页、记录、用药、报告保持同一套空间和控件节奏。 */
+.page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  background: var(--mas-bg);
+  color: var(--mas-text);
+}
+
+.page-heading {
+  color: var(--mas-text);
+  font-size: 36rpx;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+.page-copy {
+  margin-top: 10rpx;
+  color: var(--mas-text-muted);
+  font-size: 25rpx;
+  line-height: 1.6;
+}
+
+.page button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 88rpx;
+  margin: 16rpx 0;
+  padding: 16rpx 24rpx;
+  box-sizing: border-box;
+  border-radius: var(--mas-radius-control);
+  font-size: 27rpx;
+  line-height: 1.45;
+}
+
+.page button.primary-button {
+  color: var(--mas-on-primary);
+  background: var(--mas-primary);
+  font-weight: 600;
+}
+
+.page button.secondary-button {
+  color: var(--mas-primary);
+  border: 1rpx solid var(--mas-border);
+  background: var(--mas-surface);
+}
+
+.page button.text-button {
+  width: auto;
+  min-height: var(--mas-control-height);
+  margin: 10rpx auto;
+  padding: 8rpx 4rpx;
+  color: var(--mas-primary);
+  border: 1rpx solid transparent;
+  background: transparent;
+  font-size: 25rpx;
+}
+
+.page button.danger-text {
+  color: var(--mas-danger);
+}
+
+.card {
+  margin: 20rpx 0;
+  padding: 26rpx;
+  border: 1rpx solid var(--mas-border);
+  border-radius: var(--mas-radius-card);
+  background: var(--mas-surface);
+  box-shadow: var(--mas-shadow-card);
+}
+
+.card-title {
+  color: var(--mas-text);
+  font-size: 29rpx;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.card-meta {
+  margin-top: 12rpx;
+  color: var(--mas-text-subtle);
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+.local-caption {
+  margin-top: 20rpx;
+  color: var(--mas-text-subtle);
+  font-size: 23rpx;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.error-banner {
+  margin: 20rpx 0;
+  padding: 22rpx;
+  border: 1rpx solid var(--mas-warning);
+  border-radius: var(--mas-radius-control);
+  background: var(--mas-warning-soft);
+  color: var(--mas-warning);
+  font-size: 25rpx;
+  line-height: 1.6;
+}
+
+.notice {
+  margin-top: 22rpx;
+  padding: 22rpx;
+  border: 1rpx solid var(--mas-border);
+  border-radius: var(--mas-radius-control);
+  background: var(--mas-surface-soft);
+  color: var(--mas-text-muted);
+  font-size: 24rpx;
+  line-height: 1.7;
+}
+
+.search-input,
+.form-input,
+.form-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1rpx solid var(--mas-border);
+  border-radius: var(--mas-radius-control);
+  background: var(--mas-surface);
+  color: var(--mas-text);
+  font-size: 26rpx;
+}
+
+.search-input,
+.form-input {
+  min-height: 88rpx;
+  padding: 18rpx 22rpx;
+}
+
+.form-textarea {
+  min-height: 190rpx;
+  padding: 20rpx;
+  line-height: 1.6;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.filter-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10rpx;
+  min-height: 88rpx;
+  padding: 14rpx 20rpx;
+  box-sizing: border-box;
+  border: 1rpx solid var(--mas-border);
+  border-radius: var(--mas-radius-control);
+  background: var(--mas-surface);
+  color: var(--mas-text-muted);
+  font-size: 23rpx;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.filter-cell text {
+  flex: none;
+  color: var(--mas-text-subtle);
+}
+
+.filter-cell.selected {
+  color: var(--mas-primary);
+  border-color: var(--mas-primary);
+  background: var(--mas-surface-soft);
+}
+
+.field {
+  margin-top: 24rpx;
+}
+
+.field-label {
+  margin-bottom: 12rpx;
+  color: var(--mas-text-muted);
+  font-size: 25rpx;
+  line-height: 1.5;
+}
+
+.button-row {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.page .button-row button {
+  flex: 1 1 0;
+  width: 0;
+  margin-top: 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6rpx 12rpx;
+  border-radius: 999rpx;
+  color: var(--mas-text-muted);
+  background: var(--mas-surface-soft);
+  font-size: 21rpx;
+  line-height: 1.5;
+}
+
+.badge.demo {
+  color: var(--mas-warning);
+  background: var(--mas-warning-soft);
+}
+
+.empty-state {
+  padding: 54rpx 24rpx;
+  text-align: center;
+}
+
+.empty-state .page-copy {
+  margin-top: 14rpx;
+}
+
+.detail-value {
+  color: var(--mas-text);
+  font-size: 27rpx;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.detail-row {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid var(--mas-border);
+}
+
+.detail-row:last-child {
+  border-bottom: 0;
+}
+
+.preview-image {
+  display: block;
+  width: 100%;
+  height: 330rpx;
+  border-radius: var(--mas-radius-control);
+  background: var(--mas-surface-soft);
+}

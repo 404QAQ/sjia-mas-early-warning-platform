@@ -1,0 +1,35 @@
+@import "../../styles/patient.wxss";
+
+.task { color: #687677; font-size: 27rpx; line-height: 1.65; margin: 10rpx 0; }
+/* 表单区域使用浅色卡片，保证输入文字和占位提示在手机屏幕上清晰可读。 */
+.followup-hero { margin: 22rpx 0; padding: 28rpx; color: var(--mas-text); background: var(--mas-surface); border: 1rpx solid var(--mas-border); border-left: 6rpx solid var(--mas-primary); border-radius: var(--mas-radius-card); box-shadow: var(--mas-shadow-card); }
+.hero-kicker { color: var(--mas-primary); font-size: 23rpx; }
+.hero-title { margin-top: 8rpx; color: var(--mas-text); font-size: 40rpx; font-weight: 700; }
+.hero-copy { margin-top: 10rpx; color: var(--mas-text-muted); font-size: 26rpx; line-height: 1.6; }
+.followup-date { margin-top: 22rpx; color: var(--mas-text); font-size: 38rpx; font-weight: 700; }
+.followup-picker { display: inline-flex; align-items: center; width: auto; min-height: 88rpx; margin-top: 14rpx; padding: 18rpx 22rpx; box-sizing: border-box; border: 1rpx solid #bdd6d9; border-radius: var(--mas-radius-control); color: var(--mas-primary); background: var(--mas-surface-soft); font-size: 24rpx; line-height: 1.4; }
+.followup-hero textarea { box-sizing: border-box; width: 100%; min-height: 120rpx; margin-top: 18rpx; padding: 16rpx; border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-control); color: var(--mas-text); background: var(--mas-bg); font-size: 26rpx; line-height: 1.6; }
+.page input, .followup-input { box-sizing: border-box; min-height: 88rpx; }
+.followup-input { width: 100%; margin-top: 14rpx; padding: 14rpx 16rpx; border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-control); color: var(--mas-text); background: var(--mas-bg); font-size: 25rpx; }
+.followup-input::placeholder { color: var(--mas-text-subtle); }
+.followup-hero textarea::placeholder { color: var(--mas-text-subtle); }
+.page button.hero-button { width: 100%; min-height: 88rpx; margin-top: 22rpx; color: var(--mas-on-primary); background: var(--mas-primary); font-size: 27rpx; font-weight: 600; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; }
+.section-head .hint { margin: 0; font-size: 24rpx; }
+.schedule-row { display: flex; align-items: flex-start; gap: 16rpx; padding: 18rpx 0; }
+.schedule-dot { width: 18rpx; height: 18rpx; margin-top: 8rpx; border-radius: 50%; background: var(--mas-primary); box-shadow: 0 0 0 8rpx #E1F2EE; }
+.schedule-main { flex: 1; }
+.schedule-name { color: var(--mas-text-strong); font-size: 28rpx; font-weight: 700; }
+.schedule-badge { padding: 6rpx 10rpx; color: var(--mas-primary); background: var(--mas-success-soft); border-radius: 999rpx; font-size: 22rpx; }
+
+.followup-hero .field-label { margin-top: 20rpx; color: var(--mas-text); font-size: 25rpx; }
+
+/* 参考随访页：紧凑白卡、青绿操作、真实日程列表。 */
+.page { background: var(--mas-bg); }
+.title { font-size: 36rpx; font-weight: 700; }
+.followup-hero { margin-top: 24rpx; padding: var(--mas-card-padding); color: var(--mas-text); background: var(--mas-surface); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); box-shadow: var(--mas-shadow-card); }
+.hero-title { font-size: 30rpx; margin: 8rpx 0; }.hero-kicker,.hero-copy { color: var(--mas-text-muted); font-size: 24rpx; line-height: 1.65; }
+.followup-picker,.followup-input { background: var(--mas-bg); color: var(--mas-text); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-control); min-height: var(--mas-control-height); box-sizing: border-box; }
+.followup-hero .hero-button { background: var(--mas-primary); color: var(--mas-on-primary); min-height: var(--mas-control-height); border-radius: var(--mas-radius-control); font-size: 27rpx; }
+.followup-record { padding: 24rpx 0; border-bottom: 1rpx solid var(--mas-border-soft); }.followup-record:last-child { border: 0; }
+.followup-actions { display: flex; flex-wrap: wrap; gap: 20rpx; }.followup-actions .text-button { padding: 12rpx 0; min-height: 88rpx; font-size: 25rpx; background: transparent; color: var(--mas-primary); }.followup-actions .muted { color: var(--mas-text-muted); }

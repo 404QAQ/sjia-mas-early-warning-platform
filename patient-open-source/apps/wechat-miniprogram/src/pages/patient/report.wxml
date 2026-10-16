@@ -1,0 +1,23 @@
+<view class="page report-page patient-page tab-page">
+<import src="./archive-filter.wxml" />
+  <view class="page-heading">检查报告</view>
+  <view wx:if="{{error}}" class="error-banner">{{error}}<button class="text-button" bindtap="onShow">重新读取</button></view>
+  <view class="scan-card">
+    <view class="camera-tile"><view class="line-icon camera-icon"></view></view>
+    <view class="scan-title">拍照整理报告</view>
+    <view class="scan-copy">拍照保存原图，核对医院、医师、诊断、<text>时间与异常数据后入档</text></view>
+    <button class="primary-button" bindtap="openScan">拍照</button>
+  </view>
+  <view class="scan-notice">报告归档：拍照 / 相册 → 核对填写 → 确认入档。核对后保存到患者档案，可供照护医生查看。</view>
+  <button wx:for="{{kinds}}" wx:key="key" class="archive-entry" data-kind="{{item.key}}" bindtap="openArchive">
+    <view class="entry-icon"><view class="line-icon {{item.icon}}-icon"></view></view>
+    <view class="entry-main"><view class="entry-title">{{item.label}}</view><view class="entry-copy">{{item.subtitle}}</view></view><text class="chevron">›</text>
+  </button>
+  <view class="history-heading">历史查询</view>
+  <template is="archive-filter" data="{{filter,timeOptions,hospitalOptions,departmentOptions,diseaseOptions}}" />
+  <button class="primary-button search-button" bindtap="search"><view class="search-icon"></view>查询</button>
+  <view wx:if="{{loading}}" class="local-caption">正在读取档案…</view>
+  <button wx:if="{{legacyCount}}" class="secondary-button" bindtap="importLegacy" disabled="{{importing || loading}}">{{importing ? '正在导入…' : '导入旧版本本机资料（' + legacyCount + '）'}}</button>
+  <view class="local-caption">已同步 {{localCount}} 条档案{{hasDemo ? ' · 含演示资料' : ''}}</view>
+  <button class="text-button visit-link" bindtap="openVisitReport">查看复诊摘要与指标趋势 ›</button>
+</view>

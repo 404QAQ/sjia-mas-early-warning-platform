@@ -1,0 +1,37 @@
+<view class="page patient-page">
+  <view class="title">成长与照护交接</view>
+  <view class="hint">从认识自己的治疗开始，逐步接手健康管理。</view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}<button size="mini" bindtap="retryReadiness" disabled="{{saving || !readinessAvailable || !readinessCanWrite}}">重试保存</button></view>
+  <view wx:if="{{notice}}" class="message" role="status">{{notice}}</view>
+  <view class="handover-hero">
+    <view class="hero-kicker">我的健康档案 · 交接准备</view>
+    <view class="hero-title">18 岁以后，我来管理</view>
+    <view class="hero-copy">你可以先看看还差哪些准备。交接前的记录只用于帮助你和照护团队对齐。</view>
+    <view class="readiness-row"><view><view class="readiness-label">自查完成度</view><view class="readiness-value">{{readinessScore}}%</view></view><view class="readiness-track"><view class="readiness-fill" style="width: {{readinessScore}}%;"></view></view></view>
+  </view>
+  <view class="card privacy-card">
+    <view class="card-title">隐私与收件人</view>
+    <view class="line">向谁分享、分享多少，由当前授权决定。</view>
+    <view class="hint">在联系人页面查看或调整共享范围，变更后以保存结果为准。</view>
+    <button class="secondary" bindtap="openContacts">管理联系人与共享范围</button>
+  </view>
+  <view class="card private-talk-card"><view class="card-title">我想自己跟医生说</view><view class="hint">有些事情想单独交流，可以先给照护团队留言，具体安排由医生回复确认。</view><button class="secondary" bindtap="openPrivateTalk">向医生说明单独交谈</button></view>
+  <view class="card takeover-card">
+    <view class="card-title">接管我的健康档案</view>
+    <view class="line">满 18 岁后，你可以把日常记录、复诊提醒和共享设置交到自己手里。</view>
+    <view class="takeover-state">{{takeoverStarted ? '已开始准备接管 · 仍可随时返回' : '尚未开始接管准备'}}</view>
+    <button class="primary" bindtap="startTakeover" loading="{{saving}}" disabled="{{saving || !readinessAvailable || !readinessCanWrite}}">{{takeoverStarted ? '继续准备' : '开始准备接管'}}</button>
+  </view>
+  <view class="card readiness-card">
+    <view class="section-head"><view class="card-title">交接前自查</view><view class="hint">{{readinessDone}}/{{readinessItems.length}} 已完成</view></view>
+    <view wx:if="{{!readinessAvailable}}" class="hint">正在核对服务端进度，读取完成后可填写。</view>
+    <view wx:if="{{readinessUpdated}}" class="hint">最近保存 {{readinessUpdated}} · 已同步照护团队</view>
+    <block wx:if="{{showReadinessPanel && readinessAvailable}}"><view wx:for="{{readinessItems}}" wx:key="id" class="readiness-item {{saving ? 'is-saving' : ''}}" role="checkbox" aria-checked="{{item.done}}" aria-disabled="{{saving || !readinessCanWrite}}" data-id="{{item.id}}" bindtap="toggleReadiness"><view class="readiness-check {{item.done ? 'done' : ''}}">{{item.done ? '✓' : ''}}</view><view class="readiness-text">{{item.label}}</view></view></block>
+    <button class="secondary" bindtap="toggleReadinessPanel">{{showReadinessPanel ? '收起自查' : '查看并完成自查'}}</button>
+  </view>
+  <view wx:if="{{loading}}" class="hint">正在读取交接信息…</view>
+  <block wx:for="{{sections}}" wx:key="title">
+    <view class="card"><view class="card-title">{{item.title}}</view><view wx:if="{{item.state === 'LOADING'}}" class="hint">读取中…</view><view wx:elif="{{item.state === 'DENIED'}}" class="error" role="alert">{{item.error}}<text>当前身份无权查看。</text></view><view wx:elif="{{item.state === 'UNAVAILABLE'}}" class="error" role="alert">{{item.error}}</view><block wx:else><view wx:for="{{item.items}}" wx:for-item="line" wx:key="*this" class="line">{{line}}</view></block></view>
+  </block>
+  <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading}}">重新读取交接资料</button>
+</view>

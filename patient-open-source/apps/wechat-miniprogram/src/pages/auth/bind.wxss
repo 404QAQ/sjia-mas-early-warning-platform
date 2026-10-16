@@ -1,0 +1,15 @@
+@import "./index.wxss";
+.bind-page .title { max-width: 600rpx; }
+.bind-card { margin-top: 8rpx; }
+.field-label { color: var(--mas-text); font-size: 30rpx; font-weight: 700; }
+.invite-expiry { margin-top: 10rpx; color: var(--mas-text-muted); font-size: 24rpx; line-height: 1.6; }
+.code-input { box-sizing: border-box; width: 100%; height: 112rpx; margin-top: 24rpx; padding: 0 24rpx; border: 2rpx solid var(--mas-border); border-radius: var(--mas-radius-control); color: var(--mas-text); background: var(--mas-bg); font-size: 38rpx; letter-spacing: 4rpx; }
+.code-placeholder { color: #7d919a; }
+.preview { margin-top: 16rpx; color: var(--mas-primary); font-size: 25rpx; font-weight: 600; }
+.note { margin-top: 16rpx; color: var(--mas-text-muted); font-size: 23rpx; line-height: 1.7; }
+.page .bind-card button.primary-button { margin-top: 26rpx; }
+.privacy-card { display: flex; align-items: flex-start; gap: 20rpx; margin: 28rpx 4rpx 0; }
+.privacy-icon { position: relative; flex: none; box-sizing: border-box; width: 36rpx; height: 30rpx; margin-top: 14rpx; border: 3rpx solid #64848b; border-radius: 6rpx; }
+.privacy-icon::before { content: ''; position: absolute; box-sizing: border-box; width: 20rpx; height: 17rpx; left: 5rpx; top: -17rpx; border: 3rpx solid #64848b; border-bottom: 0; border-radius: 12rpx 12rpx 0 0; }
+.privacy-title { color: var(--mas-text); font-size: 25rpx; font-weight: 600; }
+.privacy-copy { margin-top: 8rpx; color: var(--mas-text-muted); font-size: 23rpx; line-height: 1.7; }

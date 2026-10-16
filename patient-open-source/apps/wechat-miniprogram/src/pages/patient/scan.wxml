@@ -1,0 +1,36 @@
+<view class="page scan-page patient-page">
+  <view class="page-heading">{{step === 'choose' ? '添加检查报告' : step === 'saved' ? '报告已入档' : '核对报告内容'}}</view>
+  <view wx:if="{{error}}" class="error-banner">{{error}}<button wx:if="{{permissionDenied}}" class="text-button" bindtap="openPermission">打开权限设置</button></view>
+  <block wx:if="{{step === 'choose'}}">
+    <view class="page-copy">请选择获取报告的方式，核对并填写后入档。</view>
+    <button class="capture-card" bindtap="chooseCamera" disabled="{{picking}}"><view class="capture-symbol">＋</view><view class="card-title">拍照</view><view class="page-copy">对准化验单或病历直接拍摄</view></button>
+    <button class="album-card" bindtap="chooseAlbum" disabled="{{picking}}"><view class="album-symbol">▧</view><view><view class="card-title">从相册选择</view><view class="page-copy">选择已有的报告或病历图片</view></view><text class="arrow">›</text></button>
+    <view class="notice">选图后请对照原图填写信息，确认后将原图与内容一起存入患者医疗档案。</view>
+    <button class="text-button manual-button" bindtap="manual" disabled="{{picking}}">没有图片，手动填写</button>
+    <button wx:if="{{demoEnabled}}" class="text-button manual-button" bindtap="useExample" disabled="{{picking}}">使用示例报告</button>
+  </block>
+  <block wx:elif="{{step === 'confirm'}}">
+    <view class="notice">{{draft.demo ? '样例报告：以下内容用于核对录入流程，并非识别结果。请以医院出具的原始资料为准。' : hasImage ? '原图已选择。请手动核对医院、医师、诊断、日期与异常数据，再确认入档。' : '手动填写：请以医院出具的原始资料为准。'}}</view>
+    <view wx:if="{{previewPath}}" class="card"><image class="preview-image" src="{{previewPath}}" mode="aspectFit" bindtap="preview" /><button class="text-button" bindtap="preview">放大查看原图</button></view>
+    <view class="card">
+      <view class="field"><view class="field-label">档案类型</view><picker range="{{kinds}}" range-key="label" value="{{kindIndex}}" bindchange="changeKind" disabled="{{saving}}"><view class="filter-cell selected">{{kinds[kindIndex].label}}<text>⌄</text></view></picker></view>
+      <view class="field"><view class="field-label">报告名称 *</view><input class="form-input" value="{{draft.title}}" data-field="title" bindinput="changeField" disabled="{{saving}}" maxlength="200" placeholder="如：血常规、门诊病历" /></view>
+      <view class="field"><view class="field-label">医院 *</view><input class="form-input" value="{{draft.hospital}}" data-field="hospital" bindinput="changeField" disabled="{{saving}}" maxlength="200" placeholder="报告上的医院名称" /></view>
+      <view class="field"><view class="field-label">科室</view><input class="form-input" value="{{draft.department}}" data-field="department" bindinput="changeField" disabled="{{saving}}" maxlength="200" placeholder="如：风湿免疫科" /></view>
+      <view class="field"><view class="field-label">医师</view><input class="form-input" value="{{draft.doctor}}" data-field="doctor" bindinput="changeField" disabled="{{saving}}" maxlength="200" placeholder="报告上的医师姓名" /></view>
+      <view class="field"><view class="field-label">疾病诊断{{draft.kind === 'hospital' ? ' *' : ''}}</view><input class="form-input" value="{{draft.diagnosis}}" data-field="diagnosis" bindinput="changeField" disabled="{{saving}}" maxlength="200" placeholder="请按原报告填写" /></view>
+      <view class="field"><view class="field-label">{{draft.kind === 'hospital' ? '入院日期' : draft.kind === 'prescription' ? '开方日期' : '报告日期'}} *</view><picker mode="date" value="{{draft.date}}" data-field="date" bindchange="changeField" disabled="{{saving}}"><view class="filter-cell selected">{{draft.date}}<text>⌄</text></view></picker></view>
+      <view class="field"><view class="field-label">异常数据</view><textarea class="form-textarea" value="{{draft.abnormal}}" data-field="abnormal" bindinput="changeField" disabled="{{saving}}" maxlength="2000" placeholder="记录异常项目、结果、单位及参考范围" /></view>
+      <view class="field"><view class="field-label">{{draft.kind === 'outpatient' ? '病情与处置 *' : draft.kind === 'prescription' ? '医嘱与备注' : '结论与记录'}}</view><textarea class="form-textarea" value="{{draft.content}}" data-field="content" bindinput="changeField" disabled="{{saving}}" maxlength="5000" placeholder="请核对原始资料后填写" /></view>
+    </view>
+    <view wx:if="{{draft.kind === 'check'}}" class="card"><view class="card-title">检查项目</view>
+      <view wx:for="{{draft.items}}" wx:key="index" class="field"><input class="form-input" value="{{item.name}}" data-field="name" data-index="{{index}}" bindinput="changeItem" disabled="{{saving}}" maxlength="200" placeholder="项目名称" aria-label="检查项目名称" /><view class="filter-grid"><input class="form-input" value="{{item.value}}" data-field="value" data-index="{{index}}" bindinput="changeItem" disabled="{{saving}}" maxlength="200" placeholder="结果" aria-label="检查结果"/><input class="form-input" value="{{item.unit}}" data-field="unit" data-index="{{index}}" bindinput="changeItem" disabled="{{saving}}" maxlength="200" placeholder="单位" aria-label="检查单位"/></view><input class="form-input line-gap" value="{{item.range}}" data-field="range" data-index="{{index}}" bindinput="changeItem" disabled="{{saving}}" maxlength="200" placeholder="原报告参考范围" aria-label="原报告参考范围"/><view class="button-row"><label>报告标记异常 <switch checked="{{item.abnormal}}" data-field="abnormal" data-index="{{index}}" bindchange="changeItem" disabled="{{saving}}" color="#0f766e"/></label><button class="text-button danger-text" data-index="{{index}}" bindtap="removeItem" disabled="{{saving}}">移除该项</button></view></view>
+      <button class="text-button" bindtap="addItem" disabled="{{saving}}">＋ 添加检查项目</button>
+    </view>
+    <view wx:if="{{draft.kind === 'prescription'}}" class="card"><view class="card-title">处方药品 *</view><view wx:for="{{draft.drugs}}" wx:key="index" class="field"><view class="field-label">药品 {{index + 1}}</view><input class="form-input" value="{{item.name}}" data-field="name" data-index="{{index}}" bindinput="changeDrug" disabled="{{saving}}" maxlength="200" placeholder="药品名称" /><input class="form-input line-gap" value="{{item.dose}}" data-field="dose" data-index="{{index}}" bindinput="changeDrug" disabled="{{saving}}" maxlength="200" placeholder="剂量 / 规格" /><input class="form-input line-gap" value="{{item.usage}}" data-field="usage" data-index="{{index}}" bindinput="changeDrug" disabled="{{saving}}" maxlength="1000" placeholder="用法与频次" /></view><button class="text-button" bindtap="addDrug" disabled="{{saving || draft.drugs.length >= 30}}">＋ 添加药品</button></view>
+    <view wx:if="{{error}}" class="error-banner">{{error}}</view>
+    <view class="button-row"><button class="secondary-button" bindtap="reselect" disabled="{{saving}}">重新选择</button><button class="primary-button" bindtap="save" disabled="{{saving}}" loading="{{saving}}">确认入档</button></view>
+    <view class="local-caption">确认后写入医疗档案，仅有权限的照护医生可查看；网络未确认时请保留原始资料并重试。</view>
+  </block>
+  <view wx:elif="{{step === 'saved'}}" class="card saved-card"><view class="saved-mark">✓</view><view class="card-title">已写入医疗档案</view><view class="page-copy">{{draft.title}}</view><view class="page-copy">{{draft.artifactId ? '报告原图与核对内容已一起保存。' : draft.demo ? '样例内容已保存，没有报告原图。' : '手动填写内容已保存。'}}</view><view class="local-caption">仅有权限的照护医生可查看；如网络未确认，请回到检查报告重新读取。</view><button class="primary-button" bindtap="viewSaved">查看档案</button><button class="text-button" bindtap="backToReports">返回检查报告</button></view>
+</view>

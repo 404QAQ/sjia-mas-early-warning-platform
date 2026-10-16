@@ -1,0 +1,8 @@
+/* 安全与急救页面只提供语义修饰，公共 page/card/button 基线来自 styles/patient.wxss。 */
+.patient-page .title { color: var(--mas-text); }
+.patient-page .card { border-radius: var(--mas-radius-card); box-shadow: var(--mas-shadow-card); }
+.patient-page .hint { color: var(--mas-text-muted); }
+.patient-page .line { color: var(--mas-text-muted); }
+.patient-page button.primary { color: var(--mas-on-primary); background: var(--mas-primary); }
+.patient-page button.secondary { color: var(--mas-primary); border-color: var(--mas-border); background: var(--mas-surface); }
+.patient-page button[disabled] { color: var(--mas-text-subtle); background: var(--mas-surface-muted); }

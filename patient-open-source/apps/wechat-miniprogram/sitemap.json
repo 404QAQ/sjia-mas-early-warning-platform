@@ -1,0 +1,4 @@
+{
+  "desc": "MAS 小程序页面访问规则",
+  "rules": [{ "action": "allow", "page": "*" }]
+}

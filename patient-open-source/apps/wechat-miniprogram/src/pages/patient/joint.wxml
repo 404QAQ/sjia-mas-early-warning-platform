@@ -1,0 +1,42 @@
+<view class="page patient-page">
+  <view class="title">关节速记</view>
+  <view class="hint">记录今天的晨僵、疼痛和活动情况，帮助你和医生回顾变化。这里不自动判断病情，也不替代医生评估。</view>
+  <view class="hint nudge">比之前好也要记一下，这同样重要。</view>
+  <view wx:if="{{loading}}" class="card"><view class="hint">读取中…</view></view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{message}}" class="message" role="status">{{message}}</view>
+  <view wx:if="{{pendingCount || rejectedCount}}" class="queue card">
+    <view>待确认操作 {{pendingCount}} 条<text wx:if="{{rejectedCount}}">，需重试 {{rejectedCount}} 条</text></view>
+    <view class="hint">网络异常或切换身份时，记录会先留在本机，确认前不会重复记录。</view>
+    <button size="mini" bindtap="retry" disabled="{{saving}}">重试待确认操作</button>
+  </view>
+
+  <view wx:if="{{canWrite}}" class="card form-card">
+    <view class="card-title">记录一条关节情况</view>
+    <view class="field-label">发生日期</view>
+    <picker mode="date" value="{{observedDate}}" end="{{today}}" bindchange="dateChange"><view class="picker">{{observedDate}}（点击选择日期）</view></picker>
+    <view class="field-label">晨僵时间</view>
+    <radio-group bindchange="stiffnessChange">
+      <label wx:for="{{stiffnessOptions}}" wx:key="value" class="option"><radio value="{{item.value}}" checked="{{stiffness === item.value}}" />{{item.label}}</label>
+    </radio-group>
+    <view class="field-label">关节疼痛：{{painNrs}}/10</view>
+    <slider min="0" max="10" step="1" value="{{painNrs}}" show-value bindchanging="painChange" bindchange="painChange" />
+    <view class="field-label">今天活动情况</view>
+    <radio-group bindchange="activityChange">
+      <label wx:for="{{activityOptions}}" wx:key="value" class="option"><radio value="{{item.value}}" checked="{{activityLevel === item.value}}" />{{item.label}}</label>
+    </radio-group>
+    <button class="primary" bindtap="save" disabled="{{saving}}">{{saving ? '正在提交…' : '保存关节速记'}}</button>
+    <view class="hint">当前身份：{{role === 'PATIENT' ? '患者本人' : '照护者/监护人'}}。照护者记录会标记为代填。</view>
+  </view>
+  <view wx:else class="card"><view class="hint">当前身份只有查看权限，不能提交关节速记。</view></view>
+
+  <view class="card">
+    <view class="card-title">已确认的关节速记</view>
+    <view wx:if="{{!assessments.length}}" class="hint">暂无已确认记录。</view>
+    <view wx:for="{{assessments}}" wx:key="id" class="row">
+      <view>{{item.observedAt}}</view>
+      <view class="row-meta">晨僵 {{item.morningStiffnessMinutes === 60 ? '1 小时以上' : item.morningStiffnessMinutes + ' 分钟'}} · 疼痛 {{item.painNrs}}/10 · {{item.activityLevel === 'FULL' ? '基本都能做' : item.activityLevel === 'LIMITED' ? '有些事情费劲' : '很多事情做不了'}} · {{item.respondent === 'PATIENT' ? '患者本人' : '照护者代填'}}</view>
+    </view>
+  </view>
+  <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading || saving}}">重新读取关节记录</button>
+</view>

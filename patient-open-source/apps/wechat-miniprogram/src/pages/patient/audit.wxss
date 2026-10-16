@@ -1,0 +1,15 @@
+@import "../../styles/patient.wxss";
+@import "./safety-common.wxss";
+
+.viewer { color: var(--mas-text-strong); font-size: 30rpx; font-weight: 700; }
+.time, .category { margin-top: 8rpx; color: var(--mas-text-subtle); font-size: 24rpx; }
+.category { margin-top: 12rpx; padding-top: 12rpx; border-top: 1rpx solid var(--mas-border-soft); }
+.action { margin-top: 14rpx; color: var(--mas-text-muted); font-size: 26rpx; line-height: 1.6; }
+.footer-note { margin-top: 28rpx; font-size: 23rpx; }
+.action-stack { margin-top: 18rpx; }
+.action-stack button { width: 100%; margin: 12rpx 0; }
+.recovery-button { width: 100%; }
+.audit-summary { display: flex; justify-content: space-between; margin: 28rpx 2rpx 8rpx; color: var(--mas-text-subtle); font-size: 23rpx; }
+.audit-heading { display: flex; align-items: center; justify-content: space-between; gap: 12rpx; }
+.audit-relation { padding: 5rpx 12rpx; color: var(--mas-primary); background: var(--mas-surface-soft); border-radius: var(--mas-radius-small); font-size: 21rpx; }
+.audit-item { margin: 14rpx 0; }

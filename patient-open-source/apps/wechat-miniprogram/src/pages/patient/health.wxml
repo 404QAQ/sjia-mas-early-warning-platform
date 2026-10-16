@@ -1,0 +1,66 @@
+<view class="page health-page patient-page">
+  <view class="compact-heading"><view class="title">{{pageTitle}}</view><view wx:if="{{section === 'vaccination' && vaccination}}" class="hint">截至 {{vaccination.updatedText}}</view><view wx:elif="{{section === 'diary'}}" class="hint">仅患者本人可见，不进入告警，不会自动通知医生。</view></view>
+  <view wx:if="{{loading}}" class="card"><view class="hint">正在读取健康资料…</view></view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{message}}" class="message" role="status">{{message}}</view>
+  <view wx:if="{{pendingCount || rejectedCount}}" class="queue"><view>待确认 {{pendingCount}} 条<text wx:if="{{rejectedCount}}"> · 需重试 {{rejectedCount}} 条</text></view><button size="mini" bindtap="retryQueue" disabled="{{saving}}">同步记录</button></view>
+  <block wx:if="{{!section || section === 'vaccination'}}">
+    <view wx:if="{{!vaccination && !loading}}" class="card"><view class="hint">疫苗日历暂未读取到，请刷新重试。</view></view>
+    <block wx:if="{{vaccination}}">
+      <view wx:if="{{vaccination.liveAttenuated.classification === 'BLOCKED'}}" class="warning">当前用药状态下，以下减毒活疫苗需由医生确认：{{vaccination.liveAttenuated.vaccinesText}}</view>
+      <view wx:elif="{{vaccination.liveAttenuated.classification === 'UNKNOWN'}}" class="warning">当前用药状态待核对，接种减毒活疫苗前请与医生确认。</view>
+      <view wx:if="{{vaccination.inactivated.length}}" class="hint vaccine-guidance">可由医生结合病情安排的灭活疫苗：<text wx:for="{{vaccination.inactivated}}" wx:key="vaccine">{{item.vaccine}} </text></view>
+      <view class="card flu-card"><view class="section-head"><view class="card-title">流感提醒</view><view class="tag">{{vaccination.annualInfluenza.statusLabel}}</view></view><view class="hint">建议窗口 {{vaccination.annualInfluenza.window.from}} 至 {{vaccination.annualInfluenza.window.to}}</view><view wx:if="{{vaccination.annualInfluenza.lastRecord}}" class="hint">最近接种 {{vaccination.annualInfluenza.lastRecord.dateText}} · {{vaccination.annualInfluenza.lastRecord.facility}}</view><view wx:if="{{vaccination.message}}" class="hint">{{vaccination.message}}</view></view>
+      <view class="card"><view class="section-head"><view class="card-title">已记录的接种</view><view class="count-tag">{{vaccination.records.length}} 条</view></view><view wx:if="{{!vaccination.records.length}}" class="empty-copy">暂无接种记录，可在下方补充。</view><view wx:for="{{vaccination.records}}" wx:key="id" class="row"><view class="section-head"><view class="record-name">{{item.vaccine}}</view><view class="row-meta">{{item.dateText}}</view></view><view class="row-meta">{{item.facility}}</view></view></view>
+      <view wx:if="{{vaccination.householdMembers.length}}" class="card"><view class="card-title">家庭成员接种提醒</view><view wx:for="{{vaccination.householdMembers}}" wx:key="relation" class="row"><view>{{item.relation}}</view><view class="row-meta"><text wx:for="{{item.vaccines}}" wx:key="name">{{item.name}}：{{item.done ? '已完成' : '待核对'}} </text></view></view></view>
+    </block>
+    <view wx:if="{{canWriteClinical}}" id="section-vaccination" class="card"><view class="card-title">补充接种记录</view>
+      <label class="field-label" for="vaccine-name">疫苗名称</label><input id="vaccine-name" class="input" maxlength="100" placeholder="如 流感疫苗" value="{{vaccineName}}" bindinput="vaccineNameInput" disabled="{{saving}}" />
+      <label class="field-label" for="vaccine-facility">接种机构</label><input id="vaccine-facility" class="input" maxlength="200" placeholder="如 社区卫生服务中心" value="{{vaccineFacility}}" bindinput="vaccineFacilityInput" disabled="{{saving}}" />
+      <view class="field-label">接种日期</view><picker mode="date" end="{{today}}" value="{{vaccineDate}}" bindchange="vaccineDateChange" disabled="{{saving}}"><view class="picker">{{vaccineDate || '选择接种日期'}}<text>›</text></view></picker>
+      <button class="primary" bindtap="saveVaccination" loading="{{saving}}" disabled="{{saving}}">保存接种记录</button><view class="footnote">接种事实会进入医生可见的患者档案。</view>
+    </view>
+  </block>
+  <view wx:if="{{!section || section === 'family'}}" class="card">
+    <view class="card-title">家族史</view>
+    <view class="hint">填写家人的健康情况，帮助医生了解背景。也可以选择暂不填写。</view>
+    <view wx:if="{{!canWriteClinical}}" class="hint">当前身份只有查看权限。</view>
+    <block wx:if="{{family}}">
+      <view wx:if="{{family.updatedText}}" class="hint">上次更新：{{family.updatedText}}</view>
+      <view wx:if="{{family.declined}}" class="hint">你选择了暂不填写。</view>
+      <view wx:else>
+        <view class="hint">自身免疫病：</view>
+        <view wx:if="{{!family.familyAutoimmune.length}}" class="hint">未记录</view>
+        <view wx:for="{{family.familyLabels}}" wx:key="*this" class="tag">{{item}}</view>
+        <view wx:if="{{family.siblings.length}}" class="hint">手足信息：</view>
+        <view wx:for="{{family.siblings}}" wx:key="display" class="row"><view>{{item.display}}</view></view>
+        <view wx:if="{{family.otherNote}}" class="hint">补充说明：{{family.otherNote}}</view>
+      </view>
+    </block>
+    <view wx:if="{{canWriteClinical}}" class="form">
+      <checkbox-group bindchange="toggleFamilyDeclined"><label class="check"><checkbox value="DECLINED" checked="{{familyDeclined}}" />暂不填写家族史</label></checkbox-group>
+      <view class="hint">可选择相关情况：</view>
+      <view wx:for="{{familyAutoimmuneOptions}}" wx:key="code" class="choice" data-code="{{item.code}}" bindtap="toggleFamily"><checkbox checked="{{item.selected}}" disabled="{{familyDeclined}}" />{{item.label}}</view>
+      <textarea class="textarea" maxlength="500" placeholder="选择“其他自身免疫病”后可补充说明" value="{{familyOtherNote}}" bindinput="familyNote" disabled="{{familyDeclined}}"></textarea>
+      <view class="sub-title">添加手足信息（可选）</view>
+      <input class="input" type="number" maxlength="3" placeholder="年龄（岁）" value="{{siblingAge}}" bindinput="siblingAgeInput" disabled="{{familyDeclined}}" />
+      <checkbox-group bindchange="siblingHealthyChange"><label class="check"><checkbox value="healthy" checked="{{siblingHealthy}}" disabled="{{familyDeclined}}" />目前健康</label></checkbox-group>
+      <input class="input" maxlength="500" placeholder="备注（可选）" value="{{siblingNote}}" bindinput="siblingNoteInput" disabled="{{familyDeclined}}" />
+      <button class="tertiary" size="mini" bindtap="addSibling" disabled="{{familyDeclined}}">加入手足信息</button>
+      <view wx:for="{{siblings}}" wx:key="display" class="row sibling-row"><view>{{item.display}}</view><button class="quiet" size="mini" data-index="{{index}}" bindtap="removeSibling">移除</button></view>
+      <button class="primary" bindtap="saveFamily" disabled="{{saving}}">保存家族史</button>
+    </view>
+  </view>
+
+  <block wx:if="{{!section || section === 'diary'}}">
+    <view wx:if="{{!canWriteDiary}}" class="card private-access"><view class="card-title">给患者自己的空间</view><view class="hint">{{diaryNotice || '私人记录仅患者本人可见，家属无法代写或查看。'}}</view></view>
+    <block wx:if="{{canWriteDiary}}">
+      <view id="section-diary" class="card diary-editor"><view wx:if="{{!section}}" class="card-title">私人记录</view><textarea class="textarea" maxlength="2000" placeholder="写下此刻想记录的事（可选）" value="{{diaryText}}" bindinput="diaryInput" disabled="{{saving || diaryActionBusy}}"></textarea><view class="hint mood-label">也可以只点一个状态：</view><view class="moods"><button class="{{selectedMood === 'DISTRESSED' ? 'active' : ''}}" data-mood="DISTRESSED" bindtap="chooseMood" disabled="{{saving || diaryActionBusy}}">难受</button><button class="{{selectedMood === 'ANGRY' ? 'active' : ''}}" data-mood="ANGRY" bindtap="chooseMood" disabled="{{saving || diaryActionBusy}}">生气</button><button class="{{selectedMood === 'LOW_ENERGY' ? 'active' : ''}}" data-mood="LOW_ENERGY" bindtap="chooseMood" disabled="{{saving || diaryActionBusy}}">没力气</button><button class="{{selectedMood === 'UNCLEAR' ? 'active' : ''}}" data-mood="UNCLEAR" bindtap="chooseMood" disabled="{{saving || diaryActionBusy}}">说不清</button></view><button class="primary" bindtap="saveDiary" loading="{{saving}}" disabled="{{saving || diaryActionBusy}}">保存私人记录</button><view class="footnote">只有主动分享的单条记录，指定医生才能临时查看。</view></view>
+      <view wx:if="{{diaryActionError}}" class="error" role="alert">{{diaryActionError}}<button class="secondary" size="mini" bindtap="refresh" disabled="{{saving || diaryActionBusy}}">刷新分享状态</button></view>
+      <view wx:if="{{shareEntryId}}" id="diary-share-editor" class="card"><view class="section-head"><view class="card-title">分享给指定医生</view><button class="text-button" bindtap="closeDiaryShare" disabled="{{diaryActionBusy}}">取消</button></view><view wx:if="{{!shareTargets.length}}" class="hint">当前没有可核验的照护医生，暂不能分享。</view><block wx:else><view class="hint">只分享当前这一条，24 小时后自动失效。</view><picker range="{{shareTargets}}" range-key="label" value="{{shareTargetIndex}}" bindchange="chooseDiaryTarget" disabled="{{diaryActionBusy}}"><view class="picker">{{shareTargets[shareTargetIndex].label}}<text>›</text></view></picker><button class="primary" bindtap="confirmDiaryShare" loading="{{diaryActionBusy}}" disabled="{{diaryActionBusy}}">确认分享这一条</button></block></view>
+      <view class="list-heading">以前写的 <text>{{diaryEntries.length}} 条</text></view><view wx:if="{{!loading && !diaryEntries.length}}" class="card empty-copy">还没有记录，写下一句话或选择此刻的感受即可保存。</view>
+      <view wx:for="{{diaryEntries}}" wx:key="id" class="card diary-entry"><view class="section-head"><view class="privacy-tag">{{item.shares.length ? '已主动分享' : '仅自己可见'}}</view><view class="row-meta">{{item.timeText}}</view></view><view class="diary-body">{{item.display}}</view><view class="entry-actions"><button class="text-button" data-id="{{item.id}}" bindtap="openDiaryShare" disabled="{{saving || diaryActionBusy || diaryActionError}}">分享给医生</button><button class="text-button remove-button" data-id="{{item.id}}" bindtap="deleteDiary" disabled="{{saving || diaryActionBusy}}">删除</button></view><view wx:for="{{item.shares}}" wx:for-item="share" wx:key="id" class="share-row"><view class="footnote">授权至 {{share.expiresLabel}}</view><button class="text-button" data-id="{{item.id}}" data-share-id="{{share.id}}" bindtap="revokeDiaryShare" disabled="{{saving || diaryActionBusy}}">撤回分享</button></view></view>
+    </block>
+  </block>
+  <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading || saving}}">刷新健康资料</button>
+</view>

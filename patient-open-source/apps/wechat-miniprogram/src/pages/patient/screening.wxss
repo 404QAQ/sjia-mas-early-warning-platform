@@ -1,0 +1,74 @@
+@import "../../styles/patient.wxss";
+
+page { background: var(--mas-bg); }
+.page { min-height: 100vh; box-sizing: border-box; background: var(--mas-bg); color: var(--mas-text); }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20rpx; }
+.title { margin-top: 8rpx; color: var(--mas-text); font-size: 36rpx; font-weight: 700; line-height: 1.25; }
+.hint { color: var(--mas-text-muted); font-size: 24rpx; line-height: 1.65; }
+.page-header .hint { max-width: 590rpx; margin-top: 10rpx; }
+.assessment-status { display: flex; align-items: center; gap: 16rpx; min-height: 90rpx; box-sizing: border-box; margin-top: 24rpx; padding: 18rpx 20rpx; border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); background: var(--mas-success-soft); }
+.assessment-ready { border-color: var(--mas-border); background: var(--mas-success-soft); }
+.assessment-done { border-color: var(--mas-border); background: var(--mas-success-soft); }
+.assessment-muted { border-color: var(--mas-border); background: var(--mas-bg); }
+.assessment-loading { border-color: var(--mas-border); background: var(--mas-bg); }
+.assessment-status-icon { width: 44rpx; height: 44rpx; flex: 0 0 44rpx; color: var(--mas-primary); background: var(--mas-success-soft); border-radius: 50%; font-size: 28rpx; font-weight: 700; line-height: 44rpx; text-align: center; }
+.assessment-muted .assessment-status-icon, .assessment-loading .assessment-status-icon { color: var(--mas-text-subtle); background: var(--mas-bg); }
+.assessment-status-copy { flex: 1; min-width: 0; }
+.assessment-status-title { color: var(--mas-success); font-size: 28rpx; font-weight: 700; }
+.assessment-muted .assessment-status-title, .assessment-loading .assessment-status-title { color: var(--mas-text-muted); }
+.assessment-status-detail { margin-top: 3rpx; color: var(--mas-text-muted); font-size: 23rpx; line-height: 1.4; }
+.assessment-progress { color: var(--mas-success); font-size: 25rpx; font-weight: 700; }
+.card { box-sizing: border-box; margin-top: 20rpx; padding: 26rpx; background: var(--mas-surface); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-card); box-shadow: var(--mas-shadow-card); }
+.card-title { margin-bottom: 12rpx; color: var(--mas-text); font-size: 29rpx; font-weight: 700; line-height: 1.45; }
+.form-intro-card { border-left: 5rpx solid var(--mas-primary); }
+.privacy-note { display: flex; align-items: center; gap: 10rpx; margin-top: 20rpx; padding-top: 16rpx; color: var(--mas-text-subtle); border-top: 1rpx solid var(--mas-border); font-size: 23rpx; }
+.privacy-icon { color: var(--mas-primary); font-size: 22rpx; font-weight: 700; }
+.visit-banner { margin: 2rpx 0 4rpx; padding: 17rpx 18rpx; border-left: 4rpx solid var(--mas-primary); border-radius: var(--mas-radius-control); background: var(--mas-surface-soft); }
+.visit-label { color: var(--mas-text-muted); font-size: 22rpx; }
+.visit-date { margin-top: 4rpx; color: var(--mas-text); font-size: 28rpx; font-weight: 700; }
+.visit-note { margin-top: 6rpx; color: var(--mas-text-muted); font-size: 23rpx; line-height: 1.5; }
+.question { margin-top: 24rpx; padding-top: 22rpx; border-top: 1rpx solid var(--mas-border); }
+.question-title { margin-bottom: 12rpx; color: var(--mas-text); font-size: 28rpx; font-weight: 600; line-height: 1.55; }
+.picker { display: flex; align-items: center; box-sizing: border-box; width: 100%; min-height: 88rpx; padding: 18rpx; color: var(--mas-text); background: var(--mas-surface); border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-control); font-size: 27rpx; }
+.page button.primary, .page button.secondary { margin-top: 20rpx; border-radius: var(--mas-radius-control); font-size: 27rpx; }
+.page button.primary { color: var(--mas-on-primary); background: var(--mas-primary); }
+.page button.submit-button { margin-top: 28rpx; box-shadow: 0 6rpx 14rpx rgba(15,110,120,.16); }
+.page button.secondary { color: var(--mas-text); background: var(--mas-surface-soft); border: 1rpx solid var(--mas-border); }
+.page button[disabled] { color: var(--mas-text-subtle); background: var(--mas-bg); border-color: var(--mas-bg); box-shadow: none; }
+button::after { border: 0; }
+.error, .message, .queue { margin-top: 18rpx; padding: 18rpx 20rpx; border-radius: var(--mas-radius-control); font-size: 25rpx; line-height: 1.6; }
+.error { color: var(--mas-danger); background: var(--mas-danger-soft); border: 1rpx solid var(--mas-border); }
+.message { color: var(--mas-success); background: var(--mas-success-soft); border: 1rpx solid var(--mas-border); }
+.queue { display: flex; align-items: center; justify-content: space-between; gap: 14rpx; color: var(--mas-warning); background: var(--mas-warning-soft); border: 1rpx solid var(--mas-border); }
+.page .queue button { width: auto; flex: 0 0 auto; margin: 0; color: var(--mas-warning); background: var(--mas-surface); border: 1rpx solid var(--mas-border); }
+.next-step-card { border-left: 5rpx solid var(--mas-primary); }
+.next-step-card .card-title { color: var(--mas-primary); }
+.resource-row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; padding: 16rpx 0; border-bottom: 1rpx solid var(--mas-border); }
+.resource-row:last-child { border-bottom: 0; }
+.line { flex: 1; color: var(--mas-text-muted); font-size: 25rpx; line-height: 1.55; }
+.page .resource-row button { width: auto; flex: 0 0 auto; margin: 0; }
+.crisis-card { border-top: 5rpx solid var(--mas-danger); background: var(--mas-danger-soft); }
+.page button.recovery-button { width: 100%; min-height: var(--mas-control-height); margin: 28rpx 0 16rpx; }
+.page { background: var(--mas-bg); }
+.support-hero { padding: 30rpx; border-radius: 20rpx; color: var(--mas-on-primary); background: #273747; }
+.support-hero-title { margin-bottom: 22rpx; font-size: 30rpx; font-weight: 600; }
+.page button.support-route { display: flex; align-items: center; justify-content: space-between; gap: 18rpx; width: 100%; margin-top: 14rpx; padding: 22rpx; border-radius: var(--mas-radius-card); text-align: left; color: var(--mas-on-primary); background: #354657; line-height: 1.6; }
+.support-route-title { font-size: 26rpx; font-weight: 500; }
+.support-route-note { margin-top: 5rpx; color: #d3dee7; font-size: 21rpx; }
+.support-route > text { flex: none; font-size: 36rpx; color: #bdcdd6; }
+.card { padding: var(--mas-card-padding); border-color: var(--mas-border); border-radius: var(--mas-radius-card); box-shadow: var(--mas-shadow-card); }
+.form-intro-card { border-left-width: 1rpx; }
+.privacy-note { margin-top: 14rpx; padding-top: 12rpx; }
+.assessment-status { border-radius: var(--mas-radius-card); }
+.question-title { font-size: 27rpx; font-weight: 500; }
+.answer-options { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.page button.answer-option { box-sizing: border-box; flex: 1 1 calc(50% - 12rpx); min-width: calc(50% - 12rpx); min-height: 88rpx; margin: 0; padding: 14rpx 8rpx; border: 1rpx solid var(--mas-border); border-radius: var(--mas-radius-control); color: var(--mas-text-muted); background: var(--mas-surface); font-size: 24rpx; line-height: 1.6; }
+.page button.answer-option:last-child { flex-grow: 0; color: #7c8995; border-style: dashed; }
+.page button.answer-option.is-selected { color: var(--mas-on-primary); background: var(--mas-primary); border-color: var(--mas-primary); border-style: solid; }
+.page button.submit-button { width: 100%; min-height: 88rpx; padding: 16rpx; box-shadow: none; background: var(--mas-primary); }
+.history-row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; padding: 22rpx 0; border-top: 1rpx solid var(--mas-border-soft); color: var(--mas-text-subtle); font-size: 24rpx; }
+.history-row:first-of-type { margin-top: 18rpx; }
+.history-row > view { color: var(--mas-primary); font-size: 23rpx; }
+.vent-card { display: flex; align-items: center; justify-content: space-between; gap: 18rpx; }
+.vent-card > view { flex: 1; }
+.page .vent-card button { width: auto; min-height: 88rpx; margin: 0; padding: 12rpx 24rpx; border-color: var(--mas-border); color: var(--mas-primary); background: var(--mas-surface); }

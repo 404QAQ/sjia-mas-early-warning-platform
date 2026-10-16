@@ -1,0 +1,46 @@
+<view class="page patient-page">
+  <view class="title">跨院数据共享</view>
+  <view class="hint">换医院看病时，哪些内容可以给新医院看，由你决定。每一项都要单独确认。心理相关的默认不共享。</view>
+
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{notice}}" class="message" role="status">{{notice}}</view>
+  <view wx:if="{{pendingText}}" class="warn" role="status">{{pendingText}}<button size="mini" bindtap="retry" disabled="{{saving}}">重试原操作</button></view>
+  <view wx:if="{{loading && !items.length}}" class="hint">正在读取跨院共享情况…</view>
+
+  <view wx:if="{{!loading && !items.length}}" class="card"><view class="line">目前没有跨院共享。医院之间的协作建立后，这里会显示哪家医院看得到你的哪些数据。</view></view>
+
+  <view wx:for="{{items}}" wx:key="key" class="card">
+    <view class="card-title">跨院共享授权<text class="badge">{{item.statusLabel}}</text></view>
+    <view class="hint">来源机构编号：{{item.fromOrgId}}</view>
+    <view class="hint">接收机构编号：{{item.toOrgId}}</view>
+    <view class="line">{{item.visibleText}}</view>
+    <view class="line">{{item.hiddenText}}</view>
+    <view class="hint">{{item.confirmedText}}</view>
+
+    <block wx:if="{{editingKey !== item.key}}">
+      <view wx:for="{{item.choices}}" wx:for-item="choice" wx:key="key" class="line">· {{choice.label}}：{{choice.checked ? '已共享' : '未共享'}}</view>
+      <view class="hint">{{item.moodDiaryNote}}</view>
+    </block>
+    <block wx:else>
+      <view class="line">勾选要共享的内容（每一项独立）：</view>
+      <view wx:for="{{editing}}" wx:for-item="choice" wx:key="key" class="choice" data-key="{{choice.key}}" bindtap="toggle">
+        <view class="box">{{choice.checked ? '✓' : ''}}</view>{{choice.label}}
+      </view>
+      <view class="hint">情绪日记永远不参与跨院共享，这里不提供开关。</view>
+    </block>
+
+    <button wx:if="{{item.canConfirm}}" bindtap="confirm" data-key="{{item.key}}" disabled="{{saving}}">确认这项共享</button>
+    <button wx:if="{{item.canUpdate && editingKey !== item.key}}" class="secondary" bindtap="edit" data-key="{{item.key}}" disabled="{{saving}}">修改共享范围</button>
+    <button wx:if="{{item.canUpdate && editingKey === item.key}}" bindtap="update" disabled="{{saving}}">保存修改后的范围</button>
+    <button wx:if="{{item.canUpdate && editingKey === item.key}}" class="secondary" bindtap="cancelEdit" disabled="{{saving}}">先不改</button>
+    <button wx:if="{{item.canRevoke}}" class="danger" bindtap="revoke" data-key="{{item.key}}" disabled="{{saving}}">终止这项共享</button>
+  </view>
+
+  <view class="card">
+    <view class="card-title">关于你的记录</view>
+    <view class="line">你自己写的东西，任何医院都看不到。</view>
+    <view class="line">你的记录只在你确认的范围内跨院可见。你随时可以在这里改，或终止。</view>
+  </view>
+
+  <button wx:if="{{error && !loading}}" class="secondary recovery-button" bindtap="refresh" disabled="{{loading || saving}}">重新读取共享设置</button>
+</view>
