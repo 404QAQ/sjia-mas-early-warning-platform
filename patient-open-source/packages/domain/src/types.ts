@@ -1,5 +1,5 @@
 /**
- * 核心实体类型。字段名与 docs/04 §1.1/§1.3 保持一致，便于与设计文档逐条对照。
+ * 患者端与风险评估共享类型。字段名与公开契约保持一致，便于跨端对照。
  * 时间统一用 ISO 8601 字符串（带时区），不用 Date 对象跨层传递。
  */
 
@@ -32,13 +32,11 @@ export interface Patient {
   lifeStageOverridden?: boolean;
   isLivingAlone: boolean;
   pregnancyStatus?: PregnancyStatus | LegacyPregnancyStatus;
-  /** 医生手写的基线特点（一句话，交班摘要必须带出） */
+  /** 专业基线备注，用于风险解释与复诊准备。 */
   clinicianBaselineNote?: string;
 }
 
 export type ActorRelation = 'SELF' | 'LEGAL_GUARDIAN' | 'CAREGIVER' | 'SPOUSE' | 'PROXY' | 'CLINICIAN';
-/** 妇产/风湿双科交接使用的受控专科标识；未配置时不得据此获得交接权限。 */
-export type ClinicalSpecialty = 'RHEUMATOLOGY' | 'OBSTETRICS';
 
 export interface Actor {
   id: string;
@@ -47,8 +45,6 @@ export interface Actor {
   displayName?: string;
   patientId: string;
   relation: ActorRelation;
-  /** 受控的临床专科身份；仅服务端种子/机构目录写入，客户端不可声明。 */
-  clinicalSpecialty?: ClinicalSpecialty;
   activeFrom: Iso;
   activeUntil?: Iso;
   revokedAt?: Iso;
@@ -73,26 +69,6 @@ export interface Contact {
   quietHours?: { from: string; to: string };
   capabilityTags: string[];
   lastConfirmedAt: Iso;
-}
-
-export type CareTeamRole = 'ATTENDING' | 'PRIMARY' | 'ON_CALL' | 'CONSULTANT' | 'NURSE';
-
-export interface CareTeamMember {
-  patientId: string;
-  clinicianId: string;
-  clinicianName: string;
-  role: CareTeamRole;
-  activeFrom: Iso;
-  activeUntil?: Iso;
-}
-
-export interface Shift {
-  id: string;
-  clinicianId: string;
-  clinicianName: string;
-  startsAt: Iso;
-  endsAt: Iso;
-  kind: 'DAY' | 'NIGHT' | 'BACKUP';
 }
 
 // ---------- 观测值 ----------
@@ -136,7 +112,7 @@ export interface PersonalBaseline {
   unit: string;
   source: 'COMPUTED' | 'CLINICIAN';
   stabilityPeriods: StabilityPeriod[];
-  /** 医生手写的一句话（价值最高），可含显式阈值 */
+  /** 专业备注，可含显式阈值 */
   clinicianNote?: string;
   /** 从 clinicianNote 解析出的覆盖阈值【工程初稿】 */
   clinicianThresholds?: ClinicianThreshold[];
@@ -427,56 +403,8 @@ export interface DifferentialConfig {
   }>;
   dataGapPriority: string[];
   strengthThresholds: { strong: number; medium: number };
-  /** 仅供医生端展示层过滤；引擎阶段 0 仍返回稳定四通道。 */
+  /** 供展示层过滤；引擎阶段 0 仍返回稳定四通道。 */
   presentation?: { showChannelWhen: 'EVIDENCE' | 'ALWAYS'; minStrengthToShow: 'WEAK' | 'MEDIUM' | 'STRONG' };
-}
-
-// ---------- 告警 ----------
-
-export type AlertStatus =
-  | 'OPEN'
-  | 'ACKNOWLEDGED'
-  | 'ESCALATED'
-  | 'RESOLVED';
-
-export type IgnoreReasonCode =
-  | 'KNOWN_FLUCTUATION'
-  | 'INFECTION'
-  | 'ALREADY_MANAGED'
-  | 'DATA_ERROR'
-  | 'ADHERENCE'
-  | 'OTHER';
-
-export const IGNORE_REASON_LABEL: Record<IgnoreReasonCode, string> = {
-  KNOWN_FLUCTUATION: '已知波动（该患儿特点）',
-  INFECTION: '感染干扰',
-  ALREADY_MANAGED: '已处理（已有临床干预，指标偏离可解释）',
-  DATA_ERROR: '数据录入错误',
-  ADHERENCE: '依从性问题（漏药导致，非疾病恶化）',
-  OTHER: '其他',
-};
-
-export interface Alert {
-  id: string;
-  patientId: string;
-  status: AlertStatus;
-  riskLevel: RiskLevel;
-  actionLevel: ActionLevel;
-  safetyNetStatus: SafetyNetStatus;
-  reasons: AlertReason[];
-  evidence: EvidenceItem[];
-  suggestions: string[];
-  differential: DifferentialChannel[];
-  dataGaps: DataGap[];
-  engineVersion: string;
-  configVersion: string;
-  signalFingerprint: string;
-  currentLevel: 1 | 2 | 3;
-  createdAt: Iso;
-  escalateAt?: Iso;
-  acknowledgedBy?: string;
-  acknowledgedAt?: Iso;
-  version: number;
 }
 
 export type PatientFollowUpState = 'PENDING_REVIEW' | 'CLOSED';

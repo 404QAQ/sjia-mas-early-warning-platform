@@ -1,5 +1,5 @@
 import type { Iso, PatientSex } from './types.js';
-import { parseCareInstant } from './care-routing.js';
+import { parseCareInstant } from './time.js';
 
 /** L-06 妊娠与生育状态；不参与孕期 MAS 风险评分。 */
 export const PREGNANCY_STATES = ['CONSIDERING', 'PLANNING', 'PREGNANT', 'POSTPARTUM', 'NONE'] as const;

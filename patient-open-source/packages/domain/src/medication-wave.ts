@@ -1,6 +1,6 @@
 import type { Code, ObservationSource } from './codes.js';
 import type { Iso, Observation } from './types.js';
-import { parseCareInstant } from './care-routing.js';
+import { parseCareInstant } from './time.js';
 import type { MedicationFrequency, MedicationLog, MedicationPlan, MedicationPlanStatus } from './medication.js';
 
 /**

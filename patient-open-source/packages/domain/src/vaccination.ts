@@ -1,6 +1,6 @@
 import type { Iso } from './types.js';
 import { isClinicianMedicationPlan, type MedicationPlan, type MedicationPlanStatus } from './medication.js';
-import { parseCareInstant } from './care-routing.js';
+import { parseCareInstant } from './time.js';
 
 /** L-03 疫苗分类只表达知识规则，不表达个体接种建议或适合性判断。 */
 export type ImmunosuppressionStatus = 'KNOWN' | 'UNKNOWN';

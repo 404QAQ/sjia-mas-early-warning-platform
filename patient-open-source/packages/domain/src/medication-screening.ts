@@ -1,4 +1,4 @@
-import { parseCareInstant } from './care-routing.js';
+import { parseCareInstant } from './time.js';
 import type { Iso } from './types.js';
 
 /** 长期用药必须持续关注的五类筛查。筛查优先级不随缓解期降低。 */

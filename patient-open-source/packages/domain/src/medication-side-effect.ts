@@ -1,4 +1,4 @@
-import { parseCareInstant } from './care-routing.js';
+import { parseCareInstant } from './time.js';
 import type { Iso } from './types.js';
 
 /** M-04 的症状编码。分级由编码决定，患者不能自行输入严重度。 */

@@ -9,5 +9,6 @@ describe('患者公开领域入口', () => {
     expect('decideAlertRouting' in publicDomain).toBe(false);
     expect('createThresholdConfigSnapshot' in publicDomain).toBe(false);
     expect('ACTIONS' in publicDomain).toBe(false);
+    expect('IGNORE_REASON_LABEL' in publicDomain).toBe(false);
   });
 });

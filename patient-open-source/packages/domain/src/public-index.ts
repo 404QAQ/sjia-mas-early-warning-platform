@@ -1,14 +1,43 @@
-/**
- * 患者端公开入口。
- *
- * 工作台排班、告警路由、权限、阈值注册/回测和交班模块保留在源码树中，
- * 仅为内部测试与引擎构建提供实现，但不从公开包入口导出。
- */
+/** 患者端公开入口；这里只发布患者数据契约和风险评估所需的类型。 */
 export * from './codes.js';
 export * from './units.js';
-export * from './types.js';
+export type {
+  Iso,
+  DiseaseType,
+  LifeStage,
+  PatientSex,
+  Patient,
+  ActorRelation,
+  Actor,
+  Visibility,
+  Contact,
+  Observation,
+  StabilityPeriod,
+  PersonalBaseline,
+  ClinicianThreshold,
+  SafetyNetState,
+  JointAssessment,
+  InterventionResponse,
+  RiskLevel,
+  ActionLevel,
+  SafetyNetStatus,
+  AlertReason,
+  EvidenceItem,
+  Standard2016Item,
+  StandardProgress,
+  TrendSignal,
+  MsScoreResult,
+  DifferentialChannel,
+  DataGap,
+  EngineInput,
+  EngineOutput,
+  ThresholdConfig,
+  DifferentialChannelKey,
+  DifferentialConfig,
+  PatientFollowUpState,
+  PatientFollowUp,
+} from './types.js';
 export * from './differential-rules.js';
-export * from './patient-care.js';
 export * from './patient-message.js';
 export * from './medication.js';
 export * from './medication-injection.js';

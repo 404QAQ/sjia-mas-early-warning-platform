@@ -1,4 +1,4 @@
-import { parseCareInstant } from './care-routing.js';
+import { parseCareInstant } from './time.js';
 import type { Iso } from './types.js';
 import { isClinicianMedicationPlan, type MedicationLog, type MedicationPlan } from './medication.js';
 
