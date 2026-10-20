@@ -1,6 +1,6 @@
 /**
- * 黄金用例：引擎输出必须与设计文档给出的示例逐条对得上。
- * 出处：design/01（风险队列卡片）、design/03（患者详情）、docs/01 §4.4（SBAR）、docs/02 §3.1/§6.3。
+ * 黄金用例：引擎输出必须与公开设计文档给出的示例逐条对得上。
+ * 这里只验证患者端风险摘要、行动级别和证据项，不依赖任何工作台页面。
  */
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_CONFIG, evaluate, fuse } from '../src/index.js';

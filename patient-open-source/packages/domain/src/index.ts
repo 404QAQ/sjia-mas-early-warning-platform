@@ -1,43 +1,7 @@
-export * from './codes.js';
-export * from './units.js';
-export * from './types.js';
-export * from './permissions.js';
-export * from './care-routing.js';
-export * from './delivery-timing.js';
-export * from './care-calendar.js';
-export * from './care-shift-change.js';
-export * from './care-leave.js';
-export * from './care-shift-swap.js';
-export * from './patient-care.js';
-export * from './patient-message.js';
-export * from './medication.js';
-export * from './medication-injection.js';
-export * from './medication-trajectory.js';
-export * from './medication-wave.js';
-export * from './medication-exposure.js';
-export * from './medication-side-effect.js';
-export * from './medication-screening.js';
-export * from './emergency-plan.js';
-export * from './emergency-kit.js';
-export * from './emergency-card.js';
-export * from './emergency-share.js';
-export * from './private-diary.js';
-export * from './life-event.js';
-export * from './vaccination.js';
-export * from './joint.js';
-export * from './work-support.js';
-export * from './threshold-config.js';
-export * from './contact-safety.js';
-export * from './living-mode.js';
-export * from './education.js';
-export * from './intervention.js';
-export * from './psych-screening.js';
-export * from './psych-support.js';
-export * from './pregnancy.js';
-export * from './pregnancy-handoff.js';
-export * from './school-disclosure.js';
-export * from './data-sharing.js';
-export * from './family-history.js';
-export * from './patient-lifecycle.js';
-export * from './menstrual-cycle.js';
-export * from './consultation.js';
+/**
+ * 公开源码入口。
+ *
+ * 患者端构建和包 exports 都使用 public-index；这里保留同一入口，避免
+ * 从源码路径意外拿到未公开的内部实现。
+ */
+export * from './public-index.js';
